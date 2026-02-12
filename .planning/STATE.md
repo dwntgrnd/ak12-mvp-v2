@@ -10,28 +10,28 @@ See: .planning/PROJECT.md (updated 2026-02-12)
 ## Current Position
 
 Phase: 1 of 7 (Foundation & Shell)
-Plan: 1 of 3 in current phase
+Plan: 2 of 3 in current phase
 Status: In progress
-Last activity: 2026-02-12 — Completed plan 01-01 (Project Foundation & Design System)
+Last activity: 2026-02-12 — Completed plan 01-02 (Service Type System & Interfaces)
 
-Progress: [█░░░░░░░░░] 10%
+Progress: [██░░░░░░░░] 20%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 1
-- Average duration: 5 min
-- Total execution time: 0.08 hours
+- Total plans completed: 2
+- Average duration: 3.5 min
+- Total execution time: 0.12 hours
 
 **By Phase:**
 
 | Phase               | Plans | Total | Avg/Plan |
 |---------------------|-------|-------|----------|
-| 01-foundation-shell | 1     | 5min  | 5min     |
+| 01-foundation-shell | 2     | 7min  | 3.5min   |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (5min)
-- Trend: Establishing baseline
+- Last 5 plans: 01-01 (5min), 01-02 (2min)
+- Trend: High velocity on foundation work
 
 *Updated after each plan completion*
 
@@ -47,6 +47,9 @@ Recent decisions affecting current work:
 - 01-01: HSL format for all CSS custom properties for shadcn/ui compatibility
 - 01-01: Tailwind CSS v4 with @import and @theme syntax
 - 01-01: Manual Next.js setup to work around npm naming restrictions with directory casing
+- 01-02: Const array pattern for controlled vocabulary to ensure compile-time type safety
+- 01-02: Record<string, unknown> instead of any for strict typing in dynamic data fields
+- 01-02: Barrel export pattern in service registry for single-file imports
 
 ### Pending Todos
 
@@ -61,6 +64,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-02-12T12:09:49Z
-Stopped at: Completed 01-01-PLAN.md (Project Foundation & Design System)
+Last session: 2026-02-12T12:15:22Z
+Stopped at: Completed 01-02-PLAN.md (Service Type System & Interfaces)
 Resume file: None
