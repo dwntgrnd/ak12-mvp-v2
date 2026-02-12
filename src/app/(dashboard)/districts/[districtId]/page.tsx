@@ -7,6 +7,8 @@ import { ProficiencySection } from '@/components/district/proficiency-section';
 import { FundingSection } from '@/components/district/funding-section';
 import { FitAssessmentPanel } from '@/components/district/fit-assessment-panel';
 import { DataField } from '@/components/district/data-field';
+import { SaveButton } from '@/components/district/save-button';
+import { ExcludeButton } from '@/components/district/exclude-button';
 
 export async function generateMetadata({
   params,
@@ -53,9 +55,15 @@ export default async function DistrictProfilePage({
 
       {/* Header section */}
       <div className="mb-8">
-        <h1 className="text-2xl font-bold font-heading mb-2">
-          {district.name}
-        </h1>
+        <div className="flex items-start justify-between mb-2">
+          <h1 className="text-2xl font-bold font-heading">
+            {district.name}
+          </h1>
+          <div className="flex items-center gap-2">
+            <SaveButton districtId={districtId} />
+            <ExcludeButton districtId={districtId} />
+          </div>
+        </div>
         <div className="flex items-center gap-3 text-muted-foreground">
           <span>
             {district.location}, {district.county}
