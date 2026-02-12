@@ -32,10 +32,13 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. Design tokens (colors, spacing, typography) applied consistently via Tailwind config
   4. Service interfaces and types defined for all 6 services (36 methods total)
   5. Health check endpoint responds successfully
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] TBD during planning
+
+- [ ] 01-01-PLAN.md — Project scaffold + design token system
+- [ ] 01-02-PLAN.md — Service interfaces & types (36 methods)
+- [ ] 01-03-PLAN.md — App shell, sidebar navigation & health check
 
 ### Phase 2: Auth & Data Layer
 **Goal**: Users can authenticate and data layer is operational with seeded California district data
@@ -139,7 +142,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation & Shell | 0/TBD | Not started | - |
+| 1. Foundation & Shell | 0/3 | Planned | - |
 | 2. Auth & Data Layer | 0/TBD | Not started | - |
 | 3. Discovery & District Profiles | 0/TBD | Not started | - |
 | 4. District Management | 0/TBD | Not started | - |
