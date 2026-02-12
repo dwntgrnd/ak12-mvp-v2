@@ -1,0 +1,106 @@
+# Requirements: AlchemyK12 MVP v2
+
+**Defined:** 2026-02-12
+**Core Value:** Sales reps can find the right districts for their products and walk into meetings with district-specific talking points
+
+## v1 Requirements
+
+Requirements for initial release. Each maps to roadmap phases.
+
+### Authentication
+
+- [ ] **AUTH-01**: User can sign in with email and password
+- [ ] **AUTH-02**: User session persists across browser refresh
+- [ ] **AUTH-03**: System health check endpoint available
+
+### Discovery & Search
+
+- [ ] **DISC-01**: User can search California districts by name or keyword
+- [ ] **DISC-02**: User can filter districts by demographics, enrollment, and location
+- [ ] **DISC-03**: User can view paginated search results
+- [ ] **DISC-04**: User can view available filter facets dynamically
+- [ ] **DISC-05**: User can assess product-district fit (strong/moderate/low) after selecting products
+
+### District Profiles
+
+- [ ] **DIST-01**: User can view district profile with demographics data
+- [ ] **DIST-02**: User can view district proficiency data
+- [ ] **DIST-03**: User can view district funding data
+- [ ] **DIST-04**: District data fields render dynamically (whatever's present)
+
+### District Management
+
+- [ ] **DMGT-01**: User can save/bookmark districts
+- [ ] **DMGT-02**: User can view saved districts list
+- [ ] **DMGT-03**: User can remove saved districts
+- [ ] **DMGT-04**: User can exclude districts with categorized reason
+- [ ] **DMGT-05**: User can view excluded districts
+- [ ] **DMGT-06**: User can restore excluded districts
+
+### Solutions Library
+
+- [ ] **PROD-01**: User can view product catalog with filtering by grade range and subject area
+- [ ] **PROD-02**: User can view product detail with full metadata and assets
+- [ ] **PROD-03**: Admin can create new products with grade range, subject area, and metadata
+- [ ] **PROD-04**: Admin can edit existing products
+- [ ] **PROD-05**: Admin can delete products (soft delete)
+- [ ] **PROD-06**: Admin can upload product assets (files)
+
+### Playbooks
+
+- [ ] **PLAY-01**: User can generate AI playbook for a district with selected products
+- [ ] **PLAY-02**: User can view playbook generation progress with section-level status
+- [ ] **PLAY-03**: User can view completed playbook with all sections (key themes, product fit, objections, stakeholders, district data, fit assessment)
+- [ ] **PLAY-04**: User can edit individual playbook sections
+- [ ] **PLAY-05**: User can regenerate individual playbook sections
+- [ ] **PLAY-06**: User can view all playbooks with filtering by fit category
+- [ ] **PLAY-07**: User can view existing playbooks for a specific district
+- [ ] **PLAY-08**: User can delete playbooks
+
+### User Management
+
+- [ ] **USER-01**: Admin can invite users with role assignment (publisher-admin or publisher-rep)
+- [ ] **USER-02**: Admin can view users list with status
+- [ ] **USER-03**: Admin can deactivate users
+- [ ] **USER-04**: Admin can reactivate users
+
+## v2 Requirements
+
+Deferred to future release. Tracked but not in current roadmap.
+
+### Tenant Management
+
+- **TNNT-01**: Super-admin can create new tenants with admin user
+- **TNNT-02**: Super-admin can view all tenants
+- **TNNT-03**: Super-admin can view tenant status and metrics
+- **TNNT-04**: Any user can view their organization status (product count, playbook count)
+
+## Out of Scope
+
+Explicitly excluded. Documented to prevent scope creep.
+
+| Feature | Reason |
+|---------|--------|
+| Real-time chat/messaging | Not core to intelligence workflow |
+| Mobile app | Web-first; desktop reps are the primary users |
+| States beyond California | MVP scoped to CA districts only |
+| Automated outreach/email | This is intelligence, not CRM |
+| Analytics/reporting dashboards | Defer until usage patterns emerge |
+| Tenant management UI | Deferred to v2; handled via super-admin |
+
+## Traceability
+
+Which phases cover which requirements. Updated during roadmap creation.
+
+| Requirement | Phase | Status |
+|-------------|-------|--------|
+| (populated during roadmap creation) | | |
+
+**Coverage:**
+- v1 requirements: 31 total
+- Mapped to phases: 0
+- Unmapped: 31 ⚠️
+
+---
+*Requirements defined: 2026-02-12*
+*Last updated: 2026-02-12 after initial definition*
