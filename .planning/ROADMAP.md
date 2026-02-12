@@ -126,10 +126,13 @@ Plans:
   6. User can view all playbooks with filtering by fit category (strong/moderate/low)
   7. User can view existing playbooks for a specific district before creating new one
   8. User can delete playbooks they no longer need
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] TBD during planning
+
+- [ ] 06-01-PLAN.md — Playbook service layer & API routes (generate, CRUD, status, edit, regenerate)
+- [ ] 06-02-PLAN.md — Playbook list page & detail/view page (cards, filters, sections, generation status)
+- [ ] 06-03-PLAN.md — Inline section editing, regeneration & generation trigger from district profile
 
 ### Phase 7: User Management
 **Goal**: Publisher admins can invite users, assign roles, and manage user lifecycle
