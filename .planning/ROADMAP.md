@@ -15,7 +15,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 1: Foundation & Shell** - Project scaffold, design system, navigation, service contracts
 - [x] **Phase 2: Auth & Data Layer** - Clerk authentication, Prisma + PostgreSQL, seed data
 - [x] **Phase 3: Discovery & District Profiles** - Search California districts, view detailed profiles
-- [ ] **Phase 4: District Management** - Save/bookmark and exclude districts with reasons
+- [x] **Phase 4: District Management** - Save/bookmark and exclude districts with reasons
 - [ ] **Phase 5: Solutions Library** - Product catalog with admin CRUD and asset management
 - [ ] **Phase 6: Playbooks** - AI-generated district-specific playbooks with editing
 - [ ] **Phase 7: User Management** - Invite, deactivate, reactivate users with role assignment
@@ -91,8 +91,8 @@ Plans:
 
 Plans:
 
-- [ ] 04-01-PLAN.md — District management service layer & API routes (save, exclude, restore)
-- [ ] 04-02-PLAN.md — District management UI (save/exclude buttons, exclusion modal, saved/excluded page)
+- [x] 04-01-PLAN.md — District management service layer & API routes (save, exclude, restore)
+- [x] 04-02-PLAN.md — District management UI (save/exclude buttons, exclusion modal, saved/excluded page)
 
 ### Phase 5: Solutions Library
 **Goal**: Publisher admins can manage product catalog with full CRUD and asset uploads
@@ -152,7 +152,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | 1. Foundation & Shell | 3/3 | ✓ Complete | 2026-02-12 |
 | 2. Auth & Data Layer | 3/3 | ✓ Complete | 2026-02-12 |
 | 3. Discovery & District Profiles | 3/3 | ✓ Complete | 2026-02-12 |
-| 4. District Management | 0/2 | Planned | - |
+| 4. District Management | 2/2 | ✓ Complete | 2026-02-12 |
 | 5. Solutions Library | 0/TBD | Not started | - |
 | 6. Playbooks | 0/TBD | Not started | - |
 | 7. User Management | 0/TBD | Not started | - |
