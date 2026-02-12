@@ -87,10 +87,12 @@ Plans:
   4. User can exclude a district and select a categorized reason (e.g., "Not in territory", "Already has solution")
   5. User can view all excluded districts with their exclusion reasons
   6. User can restore an excluded district back to active status
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] TBD during planning
+
+- [ ] 04-01-PLAN.md — District management service layer & API routes (save, exclude, restore)
+- [ ] 04-02-PLAN.md — District management UI (save/exclude buttons, exclusion modal, saved/excluded page)
 
 ### Phase 5: Solutions Library
 **Goal**: Publisher admins can manage product catalog with full CRUD and asset uploads
