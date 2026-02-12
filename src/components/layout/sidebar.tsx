@@ -1,6 +1,7 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
+import { useState, useEffect } from 'react';
 import { Search, Bookmark, Package, FileText, Shield } from 'lucide-react';
 import { useUser, UserButton } from '@clerk/nextjs';
 import { SidebarNavItem } from './sidebar-nav-item';
@@ -17,6 +18,22 @@ const adminNavItems = [{ href: '/admin', icon: Shield, label: 'Admin' }];
 export function Sidebar() {
   const pathname = usePathname();
   const { user, isLoaded } = useUser();
+  const [userRole, setUserRole] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchUserRole = async () => {
+      try {
+        const response = await fetch('/api/users/me');
+        const data = await response.json();
+        setUserRole(data.role);
+      } catch (error) {
+        // If fetch fails, keep role as null (safe default)
+        setUserRole(null);
+      }
+    };
+
+    fetchUserRole();
+  }, []);
 
   const isActive = (href: string) => {
     if (href === '/discovery') {
@@ -25,8 +42,7 @@ export function Sidebar() {
     return pathname.startsWith(href);
   };
 
-  // TODO: Gate admin nav based on user role from local DB (Phase 7)
-  const showAdminNav = true;
+  const showAdminNav = userRole === 'publisher-admin' || userRole === 'super-admin';
 
   return (
     <aside className="w-64 h-screen sticky top-0 bg-sidebar flex flex-col">
