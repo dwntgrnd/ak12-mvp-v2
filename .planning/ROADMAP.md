@@ -68,10 +68,13 @@ Plans:
   4. User can select products and see fit assessment (strong/moderate/low) for each district
   5. User can click a district and view full profile with demographics, proficiency, and funding data
   6. District profile renders all available data fields dynamically
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] TBD during planning
+
+- [ ] 03-01-PLAN.md — District service layer + API routes (search, filters, detail, fit assessment)
+- [ ] 03-02-PLAN.md — Discovery search UI (search bar, filter sidebar, result cards, pagination)
+- [ ] 03-03-PLAN.md — District profile page (demographics, proficiency, funding, fit assessment)
 
 ### Phase 4: District Management
 **Goal**: Users can save districts for territory building and exclude districts with categorized reasons
@@ -146,7 +149,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 |-------|----------------|--------|-----------|
 | 1. Foundation & Shell | 3/3 | ✓ Complete | 2026-02-12 |
 | 2. Auth & Data Layer | 3/3 | ✓ Complete | 2026-02-12 |
-| 3. Discovery & District Profiles | 0/TBD | Not started | - |
+| 3. Discovery & District Profiles | 0/3 | Not started | - |
 | 4. District Management | 0/TBD | Not started | - |
 | 5. Solutions Library | 0/TBD | Not started | - |
 | 6. Playbooks | 0/TBD | Not started | - |
