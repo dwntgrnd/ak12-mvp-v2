@@ -135,6 +135,16 @@ export default function PlaybookDetailPage({
     );
   }
 
+  const handleSectionUpdate = (sectionId: string, updatedSection: any) => {
+    // Update the section in local playbook state
+    if (playbook) {
+      const updatedSections = playbook.sections.map((s) =>
+        s.sectionId === sectionId ? updatedSection : s
+      );
+      setPlaybook({ ...playbook, sections: updatedSections });
+    }
+  };
+
   const isGenerating = status.overallStatus === 'generating';
 
   return (
@@ -209,6 +219,7 @@ export default function PlaybookDetailPage({
                 key={section.sectionId}
                 section={section}
                 playbookId={playbookId!}
+                onSectionUpdate={handleSectionUpdate}
               />
             );
           })}
