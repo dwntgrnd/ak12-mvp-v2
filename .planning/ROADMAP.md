@@ -50,10 +50,12 @@ Plans:
   3. PostgreSQL database exists with Prisma schema for all entities
   4. Database contains seeded California district data (demographics, proficiency, funding)
   5. System health check endpoint reports database connectivity
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] TBD during planning
+- [ ] 02-01-PLAN.md — Prisma + PostgreSQL schema for all entities
+- [ ] 02-02-PLAN.md — Clerk authentication integration
+- [ ] 02-03-PLAN.md — California district seed data + health check DB wiring
 
 ### Phase 3: Discovery & District Profiles
 **Goal**: Users can search California districts and view comprehensive district profiles
@@ -143,7 +145,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation & Shell | 3/3 | ✓ Complete | 2026-02-12 |
-| 2. Auth & Data Layer | 0/TBD | Not started | - |
+| 2. Auth & Data Layer | 0/3 | Not started | - |
 | 3. Discovery & District Profiles | 0/TBD | Not started | - |
 | 4. District Management | 0/TBD | Not started | - |
 | 5. Solutions Library | 0/TBD | Not started | - |
