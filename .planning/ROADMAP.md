@@ -105,10 +105,13 @@ Plans:
   4. Admin can edit existing product details
   5. Admin can soft-delete products (hidden but recoverable)
   6. Admin can upload product assets (PDFs, images) and associate with products
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] TBD during planning
+
+- [ ] 05-01-PLAN.md — Product service layer & API routes (CRUD + asset upload)
+- [ ] 05-02-PLAN.md — Product catalog UI & product detail page
+- [ ] 05-03-PLAN.md — Admin product management UI (create, edit, delete, upload)
 
 ### Phase 6: Playbooks
 **Goal**: Users can generate, view, edit, and manage AI-powered district playbooks
@@ -153,6 +156,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | 2. Auth & Data Layer | 3/3 | ✓ Complete | 2026-02-12 |
 | 3. Discovery & District Profiles | 3/3 | ✓ Complete | 2026-02-12 |
 | 4. District Management | 2/2 | ✓ Complete | 2026-02-12 |
-| 5. Solutions Library | 0/TBD | Not started | - |
+| 5. Solutions Library | 0/3 | Planning complete | - |
 | 6. Playbooks | 0/TBD | Not started | - |
 | 7. User Management | 0/TBD | Not started | - |
