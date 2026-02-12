@@ -22,7 +22,7 @@ export function FitAssessmentPanel({ districtId }: FitAssessmentPanelProps) {
         const response = await fetch('/api/products');
         if (response.ok) {
           const data = await response.json();
-          setProducts(data.items || []);
+          setProducts(data.products || []);
         }
       } catch (error) {
         // Silently handle 404 or network errors - just show placeholder

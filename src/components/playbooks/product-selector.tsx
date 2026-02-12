@@ -22,8 +22,8 @@ export function ProductSelector({ selectedIds, onSelectionChange }: ProductSelec
           throw new Error('Failed to fetch products');
         }
 
-        const data: ProductSummary[] = await response.json();
-        setProducts(data);
+        const data = await response.json();
+        setProducts(data.products || []);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load products');
       } finally {
