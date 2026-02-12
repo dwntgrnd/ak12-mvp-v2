@@ -94,13 +94,48 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| (populated during roadmap creation) | | |
+| AUTH-01 | Phase 2 | Pending |
+| AUTH-02 | Phase 2 | Pending |
+| AUTH-03 | Phase 2 | Pending |
+| DISC-01 | Phase 3 | Pending |
+| DISC-02 | Phase 3 | Pending |
+| DISC-03 | Phase 3 | Pending |
+| DISC-04 | Phase 3 | Pending |
+| DISC-05 | Phase 3 | Pending |
+| DIST-01 | Phase 3 | Pending |
+| DIST-02 | Phase 3 | Pending |
+| DIST-03 | Phase 3 | Pending |
+| DIST-04 | Phase 3 | Pending |
+| DMGT-01 | Phase 4 | Pending |
+| DMGT-02 | Phase 4 | Pending |
+| DMGT-03 | Phase 4 | Pending |
+| DMGT-04 | Phase 4 | Pending |
+| DMGT-05 | Phase 4 | Pending |
+| DMGT-06 | Phase 4 | Pending |
+| PROD-01 | Phase 5 | Pending |
+| PROD-02 | Phase 5 | Pending |
+| PROD-03 | Phase 5 | Pending |
+| PROD-04 | Phase 5 | Pending |
+| PROD-05 | Phase 5 | Pending |
+| PROD-06 | Phase 5 | Pending |
+| PLAY-01 | Phase 6 | Pending |
+| PLAY-02 | Phase 6 | Pending |
+| PLAY-03 | Phase 6 | Pending |
+| PLAY-04 | Phase 6 | Pending |
+| PLAY-05 | Phase 6 | Pending |
+| PLAY-06 | Phase 6 | Pending |
+| PLAY-07 | Phase 6 | Pending |
+| PLAY-08 | Phase 6 | Pending |
+| USER-01 | Phase 7 | Pending |
+| USER-02 | Phase 7 | Pending |
+| USER-03 | Phase 7 | Pending |
+| USER-04 | Phase 7 | Pending |
 
 **Coverage:**
 - v1 requirements: 31 total
-- Mapped to phases: 0
-- Unmapped: 31 ⚠️
+- Mapped to phases: 31
+- Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-02-12*
-*Last updated: 2026-02-12 after initial definition*
+*Last updated: 2026-02-12 after roadmap creation*
