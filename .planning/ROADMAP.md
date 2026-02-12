@@ -17,7 +17,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 3: Discovery & District Profiles** - Search California districts, view detailed profiles
 - [x] **Phase 4: District Management** - Save/bookmark and exclude districts with reasons
 - [x] **Phase 5: Solutions Library** - Product catalog with admin CRUD and asset management
-- [ ] **Phase 6: Playbooks** - AI-generated district-specific playbooks with editing
+- [x] **Phase 6: Playbooks** - AI-generated district-specific playbooks with editing
 - [ ] **Phase 7: User Management** - Invite, deactivate, reactivate users with role assignment
 
 ## Phase Details
@@ -130,9 +130,9 @@ Plans:
 
 Plans:
 
-- [ ] 06-01-PLAN.md — Playbook service layer & API routes (generate, CRUD, status, edit, regenerate)
-- [ ] 06-02-PLAN.md — Playbook list page & detail/view page (cards, filters, sections, generation status)
-- [ ] 06-03-PLAN.md — Inline section editing, regeneration & generation trigger from district profile
+- [x] 06-01-PLAN.md — Playbook service layer & API routes (generate, CRUD, status, edit, regenerate)
+- [x] 06-02-PLAN.md — Playbook list page & detail/view page (cards, filters, sections, generation status)
+- [x] 06-03-PLAN.md — Inline section editing, regeneration & generation trigger from district profile
 
 ### Phase 7: User Management
 **Goal**: Publisher admins can invite users, assign roles, and manage user lifecycle
@@ -160,5 +160,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | 3. Discovery & District Profiles | 3/3 | ✓ Complete | 2026-02-12 |
 | 4. District Management | 2/2 | ✓ Complete | 2026-02-12 |
 | 5. Solutions Library | 3/3 | ✓ Complete | 2026-02-12 |
-| 6. Playbooks | 0/TBD | Not started | - |
+| 6. Playbooks | 3/3 | ✓ Complete | 2026-02-12 |
 | 7. User Management | 0/TBD | Not started | - |
