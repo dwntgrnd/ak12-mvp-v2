@@ -12,7 +12,7 @@ Build a sales intelligence platform for K-12 EdTech publishers in seven phases. 
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Foundation & Shell** - Project scaffold, design system, navigation, service contracts
+- [x] **Phase 1: Foundation & Shell** - Project scaffold, design system, navigation, service contracts
 - [ ] **Phase 2: Auth & Data Layer** - Clerk authentication, Prisma + PostgreSQL, seed data
 - [ ] **Phase 3: Discovery & District Profiles** - Search California districts, view detailed profiles
 - [ ] **Phase 4: District Management** - Save/bookmark and exclude districts with reasons
@@ -36,9 +36,9 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 Plans:
 
-- [ ] 01-01-PLAN.md — Project scaffold + design token system
-- [ ] 01-02-PLAN.md — Service interfaces & types (36 methods)
-- [ ] 01-03-PLAN.md — App shell, sidebar navigation & health check
+- [x] 01-01-PLAN.md — Project scaffold + design token system
+- [x] 01-02-PLAN.md — Service interfaces & types (36 methods)
+- [x] 01-03-PLAN.md — App shell, sidebar navigation & health check
 
 ### Phase 2: Auth & Data Layer
 **Goal**: Users can authenticate and data layer is operational with seeded California district data
@@ -142,7 +142,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation & Shell | 0/3 | Planned | - |
+| 1. Foundation & Shell | 3/3 | ✓ Complete | 2026-02-12 |
 | 2. Auth & Data Layer | 0/TBD | Not started | - |
 | 3. Discovery & District Profiles | 0/TBD | Not started | - |
 | 4. District Management | 0/TBD | Not started | - |
