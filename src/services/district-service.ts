@@ -7,8 +7,12 @@ import type {
   DistrictProfile,
   DistrictSearchRequest,
   FilterFacet,
-  FilterOption
+  FilterOption,
+  SavedDistrict,
+  ExclusionReason,
+  ExcludedDistrict
 } from './types/district';
+import { EXCLUSION_CATEGORIES } from './types/controlled-vocabulary';
 
 /**
  * Search districts with optional filters and pagination
@@ -265,4 +269,232 @@ export async function getDistrictFitAssessment(
     fitCategory,
     fitRationale
   };
+}
+
+/**
+ * Save a district for a user
+ */
+export async function saveDistrict(
+  userId: string,
+  districtId: string
+): Promise<SavedDistrict> {
+  // Verify district exists
+  const district = await prisma.district.findUnique({
+    where: { id: districtId }
+  });
+
+  if (!district) {
+    const error: any = new Error('District not found');
+    error.code = 'DISTRICT_NOT_FOUND';
+    throw error;
+  }
+
+  try {
+    // Create saved district record
+    const savedRecord = await prisma.savedDistrict.create({
+      data: {
+        userId,
+        districtId
+      },
+      include: {
+        district: true
+      }
+    });
+
+    // Map to SavedDistrict type
+    return {
+      districtId: savedRecord.districtId,
+      name: savedRecord.district.name,
+      location: savedRecord.district.location,
+      enrollment: savedRecord.district.enrollment,
+      savedAt: savedRecord.savedAt.toISOString()
+    };
+  } catch (error: any) {
+    // Handle unique constraint violation (already saved)
+    if (error.code === 'P2002') {
+      // Fetch and return existing record
+      const existing = await prisma.savedDistrict.findUnique({
+        where: {
+          userId_districtId: { userId, districtId }
+        },
+        include: {
+          district: true
+        }
+      });
+
+      if (existing) {
+        return {
+          districtId: existing.districtId,
+          name: existing.district.name,
+          location: existing.district.location,
+          enrollment: existing.district.enrollment,
+          savedAt: existing.savedAt.toISOString()
+        };
+      }
+    }
+
+    throw error;
+  }
+}
+
+/**
+ * Get all saved districts for a user
+ */
+export async function getSavedDistricts(userId: string): Promise<SavedDistrict[]> {
+  const records = await prisma.savedDistrict.findMany({
+    where: { userId },
+    include: {
+      district: true
+    },
+    orderBy: {
+      savedAt: 'desc'
+    }
+  });
+
+  return records.map(record => ({
+    districtId: record.districtId,
+    name: record.district.name,
+    location: record.district.location,
+    enrollment: record.district.enrollment,
+    savedAt: record.savedAt.toISOString()
+  }));
+}
+
+/**
+ * Remove a saved district for a user
+ */
+export async function removeSavedDistrict(
+  userId: string,
+  districtId: string
+): Promise<void> {
+  try {
+    await prisma.savedDistrict.delete({
+      where: {
+        userId_districtId: { userId, districtId }
+      }
+    });
+  } catch (error: any) {
+    // Handle record not found
+    if (error.code === 'P2025') {
+      const notSavedError: any = new Error('District is not saved');
+      notSavedError.code = 'NOT_SAVED';
+      throw notSavedError;
+    }
+    throw error;
+  }
+}
+
+/**
+ * Exclude a district with a categorized reason
+ */
+export async function excludeDistrict(
+  userId: string,
+  districtId: string,
+  reason: ExclusionReason
+): Promise<ExcludedDistrict> {
+  // Validate category
+  if (!EXCLUSION_CATEGORIES.includes(reason.category as any)) {
+    const error: any = new Error('Invalid exclusion category');
+    error.code = 'INVALID_CATEGORY';
+    throw error;
+  }
+
+  // Verify district exists
+  const district = await prisma.district.findUnique({
+    where: { id: districtId }
+  });
+
+  if (!district) {
+    const error: any = new Error('District not found');
+    error.code = 'DISTRICT_NOT_FOUND';
+    throw error;
+  }
+
+  try {
+    // Create excluded district record
+    const excludedRecord = await prisma.excludedDistrict.create({
+      data: {
+        userId,
+        districtId,
+        category: reason.category,
+        note: reason.note
+      },
+      include: {
+        district: true
+      }
+    });
+
+    // Cleanup: remove from saved districts if it was saved (silent)
+    await prisma.savedDistrict.deleteMany({
+      where: { userId, districtId }
+    });
+
+    // Map to ExcludedDistrict type
+    return {
+      districtId: excludedRecord.districtId,
+      districtName: excludedRecord.district.name,
+      reason: {
+        category: excludedRecord.category as any,
+        note: excludedRecord.note || undefined
+      },
+      excludedAt: excludedRecord.excludedAt.toISOString()
+    };
+  } catch (error: any) {
+    // Handle unique constraint violation (already excluded)
+    if (error.code === 'P2002') {
+      const alreadyExcludedError: any = new Error('District is already excluded');
+      alreadyExcludedError.code = 'ALREADY_EXCLUDED';
+      throw alreadyExcludedError;
+    }
+    throw error;
+  }
+}
+
+/**
+ * Get all excluded districts for a user
+ */
+export async function getExcludedDistricts(userId: string): Promise<ExcludedDistrict[]> {
+  const records = await prisma.excludedDistrict.findMany({
+    where: { userId },
+    include: {
+      district: true
+    },
+    orderBy: {
+      excludedAt: 'desc'
+    }
+  });
+
+  return records.map(record => ({
+    districtId: record.districtId,
+    districtName: record.district.name,
+    reason: {
+      category: record.category as any,
+      note: record.note || undefined
+    },
+    excludedAt: record.excludedAt.toISOString()
+  }));
+}
+
+/**
+ * Restore an excluded district for a user
+ */
+export async function restoreDistrict(
+  userId: string,
+  districtId: string
+): Promise<void> {
+  try {
+    await prisma.excludedDistrict.delete({
+      where: {
+        userId_districtId: { userId, districtId }
+      }
+    });
+  } catch (error: any) {
+    // Handle record not found
+    if (error.code === 'P2025') {
+      const notExcludedError: any = new Error('District is not excluded');
+      notExcludedError.code = 'NOT_EXCLUDED';
+      throw notExcludedError;
+    }
+    throw error;
+  }
 }
