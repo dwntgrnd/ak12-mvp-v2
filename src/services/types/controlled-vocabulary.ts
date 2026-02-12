@@ -36,3 +36,11 @@ export const EXCLUSION_CATEGORIES = [
 ] as const;
 
 export type ExclusionCategory = typeof EXCLUSION_CATEGORIES[number];
+
+export const FIT_CATEGORIES = [
+  'strong',
+  'moderate',
+  'low'
+] as const;
+
+export type FitCategory = typeof FIT_CATEGORIES[number];
