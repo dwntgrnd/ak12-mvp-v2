@@ -18,7 +18,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 4: District Management** - Save/bookmark and exclude districts with reasons
 - [x] **Phase 5: Solutions Library** - Product catalog with admin CRUD and asset management
 - [x] **Phase 6: Playbooks** - AI-generated district-specific playbooks with editing
-- [ ] **Phase 7: User Management** - Invite, deactivate, reactivate users with role assignment
+- [x] **Phase 7: User Management** - Invite, deactivate, reactivate users with role assignment
 
 ## Phase Details
 
@@ -146,8 +146,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 07-01-PLAN.md — User service layer & API routes (invite, list, deactivate, reactivate)
-- [ ] 07-02-PLAN.md — Admin users management UI & sidebar role-based gating
+- [x] 07-01-PLAN.md — User service layer & API routes (invite, list, deactivate, reactivate)
+- [x] 07-02-PLAN.md — Admin users management UI & sidebar role-based gating
 
 ## Progress
 
@@ -162,4 +162,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | 4. District Management | 2/2 | ✓ Complete | 2026-02-12 |
 | 5. Solutions Library | 3/3 | ✓ Complete | 2026-02-12 |
 | 6. Playbooks | 3/3 | ✓ Complete | 2026-02-12 |
-| 7. User Management | 0/2 | Not started | - |
+| 7. User Management | 2/2 | ✓ Complete | 2026-02-12 |
