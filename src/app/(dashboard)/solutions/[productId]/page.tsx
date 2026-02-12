@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 import { getProduct } from '@/services/product-service';
 import { getCurrentUser } from '@/lib/auth-utils';
+import { AdminActions } from '@/components/solutions/admin-actions';
 
 // Helper function to format file size
 function formatFileSize(bytes: number): string {
@@ -32,6 +33,9 @@ export default async function ProductDetailPage({
       </div>
     );
   }
+
+  // Determine if user is admin
+  const isAdmin = user.role === 'publisher-admin' || user.role === 'super-admin';
 
   // Fetch product
   let product;
@@ -85,6 +89,13 @@ export default async function ProductDetailPage({
           {product.description}
         </p>
       </div>
+
+      {/* Admin actions */}
+      <AdminActions
+        productId={productId}
+        productName={product.name}
+        isAdmin={isAdmin}
+      />
 
       {/* Content grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

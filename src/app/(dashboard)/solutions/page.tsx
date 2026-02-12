@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import type { ProductSummary } from '@/services/types/product';
 import { ProductCard } from '@/components/solutions/product-card';
 import { ProductFilters } from '@/components/solutions/product-filters';
@@ -64,10 +65,20 @@ export default function SolutionsPage() {
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-semibold font-heading">Solutions Library</h1>
-      <p className="text-muted-foreground mt-2">
-        Browse and discover products by grade range and subject area.
-      </p>
+      <div className="flex items-start justify-between mb-6">
+        <div>
+          <h1 className="text-2xl font-semibold font-heading">Solutions Library</h1>
+          <p className="text-muted-foreground mt-2">
+            Browse and discover products by grade range and subject area.
+          </p>
+        </div>
+        <Link
+          href="/solutions/new"
+          className="bg-primary text-primary-foreground px-4 py-2 rounded-md text-sm font-medium hover:bg-primary/90"
+        >
+          New Product
+        </Link>
+      </div>
 
       <div className="mt-6">
         <input
