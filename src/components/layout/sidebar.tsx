@@ -2,13 +2,8 @@
 
 import { usePathname } from 'next/navigation';
 import { Search, Bookmark, Package, FileText, Shield } from 'lucide-react';
+import { useUser, UserButton } from '@clerk/nextjs';
 import { SidebarNavItem } from './sidebar-nav-item';
-
-const mockUser = {
-  displayName: 'Sarah Chen',
-  organizationName: 'EduVision Publishing',
-  userRole: 'publisher-admin' as const,
-};
 
 const mainNavItems = [
   { href: '/discovery', icon: Search, label: 'Discovery' },
@@ -21,6 +16,7 @@ const adminNavItems = [{ href: '/admin', icon: Shield, label: 'Admin' }];
 
 export function Sidebar() {
   const pathname = usePathname();
+  const { user, isLoaded } = useUser();
 
   const isActive = (href: string) => {
     if (href === '/discovery') {
@@ -29,9 +25,8 @@ export function Sidebar() {
     return pathname.startsWith(href);
   };
 
-  const showAdminNav =
-    mockUser.userRole === 'publisher-admin' ||
-    mockUser.userRole === 'super-admin';
+  // TODO: Gate admin nav based on user role from local DB (Phase 7)
+  const showAdminNav = true;
 
   return (
     <aside className="w-64 h-screen sticky top-0 bg-sidebar flex flex-col">
@@ -77,19 +72,28 @@ export function Sidebar() {
 
       {/* User Context */}
       <div className="px-4 py-4 border-t border-white/10">
-        <div className="space-y-1">
-          <p className="text-sm font-medium text-sidebar-foreground">
-            {mockUser.displayName}
-          </p>
-          <p className="text-xs text-sidebar-foreground/60">
-            {mockUser.organizationName}
-          </p>
-          <div className="mt-2">
-            <span className="inline-block px-2 py-0.5 text-xs rounded bg-sidebar-hover text-sidebar-foreground/80 capitalize">
-              {mockUser.userRole}
-            </span>
+        {isLoaded && user ? (
+          <div className="flex items-center gap-3">
+            <UserButton
+              appearance={{
+                elements: { avatarBox: 'w-8 h-8' }
+              }}
+            />
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-sidebar-foreground truncate">
+                {user.fullName ?? user.primaryEmailAddress?.emailAddress}
+              </p>
+              <p className="text-xs text-sidebar-foreground/60 truncate">
+                AlchemyK12
+              </p>
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className="space-y-1">
+            <div className="h-4 w-24 bg-sidebar-hover rounded animate-pulse" />
+            <div className="h-3 w-16 bg-sidebar-hover rounded animate-pulse" />
+          </div>
+        )}
       </div>
     </aside>
   );

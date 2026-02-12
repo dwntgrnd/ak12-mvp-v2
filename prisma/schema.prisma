@@ -1,0 +1,192 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================================================
+// Core Tenant & User Models
+// ============================================================================
+
+model Tenant {
+  id               String   @id @default(uuid())
+  organizationName String   @unique @map("organization_name")
+  status           String   @default("active")
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  users            User[]
+  products         Product[]
+
+  @@map("tenants")
+}
+
+model User {
+  id           String    @id @default(uuid())
+  clerkId      String    @unique @map("clerk_id")
+  tenantId     String    @map("tenant_id")
+  email        String    @unique
+  displayName  String    @map("display_name")
+  role         String    // "super-admin" | "publisher-admin" | "publisher-rep"
+  status       String    @default("active") // "pending" | "active" | "deactivated"
+  invitedAt    DateTime  @default(now()) @map("invited_at")
+  lastActiveAt DateTime? @map("last_active_at")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+
+  tenant           Tenant             @relation(fields: [tenantId], references: [id])
+  savedDistricts   SavedDistrict[]
+  excludedDistricts ExcludedDistrict[]
+  playbooks        Playbook[]
+
+  @@map("users")
+}
+
+// ============================================================================
+// Product Models
+// ============================================================================
+
+model Product {
+  id                          String   @id @default(uuid())
+  tenantId                    String   @map("tenant_id")
+  name                        String
+  description                 String
+  gradeRange                  String   @map("grade_range")
+  subjectArea                 String   @map("subject_area")
+  keyFeatures                 String[] @map("key_features")
+  targetChallenges            String[] @map("target_challenges")
+  competitiveDifferentiators  String[] @map("competitive_differentiators")
+  approvedMessaging           String[] @map("approved_messaging")
+  isDeleted                   Boolean  @default(false) @map("is_deleted")
+  createdAt                   DateTime @default(now()) @map("created_at")
+  updatedAt                   DateTime @updatedAt @map("updated_at")
+
+  tenant  Tenant         @relation(fields: [tenantId], references: [id])
+  assets  ProductAsset[]
+
+  @@map("products")
+}
+
+model ProductAsset {
+  id         String   @id @default(uuid())
+  productId  String   @map("product_id")
+  fileName   String   @map("file_name")
+  fileType   String   @map("file_type")
+  fileSize   Int      @map("file_size")
+  url        String
+  uploadedAt DateTime @default(now()) @map("uploaded_at")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  product Product @relation(fields: [productId], references: [id])
+
+  @@map("product_assets")
+}
+
+// ============================================================================
+// District Models
+// ============================================================================
+
+model District {
+  id             String @id @default(uuid())
+  name           String
+  location       String
+  county         String
+  enrollment     Int
+  demographics   Json
+  proficiency    Json
+  funding        Json
+  additionalData Json?  @map("additional_data")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  savedByUsers     SavedDistrict[]
+  excludedByUsers  ExcludedDistrict[]
+  playbooks        Playbook[]
+
+  @@unique([name, county])
+  @@map("districts")
+}
+
+model SavedDistrict {
+  id         String   @id @default(uuid())
+  userId     String   @map("user_id")
+  districtId String   @map("district_id")
+  savedAt    DateTime @default(now()) @map("saved_at")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  user     User     @relation(fields: [userId], references: [id])
+  district District @relation(fields: [districtId], references: [id])
+
+  @@unique([userId, districtId])
+  @@map("saved_districts")
+}
+
+model ExcludedDistrict {
+  id         String    @id @default(uuid())
+  userId     String    @map("user_id")
+  districtId String    @map("district_id")
+  category   String    // from EXCLUSION_CATEGORIES
+  note       String?
+  excludedAt DateTime  @default(now()) @map("excluded_at")
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @updatedAt @map("updated_at")
+
+  user     User     @relation(fields: [userId], references: [id])
+  district District @relation(fields: [districtId], references: [id])
+
+  @@unique([userId, districtId])
+  @@map("excluded_districts")
+}
+
+// ============================================================================
+// Playbook Models
+// ============================================================================
+
+model Playbook {
+  id             String   @id @default(uuid())
+  userId         String   @map("user_id")
+  districtId     String   @map("district_id")
+  districtName   String   @map("district_name")
+  productIds     String[] @map("product_ids")
+  productNames   String[] @map("product_names")
+  fitCategory    String   @map("fit_category")
+  fitRationale   String   @map("fit_rationale")
+  overallStatus  String   @default("generating") @map("overall_status")
+  generatedAt    DateTime @default(now()) @map("generated_at")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  user     User              @relation(fields: [userId], references: [id])
+  district District          @relation(fields: [districtId], references: [id])
+  sections PlaybookSection[]
+
+  @@map("playbooks")
+}
+
+model PlaybookSection {
+  id            String    @id @default(uuid())
+  playbookId    String    @map("playbook_id")
+  sectionType   String    @map("section_type")
+  sectionLabel  String    @map("section_label")
+  contentSource String    @map("content_source")
+  status        String    @default("pending")
+  content       String?
+  isEdited      Boolean   @default(false) @map("is_edited")
+  lastEditedAt  DateTime? @map("last_edited_at")
+  errorMessage  String?   @map("error_message")
+  retryable     Boolean   @default(true)
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  playbook Playbook @relation(fields: [playbookId], references: [id])
+
+  @@map("playbook_sections")
+}
