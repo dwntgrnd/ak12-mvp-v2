@@ -9,6 +9,8 @@ import { FitAssessmentPanel } from '@/components/district/fit-assessment-panel';
 import { DataField } from '@/components/district/data-field';
 import { SaveButton } from '@/components/district/save-button';
 import { ExcludeButton } from '@/components/district/exclude-button';
+import { GeneratePlaybookButton } from '@/components/playbooks/generate-playbook-button';
+import { ExistingPlaybooksPanel } from '@/components/playbooks/existing-playbooks-panel';
 
 export async function generateMetadata({
   params,
@@ -117,6 +119,20 @@ export default async function DistrictProfilePage({
 
         {/* Fit Assessment Panel */}
         <FitAssessmentPanel districtId={districtId} />
+
+        {/* Playbook Generation Section */}
+        <div className="border rounded-lg p-6 bg-card">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold font-heading">
+              Playbooks
+            </h2>
+            <GeneratePlaybookButton
+              districtId={districtId}
+              districtName={district.name}
+            />
+          </div>
+          <ExistingPlaybooksPanel districtId={districtId} />
+        </div>
       </div>
     </div>
   );
