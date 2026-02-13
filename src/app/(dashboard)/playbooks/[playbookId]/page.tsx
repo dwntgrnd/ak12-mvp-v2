@@ -454,7 +454,7 @@ export default function PlaybookDetailPage({
       <PlaybookContextCard
         districtName={district?.name || playbook.districtName}
         districtLocation={district?.location}
-        districtEnrollment={district?.enrollment}
+        districtEnrollment={district?.totalEnrollment}
         products={displayProducts}
       />
 
