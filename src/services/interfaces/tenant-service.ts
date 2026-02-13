@@ -1,5 +1,6 @@
 // TenantService interface
 
+import type { PaginatedRequest, PaginatedResponse } from '../types/common';
 import type { TenantSummary, CreateTenantRequest, OrganizationStatus } from '../types/tenant';
 
 export interface ITenantService {
@@ -8,7 +9,7 @@ export interface ITenantService {
   createTenant(request: CreateTenantRequest): Promise<TenantSummary>;
 
   // Authorization: super-admin only
-  getTenants(): Promise<TenantSummary[]>;
+  getTenants(pagination?: PaginatedRequest): Promise<PaginatedResponse<TenantSummary>>;
 
   // Authorization: super-admin only
   // Errors: TENANT_NOT_FOUND

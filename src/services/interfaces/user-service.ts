@@ -1,5 +1,6 @@
 // UserService interface
 
+import type { PaginatedRequest, PaginatedResponse } from '../types/common';
 import type { TenantUser, InviteUserRequest } from '../types/user';
 
 export interface IUserService {
@@ -8,7 +9,7 @@ export interface IUserService {
   inviteUser(request: InviteUserRequest): Promise<TenantUser>;
 
   // Authorization: publisher-admin only
-  getUsers(): Promise<TenantUser[]>;
+  getUsers(pagination?: PaginatedRequest): Promise<PaginatedResponse<TenantUser>>;
 
   // Authorization: publisher-admin only
   // Errors: USER_NOT_FOUND, CANNOT_DEACTIVATE_SELF, LAST_ADMIN

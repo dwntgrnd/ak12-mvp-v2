@@ -1,7 +1,16 @@
 // Service registry - single import point for all types and interfaces
 
+// Service factory
+export {
+  getPlaybookService,
+  getProductService,
+  getConfigService,
+  getDistrictService,
+} from './factory';
+
 // Service interfaces
 export type { IAuthService } from './interfaces/auth-service';
+export type { IConfigService } from './interfaces/config-service';
 export type { ITenantService } from './interfaces/tenant-service';
 export type { IUserService } from './interfaces/user-service';
 export type { IProductService } from './interfaces/product-service';
@@ -13,7 +22,6 @@ export type {
   PaginatedRequest,
   PaginatedResponse,
   ServiceError,
-  FitCategory,
   FitAssessment,
   ContentSource,
   SectionStatus,
@@ -23,8 +31,6 @@ export type {
 
 // Controlled vocabulary
 export {
-  GRADE_RANGES,
-  SUBJECT_AREAS,
   EXCLUSION_CATEGORIES
 } from './types/controlled-vocabulary';
 export type {
@@ -60,7 +66,9 @@ export type {
   ProductAsset,
   ProductFilters,
   CreateProductRequest,
-  UpdateProductRequest
+  UpdateProductRequest,
+  AssetUploadUrlRequest,
+  AssetUploadUrl
 } from './types/product';
 
 // District types
@@ -68,6 +76,7 @@ export type {
   DistrictSummary,
   DistrictProfile,
   DistrictSearchRequest,
+  ExclusionStatus,
   FilterFacet,
   FilterOption,
   SavedDistrict,

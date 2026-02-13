@@ -1,99 +1,28 @@
-// GET /api/playbooks - List playbooks
-// POST /api/playbooks - Generate new playbook
-
 import { NextRequest, NextResponse } from 'next/server';
-import { getCurrentUser } from '@/lib/auth-utils';
-import * as playbookService from '@/services/playbook-service';
-import type { PlaybookFilters } from '@/services/types/playbook';
+import { getPlaybookService } from '@/services/factory';
 
 export async function GET(request: NextRequest) {
   try {
-    // Authenticate user
-    const user = await getCurrentUser();
+    const service = await getPlaybookService();
+    const { searchParams } = new URL(request.url);
 
-    const searchParams = request.nextUrl.searchParams;
+    const filters: Record<string, unknown> = {};
+    if (searchParams.get('fitScoreMin')) filters.fitScoreMin = Number(searchParams.get('fitScoreMin'));
+    if (searchParams.get('fitScoreMax')) filters.fitScoreMax = Number(searchParams.get('fitScoreMax'));
+    if (searchParams.get('sortBy')) filters.sortBy = searchParams.get('sortBy');
+    if (searchParams.get('sortOrder')) filters.sortOrder = searchParams.get('sortOrder');
 
-    // Build filters from query params
-    const filters: PlaybookFilters = {};
+    const pagination = {
+      page: Number(searchParams.get('page')) || 1,
+      pageSize: Number(searchParams.get('pageSize')) || 25,
+    };
 
-    const fitCategory = searchParams.get('fitCategory');
-    if (fitCategory) {
-      filters.fitCategory = fitCategory as any;
-    }
-
-    const sortBy = searchParams.get('sortBy');
-    if (sortBy) {
-      filters.sortBy = sortBy as any;
-    }
-
-    const sortOrder = searchParams.get('sortOrder');
-    if (sortOrder) {
-      filters.sortOrder = sortOrder as any;
-    }
-
-    // Get playbooks
-    const playbooks = await playbookService.getPlaybooks(user.id, filters);
-
-    return NextResponse.json({ playbooks }, { status: 200 });
-  } catch (error: any) {
-    console.error('Error in GET /api/playbooks:', error);
-
-    if (error.code === 'UNAUTHENTICATED' || error.code === 'USER_NOT_FOUND') {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
-
+    const result = await service.getPlaybooks(filters as any, pagination);
+    return NextResponse.json(result);
+  } catch (error: unknown) {
+    const err = error as { message?: string };
     return NextResponse.json(
-      { error: error.message || 'Internal server error' },
-      { status: 500 }
-    );
-  }
-}
-
-export async function POST(request: NextRequest) {
-  try {
-    // Authenticate user
-    const user = await getCurrentUser();
-
-    // Parse request body
-    const body = await request.json();
-
-    // Generate playbook
-    const result = await playbookService.generatePlaybook(
-      user.id,
-      body.districtId,
-      body.productIds
-    );
-
-    return NextResponse.json(result, { status: 202 });
-  } catch (error: any) {
-    console.error('Error in POST /api/playbooks:', error);
-
-    if (error.code === 'UNAUTHENTICATED' || error.code === 'USER_NOT_FOUND') {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
-
-    if (error.code === 'DISTRICT_NOT_FOUND') {
-      return NextResponse.json(
-        { error: 'District not found' },
-        { status: 404 }
-      );
-    }
-
-    if (error.code === 'PRODUCT_NOT_FOUND') {
-      return NextResponse.json(
-        { error: 'No valid products found' },
-        { status: 404 }
-      );
-    }
-
-    return NextResponse.json(
-      { error: error.message || 'Internal server error' },
+      { error: err.message || 'Internal server error' },
       { status: 500 }
     );
   }

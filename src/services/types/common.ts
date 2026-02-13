@@ -20,10 +20,11 @@ export interface ServiceError {
   retryable: boolean;
 }
 
-export type FitCategory = 'strong' | 'moderate' | 'low';
-
+// Fit score: integer 0–10. Frontend maps to display labels:
+// 0–3 = low, 4–6 = moderate, 7–10 = strong
+// Label thresholds are a frontend concern and can be adjusted without API changes.
 export interface FitAssessment {
-  fitCategory: FitCategory;
+  fitScore: number;          // 0–10 integer
   fitRationale: string;
 }
 

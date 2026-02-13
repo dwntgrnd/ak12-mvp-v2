@@ -1,6 +1,6 @@
 // PlaybookService domain types
 
-import type { FitAssessment, FitCategory, ContentSource, SectionStatus } from './common';
+import type { FitAssessment, ContentSource, SectionStatus } from './common';
 
 export interface PlaybookSummary {
   playbookId: string;
@@ -39,7 +39,8 @@ export interface PlaybookSection {
 }
 
 export interface PlaybookFilters {
-  fitCategory?: FitCategory;
+  fitScoreMin?: number;      // 0–10, filter playbooks by fit score
+  fitScoreMax?: number;      // 0–10
   sortBy?: 'generatedAt' | 'districtName';
   sortOrder?: 'asc' | 'desc';
 }

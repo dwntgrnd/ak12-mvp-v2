@@ -37,7 +37,7 @@ export interface ProductAsset {
 }
 
 export interface ProductFilters {
-  gradeRange?: GradeRange;
+  gradeRange?: GradeRange;      // matches products whose range overlaps with this range
   subjectArea?: SubjectArea;
   searchQuery?: string;
 }
@@ -62,4 +62,15 @@ export interface UpdateProductRequest {
   targetChallenges?: string[];
   competitiveDifferentiators?: string[];
   approvedMessaging?: string[];
+}
+
+export interface AssetUploadUrlRequest {
+  fileName: string;
+  fileType: string;          // MIME type
+}
+
+export interface AssetUploadUrl {
+  uploadUrl: string;         // pre-signed S3 PUT URL
+  assetId: string;           // provisional asset ID
+  expiresAt: string;         // ISO 8601, URL expiry
 }

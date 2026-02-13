@@ -1,114 +1,51 @@
-// GET /api/playbooks/[playbookId]/sections/[sectionId] - Get section detail
-// PATCH /api/playbooks/[playbookId]/sections/[sectionId] - Edit section content
-
 import { NextRequest, NextResponse } from 'next/server';
-import { getCurrentUser } from '@/lib/auth-utils';
-import * as playbookService from '@/services/playbook-service';
-
-type RouteParams = {
-  params: Promise<{ playbookId: string; sectionId: string }>;
-};
+import { getPlaybookService } from '@/services/factory';
 
 export async function GET(
-  request: NextRequest,
-  { params }: RouteParams
+  _request: NextRequest,
+  { params }: { params: Promise<{ playbookId: string; sectionId: string }> }
 ) {
   try {
-    // Authenticate user
-    const user = await getCurrentUser();
-
-    // Extract params
     const { playbookId, sectionId } = await params;
-
-    // Get section
-    const section = await playbookService.getPlaybookSection(
-      user.id,
-      playbookId,
-      sectionId
-    );
-
-    return NextResponse.json(section, { status: 200 });
-  } catch (error: any) {
-    console.error('Error in GET /api/playbooks/[playbookId]/sections/[sectionId]:', error);
-
-    if (error.code === 'UNAUTHENTICATED' || error.code === 'USER_NOT_FOUND') {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
-
-    if (error.code === 'PLAYBOOK_NOT_FOUND') {
-      return NextResponse.json(
-        { error: 'Playbook not found' },
-        { status: 404 }
-      );
-    }
-
-    if (error.code === 'SECTION_NOT_FOUND') {
-      return NextResponse.json(
-        { error: 'Section not found' },
-        { status: 404 }
-      );
-    }
-
+    const service = await getPlaybookService();
+    const section = await service.getPlaybookSection(playbookId, sectionId);
+    return NextResponse.json(section);
+  } catch (error: unknown) {
+    const err = error as { code?: string; message?: string };
+    const status =
+      err.code === 'PLAYBOOK_NOT_FOUND' || err.code === 'SECTION_NOT_FOUND' ? 404 : 500;
     return NextResponse.json(
-      { error: error.message || 'Internal server error' },
-      { status: 500 }
+      { error: err.message || 'Internal server error' },
+      { status }
     );
   }
 }
 
-export async function PATCH(
+export async function PUT(
   request: NextRequest,
-  { params }: RouteParams
+  { params }: { params: Promise<{ playbookId: string; sectionId: string }> }
 ) {
   try {
-    // Authenticate user
-    const user = await getCurrentUser();
-
-    // Extract params
     const { playbookId, sectionId } = await params;
-
-    // Parse body
+    const service = await getPlaybookService();
     const body = await request.json();
 
-    // Update section
-    const section = await playbookService.updatePlaybookSection(
-      user.id,
-      playbookId,
-      sectionId,
-      body.content
-    );
-
-    return NextResponse.json(section, { status: 200 });
-  } catch (error: any) {
-    console.error('Error in PATCH /api/playbooks/[playbookId]/sections/[sectionId]:', error);
-
-    if (error.code === 'UNAUTHENTICATED' || error.code === 'USER_NOT_FOUND') {
+    if (!body.content || typeof body.content !== 'string') {
       return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
+        { error: 'content (string) is required' },
+        { status: 400 }
       );
     }
 
-    if (error.code === 'PLAYBOOK_NOT_FOUND') {
-      return NextResponse.json(
-        { error: 'Playbook not found' },
-        { status: 404 }
-      );
-    }
-
-    if (error.code === 'SECTION_NOT_FOUND') {
-      return NextResponse.json(
-        { error: 'Section not found' },
-        { status: 404 }
-      );
-    }
-
+    const section = await service.updatePlaybookSection(playbookId, sectionId, body.content);
+    return NextResponse.json(section);
+  } catch (error: unknown) {
+    const err = error as { code?: string; message?: string };
+    const status =
+      err.code === 'PLAYBOOK_NOT_FOUND' || err.code === 'SECTION_NOT_FOUND' ? 404 : 500;
     return NextResponse.json(
-      { error: error.message || 'Internal server error' },
-      { status: 500 }
+      { error: err.message || 'Internal server error' },
+      { status }
     );
   }
 }

@@ -1,66 +1,23 @@
-// POST /api/playbooks/[playbookId]/sections/[sectionId]/regenerate - Regenerate section
-
 import { NextRequest, NextResponse } from 'next/server';
-import { getCurrentUser } from '@/lib/auth-utils';
-import * as playbookService from '@/services/playbook-service';
-
-type RouteParams = {
-  params: Promise<{ playbookId: string; sectionId: string }>;
-};
+import { getPlaybookService } from '@/services/factory';
 
 export async function POST(
-  request: NextRequest,
-  { params }: RouteParams
+  _request: NextRequest,
+  { params }: { params: Promise<{ playbookId: string; sectionId: string }> }
 ) {
   try {
-    // Authenticate user
-    const user = await getCurrentUser();
-
-    // Extract params
     const { playbookId, sectionId } = await params;
-
-    // Regenerate section
-    const result = await playbookService.regenerateSection(
-      user.id,
-      playbookId,
-      sectionId
-    );
-
-    return NextResponse.json(result, { status: 202 });
-  } catch (error: any) {
-    console.error('Error in POST /api/playbooks/[playbookId]/sections/[sectionId]/regenerate:', error);
-
-    if (error.code === 'UNAUTHENTICATED' || error.code === 'USER_NOT_FOUND') {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
-
-    if (error.code === 'PLAYBOOK_NOT_FOUND') {
-      return NextResponse.json(
-        { error: 'Playbook not found' },
-        { status: 404 }
-      );
-    }
-
-    if (error.code === 'SECTION_NOT_FOUND') {
-      return NextResponse.json(
-        { error: 'Section not found' },
-        { status: 404 }
-      );
-    }
-
-    if (error.code === 'NOT_REGENERABLE') {
-      return NextResponse.json(
-        { error: 'Section cannot be regenerated' },
-        { status: 400 }
-      );
-    }
-
+    const service = await getPlaybookService();
+    const result = await service.regenerateSection(playbookId, sectionId);
+    return NextResponse.json(result);
+  } catch (error: unknown) {
+    const err = error as { code?: string; message?: string };
+    const status =
+      err.code === 'PLAYBOOK_NOT_FOUND' || err.code === 'SECTION_NOT_FOUND' ? 404 :
+      err.code === 'NOT_REGENERABLE' ? 400 : 500;
     return NextResponse.json(
-      { error: error.message || 'Internal server error' },
-      { status: 500 }
+      { error: err.message || 'Internal server error' },
+      { status }
     );
   }
 }

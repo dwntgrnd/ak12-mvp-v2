@@ -1,6 +1,6 @@
 // DistrictService interface
 
-import type { PaginatedResponse, FitAssessment } from '../types/common';
+import type { PaginatedRequest, PaginatedResponse, FitAssessment } from '../types/common';
 import type {
   DistrictSummary,
   DistrictProfile,
@@ -14,6 +14,8 @@ import type {
 export interface IDistrictService {
   // Authorization: publisher-admin, publisher-rep
   // Errors: INVALID_FILTER
+  // Exclusions are org-wide (shared within tenant).
+  // Use exclusionStatus='excluded_only' to list excluded districts (replaces getExcludedDistricts).
   searchDistricts(request: DistrictSearchRequest): Promise<PaginatedResponse<DistrictSummary>>;
 
   // Authorization: publisher-admin, publisher-rep
@@ -31,20 +33,19 @@ export interface IDistrictService {
   saveDistrict(districtId: string): Promise<SavedDistrict>;
 
   // Authorization: publisher-admin, publisher-rep
-  getSavedDistricts(): Promise<SavedDistrict[]>;
+  getSavedDistricts(pagination?: PaginatedRequest): Promise<PaginatedResponse<SavedDistrict>>;
 
   // Authorization: publisher-admin, publisher-rep
   // Errors: DISTRICT_NOT_FOUND, NOT_SAVED
   removeSavedDistrict(districtId: string): Promise<void>;
 
   // Authorization: publisher-admin, publisher-rep
+  // Exclusions are org-wide (shared within tenant). excludedBy is set automatically.
   // Errors: DISTRICT_NOT_FOUND, ALREADY_EXCLUDED
   excludeDistrict(districtId: string, reason: ExclusionReason): Promise<ExcludedDistrict>;
 
   // Authorization: publisher-admin, publisher-rep
-  getExcludedDistricts(): Promise<ExcludedDistrict[]>;
-
-  // Authorization: publisher-admin, publisher-rep
+  // Any user in the tenant can restore any exclusion.
   // Errors: DISTRICT_NOT_FOUND, NOT_EXCLUDED
   restoreDistrict(districtId: string): Promise<void>;
 }

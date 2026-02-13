@@ -1,0 +1,77 @@
+'use client';
+
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { GeneratePlaybookSheet } from '@/components/playbook/generate-playbook-sheet';
+
+export default function GenerateDemoPage() {
+  const [sheetOpen, setSheetOpen] = useState(false);
+  const [scenario, setScenario] = useState<'cold' | 'district' | 'product'>('cold');
+
+  // Simulated entry point contexts
+  const districtContext = {
+    districtId: 'dist-lausd-001',
+    districtName: 'Los Angeles Unified School District',
+    location: 'Los Angeles, CA',
+    enrollment: 422276,
+  };
+
+  const productContext = ['prod-001']; // EnvisionMath
+
+  // Only render in development
+  if (process.env.NODE_ENV !== 'development') {
+    return (
+      <div className="p-8">
+        <p className="text-muted-foreground">This page is only available in development mode.</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="p-8 space-y-6">
+      <div>
+        <h1 className="text-2xl font-bold">Generate Playbook — Demo Scenarios</h1>
+        <p className="text-muted-foreground mt-1">
+          Test the generation trigger from different entry points.
+        </p>
+      </div>
+
+      <div className="flex flex-col gap-3 max-w-md">
+        <Button
+          variant="outline"
+          onClick={() => {
+            setScenario('cold');
+            setSheetOpen(true);
+          }}
+        >
+          Entry 5: Cold Start (Playbook List — no pre-fills)
+        </Button>
+        <Button
+          variant="outline"
+          onClick={() => {
+            setScenario('district');
+            setSheetOpen(true);
+          }}
+        >
+          Entry 1/2: From District (district pre-filled)
+        </Button>
+        <Button
+          variant="outline"
+          onClick={() => {
+            setScenario('product');
+            setSheetOpen(true);
+          }}
+        >
+          Entry 3/4: From Product (product pre-filled)
+        </Button>
+      </div>
+
+      <GeneratePlaybookSheet
+        open={sheetOpen}
+        onOpenChange={setSheetOpen}
+        initialDistrict={scenario === 'district' ? districtContext : undefined}
+        initialProductIds={scenario === 'product' ? productContext : undefined}
+      />
+    </div>
+  );
+}

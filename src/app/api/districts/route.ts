@@ -1,57 +1,23 @@
-// GET /api/districts - District search endpoint
-
 import { NextRequest, NextResponse } from 'next/server';
-import { searchDistricts } from '@/services/district-service';
-import type { DistrictSearchRequest } from '@/services/types/district';
+import { getDistrictService } from '@/services/factory';
 
 export async function GET(request: NextRequest) {
   try {
-    const searchParams = request.nextUrl.searchParams;
+    const service = await getDistrictService();
+    const { searchParams } = new URL(request.url);
 
-    // Parse query parameters
-    const searchQuery = searchParams.get('q') || undefined;
-    const page = parseInt(searchParams.get('page') || '1', 10);
-    const pageSize = Math.min(
-      parseInt(searchParams.get('pageSize') || '25', 10),
-      100
-    );
+    const searchRequest: Record<string, unknown> = {};
+    if (searchParams.get('searchQuery')) searchRequest.searchQuery = searchParams.get('searchQuery');
+    if (searchParams.get('exclusionStatus')) searchRequest.exclusionStatus = searchParams.get('exclusionStatus');
+    searchRequest.page = Number(searchParams.get('page')) || 1;
+    searchRequest.pageSize = Number(searchParams.get('pageSize')) || 25;
 
-    // Parse filters
-    const filters: Record<string, string | number | string[]> = {};
-
-    // County filter (comma-separated)
-    const countyParam = searchParams.get('county');
-    if (countyParam) {
-      filters.county = countyParam.split(',').map(c => c.trim());
-    }
-
-    // Enrollment filters
-    const enrollmentMin = searchParams.get('enrollmentMin');
-    if (enrollmentMin) {
-      filters.enrollmentMin = parseInt(enrollmentMin, 10);
-    }
-
-    const enrollmentMax = searchParams.get('enrollmentMax');
-    if (enrollmentMax) {
-      filters.enrollmentMax = parseInt(enrollmentMax, 10);
-    }
-
-    // Build request
-    const searchRequest: DistrictSearchRequest = {
-      searchQuery,
-      filters,
-      page,
-      pageSize
-    };
-
-    // Execute search
-    const result = await searchDistricts(searchRequest);
-
-    return NextResponse.json(result, { status: 200 });
-  } catch (error: any) {
-    console.error('Error in GET /api/districts:', error);
+    const result = await service.searchDistricts(searchRequest as any);
+    return NextResponse.json(result);
+  } catch (error: unknown) {
+    const err = error as { message?: string };
     return NextResponse.json(
-      { error: error.message || 'Internal server error' },
+      { error: err.message || 'Internal server error' },
       { status: 500 }
     );
   }

@@ -1,48 +1,21 @@
-// GET /api/playbooks/[playbookId]/status - Get generation status
-
 import { NextRequest, NextResponse } from 'next/server';
-import { getCurrentUser } from '@/lib/auth-utils';
-import * as playbookService from '@/services/playbook-service';
-
-type RouteParams = {
-  params: Promise<{ playbookId: string }>;
-};
+import { getPlaybookService } from '@/services/factory';
 
 export async function GET(
-  request: NextRequest,
-  { params }: RouteParams
+  _request: NextRequest,
+  { params }: { params: Promise<{ playbookId: string }> }
 ) {
   try {
-    // Authenticate user
-    const user = await getCurrentUser();
-
-    // Extract params
     const { playbookId } = await params;
-
-    // Get status
-    const status = await playbookService.getPlaybookStatus(user.id, playbookId);
-
-    return NextResponse.json(status, { status: 200 });
-  } catch (error: any) {
-    console.error('Error in GET /api/playbooks/[playbookId]/status:', error);
-
-    if (error.code === 'UNAUTHENTICATED' || error.code === 'USER_NOT_FOUND') {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
-
-    if (error.code === 'PLAYBOOK_NOT_FOUND') {
-      return NextResponse.json(
-        { error: 'Playbook not found' },
-        { status: 404 }
-      );
-    }
-
+    const service = await getPlaybookService();
+    const status = await service.getPlaybookStatus(playbookId);
+    return NextResponse.json(status);
+  } catch (error: unknown) {
+    const err = error as { code?: string; message?: string };
+    const httpStatus = err.code === 'PLAYBOOK_NOT_FOUND' ? 404 : 500;
     return NextResponse.json(
-      { error: error.message || 'Internal server error' },
-      { status: 500 }
+      { error: err.message || 'Internal server error' },
+      { status: httpStatus }
     );
   }
 }

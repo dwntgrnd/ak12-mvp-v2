@@ -1,5 +1,6 @@
 // PlaybookService interface
 
+import type { PaginatedRequest, PaginatedResponse } from '../types/common';
 import type {
   PlaybookSummary,
   Playbook,
@@ -12,7 +13,7 @@ import type {
 export interface IPlaybookService {
   // Authorization: publisher-admin, publisher-rep
   // Errors: DISTRICT_NOT_FOUND, PRODUCT_NOT_FOUND, GENERATION_LIMIT_REACHED
-  // Async: returns immediately; poll getPlaybookStatus or use SSE for progress
+  // Async: returns immediately; poll getPlaybookStatus for progress
   generatePlaybook(request: PlaybookGenerationRequest): Promise<{ playbookId: string }>;
 
   // Authorization: publisher-admin, publisher-rep (own playbooks)
@@ -28,7 +29,7 @@ export interface IPlaybookService {
   getPlaybookSection(playbookId: string, sectionId: string): Promise<PlaybookSection>;
 
   // Authorization: publisher-admin, publisher-rep (own playbooks)
-  getPlaybooks(filters?: PlaybookFilters): Promise<PlaybookSummary[]>;
+  getPlaybooks(filters?: PlaybookFilters, pagination?: PaginatedRequest): Promise<PaginatedResponse<PlaybookSummary>>;
 
   // Authorization: publisher-admin, publisher-rep
   // Errors: DISTRICT_NOT_FOUND
@@ -40,7 +41,7 @@ export interface IPlaybookService {
 
   // Authorization: publisher-admin, publisher-rep (own playbooks)
   // Errors: PLAYBOOK_NOT_FOUND, SECTION_NOT_FOUND, NOT_REGENERABLE
-  // Async: returns immediately; poll or use SSE for updated section content
+  // Async: returns immediately; poll getPlaybookStatus for updated section content
   regenerateSection(playbookId: string, sectionId: string): Promise<{ status: 'generating' }>;
 
   // Authorization: publisher-admin, publisher-rep (own playbooks, soft delete)

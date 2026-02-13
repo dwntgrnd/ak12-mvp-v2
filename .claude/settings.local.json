@@ -1,0 +1,39 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node:*)",
+      "Bash(test:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(npm install:*)",
+      "Bash(npx tsc:*)",
+      "Bash(cat:*)",
+      "Bash(grep:*)",
+      "Bash(ls:*)",
+      "Bash(pg_isready:*)",
+      "Bash(brew services:*)",
+      "Read(//Applications/**)",
+      "Bash(brew list:*)",
+      "Bash(brew install:*)",
+      "Bash(/opt/homebrew/bin/brew install:*)",
+      "Bash(/opt/homebrew/bin/brew services start:*)",
+      "Bash(/opt/homebrew/opt/postgresql@17/bin/createdb:*)",
+      "Bash(/opt/homebrew/opt/postgresql@17/bin/psql:*)",
+      "Bash(/Users/dorenberge/WorkInProgress/VIBE/AK12-MVP-v2/src/app/\\\\\\(dashboard\\\\\\)/playbooks/page.tsx << 'ENDOFFILE'\nexport default function PlaybooksPage\\(\\) {\n  return \\(\n    <div className=\"p-6\">\n      <h1 className=\"text-2xl font-semibold\">Playbooks</h1>\n      <p className=\"text-muted-foreground mt-2\">AI-generated sales playbooks for your district targets.</p>\n    </div>\n  \\);\n}\nENDOFFILE)",
+      "Bash(/Users/dorenberge/WorkInProgress/VIBE/AK12-MVP-v2/src/app/\\\\\\(dashboard\\\\\\)/admin/page.tsx << 'ENDOFFILE'\nexport default function AdminPage\\(\\) {\n  return \\(\n    <div className=\"p-6\">\n      <h1 className=\"text-2xl font-semibold\">Admin</h1>\n      <p className=\"text-muted-foreground mt-2\">Organization settings, user management, and system configuration.</p>\n    </div>\n  \\);\n}\nENDOFFILE)",
+      "Bash(npm run build:*)",
+      "Bash(npx prisma validate:*)",
+      "Bash(npx prisma generate:*)",
+      "Bash(npx tsx:*)",
+      "Bash(curl -s -L -o /dev/null -w \"%{http_code}\" http://localhost:3000/discovery echo \"\" curl -s -v http://localhost:3000/discovery)",
+      "Bash(curl:*)",
+      "Bash(kill:*)",
+      "Bash(npx prisma db seed:*)",
+      "Bash(source:*)",
+      "Bash(nvm use:*)",
+      "Bash(lsof:*)",
+      "Bash(python3:*)",
+      "Bash(npx shadcn@latest add:*)"
+    ]
+  }
+}
