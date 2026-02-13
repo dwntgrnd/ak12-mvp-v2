@@ -2,8 +2,7 @@
 
 import { usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
-import { Search, Bookmark, Package, FileText, Shield } from 'lucide-react';
-import { useUser, UserButton } from '@clerk/nextjs';
+import { Search, Bookmark, Package, FileText, Shield, User } from 'lucide-react';
 import { SidebarNavItem } from './sidebar-nav-item';
 
 const mainNavItems = [
@@ -17,7 +16,6 @@ const adminNavItems = [{ href: '/admin', icon: Shield, label: 'Admin' }];
 
 export function Sidebar() {
   const pathname = usePathname();
-  const { user, isLoaded } = useUser();
   const [userRole, setUserRole] = useState<string | null>(null);
 
   useEffect(() => {
@@ -88,28 +86,19 @@ export function Sidebar() {
 
       {/* User Context */}
       <div className="px-4 py-4 border-t border-white/10">
-        {isLoaded && user ? (
-          <div className="flex items-center gap-3">
-            <UserButton
-              appearance={{
-                elements: { avatarBox: 'w-8 h-8' }
-              }}
-            />
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-sidebar-foreground truncate">
-                {user.fullName ?? user.primaryEmailAddress?.emailAddress}
-              </p>
-              <p className="text-xs text-sidebar-foreground/60 truncate">
-                AlchemyK12
-              </p>
-            </div>
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-full bg-sidebar-hover flex items-center justify-center">
+            <User className="w-4 h-4 text-sidebar-foreground/60" />
           </div>
-        ) : (
-          <div className="space-y-1">
-            <div className="h-4 w-24 bg-sidebar-hover rounded animate-pulse" />
-            <div className="h-3 w-16 bg-sidebar-hover rounded animate-pulse" />
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-medium text-sidebar-foreground truncate">
+              Demo User
+            </p>
+            <p className="text-xs text-sidebar-foreground/60 truncate">
+              AlchemyK12
+            </p>
           </div>
-        )}
+        </div>
       </div>
     </aside>
   );
