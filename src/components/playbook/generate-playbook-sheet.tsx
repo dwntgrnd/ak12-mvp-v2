@@ -4,12 +4,12 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { Loader2, Info } from 'lucide-react';
 import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetDescription,
-} from '@/components/ui/sheet';
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -294,20 +294,19 @@ export function GeneratePlaybookSheet({
   const summary = getConfirmationSummary();
 
   return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent
-        side="right"
-        className="w-full sm:max-w-[480px] flex flex-col p-0"
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent
+        className="max-w-[520px] max-h-[85vh] flex flex-col p-0 gap-0"
       >
         {/* Header */}
-        <SheetHeader className="px-6 pt-6 pb-4 shrink-0">
-          <SheetTitle className="text-lg font-semibold">
+        <DialogHeader className="px-6 pt-6 pb-4 shrink-0">
+          <DialogTitle className="text-lg font-semibold">
             Generate Playbook
-          </SheetTitle>
-          <SheetDescription className="sr-only">
+          </DialogTitle>
+          <DialogDescription className="sr-only">
             Select products and a district to generate a sales playbook.
-          </SheetDescription>
-        </SheetHeader>
+          </DialogDescription>
+        </DialogHeader>
 
         {/* Scrollable content */}
         <div ref={contentRef} className="flex-1 overflow-y-auto px-6 pb-4">
@@ -442,7 +441,7 @@ export function GeneratePlaybookSheet({
             Cancel
           </Button>
         </div>
-      </SheetContent>
-    </Sheet>
+      </DialogContent>
+    </Dialog>
   );
 }
