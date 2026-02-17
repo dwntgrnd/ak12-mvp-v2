@@ -12,6 +12,7 @@ import {
 import { Skeleton } from '@/components/ui/skeleton';
 import { PlaybookCard } from '@/components/playbook/playbook-card';
 import { EmptyPlaybooksState } from '@/components/playbook/empty-playbooks-state';
+import { GeneratePlaybookSheet } from '@/components/playbook/generate-playbook-sheet';
 
 type SortOption = 'recent' | 'fit';
 
@@ -62,16 +63,12 @@ function sortPlaybooks(
   return [...generating, ...rest];
 }
 
-function handleNewPlaybook() {
-  // TODO: Wire GeneratePlaybookSheet — separate handoff
-  console.log('New Playbook clicked — sheet wiring pending');
-}
-
 export default function PlaybooksPage() {
   const [playbooks, setPlaybooks] = useState<PlaybookListItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [sortOption, setSortOption] = useState<SortOption>('recent');
+  const [sheetOpen, setSheetOpen] = useState(false);
 
   useEffect(() => {
     setLoading(true);
@@ -104,9 +101,12 @@ export default function PlaybooksPage() {
       });
   }, []);
 
-  // Loading state
+  const sorted = sortPlaybooks(playbooks, sortOption);
+
+  let content: React.ReactNode;
+
   if (loading) {
-    return (
+    content = (
       <div className="p-6">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-semibold">Playbooks</h1>
@@ -118,11 +118,8 @@ export default function PlaybooksPage() {
         </div>
       </div>
     );
-  }
-
-  // Error state
-  if (error) {
-    return (
+  } else if (error) {
+    content = (
       <div className="p-6">
         <h1 className="text-2xl font-semibold mb-4">Playbooks</h1>
         <div className="text-center py-16">
@@ -137,53 +134,57 @@ export default function PlaybooksPage() {
         </div>
       </div>
     );
-  }
-
-  // Empty state
-  if (playbooks.length === 0) {
-    return (
+  } else if (playbooks.length === 0) {
+    content = (
       <div className="p-6">
         <h1 className="text-2xl font-semibold mb-6">Playbooks</h1>
-        <EmptyPlaybooksState onCreateClick={handleNewPlaybook} />
+        <EmptyPlaybooksState onCreateClick={() => setSheetOpen(true)} />
+      </div>
+    );
+  } else {
+    content = (
+      <div className="p-6">
+        <div className="flex items-center justify-between mb-6">
+          <h1 className="text-2xl font-semibold">Playbooks</h1>
+          <Button
+            className="bg-[#FF7000] hover:bg-[#FF7000]/90 text-white"
+            onClick={() => setSheetOpen(true)}
+          >
+            New Playbook
+          </Button>
+        </div>
+
+        <div className="mb-6">
+          <Select
+            value={sortOption}
+            onValueChange={(v) => setSortOption(v as SortOption)}
+          >
+            <SelectTrigger className="w-[180px]">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="recent">Most Recent</SelectItem>
+              <SelectItem value="fit">Fit Assessment</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {sorted.map((playbook) => (
+            <PlaybookCard key={playbook.playbookId} playbook={playbook} />
+          ))}
+        </div>
       </div>
     );
   }
 
-  // Populated state
-  const sorted = sortPlaybooks(playbooks, sortOption);
-
   return (
-    <div className="p-6">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-semibold">Playbooks</h1>
-        <Button
-          className="bg-[#FF7000] hover:bg-[#FF7000]/90 text-white"
-          onClick={handleNewPlaybook}
-        >
-          New Playbook
-        </Button>
-      </div>
-
-      <div className="mb-6">
-        <Select
-          value={sortOption}
-          onValueChange={(v) => setSortOption(v as SortOption)}
-        >
-          <SelectTrigger className="w-[180px]">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="recent">Most Recent</SelectItem>
-            <SelectItem value="fit">Fit Assessment</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {sorted.map((playbook) => (
-          <PlaybookCard key={playbook.playbookId} playbook={playbook} />
-        ))}
-      </div>
-    </div>
+    <>
+      {content}
+      <GeneratePlaybookSheet
+        open={sheetOpen}
+        onOpenChange={setSheetOpen}
+      />
+    </>
   );
 }
