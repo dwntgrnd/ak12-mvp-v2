@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-02-12)
 Phase: 7 of 7 (User Management)
 Plan: 2 of 2 in current phase
 Status: v0.1 MVP shipped and archived
-Last activity: 2026-02-12 — v0.1 milestone completed
+Last activity: 2026-02-17 - Completed quick task 1: Convert playbook generation drawer to modal with lightbox backdrop
 
 Progress: [██████████] 100%
 
@@ -53,6 +53,12 @@ None.
 - Node.js version (18.6.0) below Next.js requirement (>=20.9.0) — dev server cannot start
 - Impact: TypeScript compilation works, project scaffold complete
 - Action: Upgrade Node.js to >=20.9.0
+
+### Quick Tasks Completed
+
+| # | Description | Date | Commit | Directory |
+|---|-------------|------|--------|-----------|
+| 1 | Convert playbook generation drawer to modal with lightbox backdrop | 2026-02-17 | 27bdc5e | [1-convert-playbook-generation-drawer-to-mo](./quick/1-convert-playbook-generation-drawer-to-mo/) |
 
 ## Session Continuity
 
