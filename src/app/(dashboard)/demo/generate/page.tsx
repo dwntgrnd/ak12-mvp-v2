@@ -6,7 +6,7 @@ import { GeneratePlaybookSheet } from '@/components/playbook/generate-playbook-s
 
 export default function GenerateDemoPage() {
   const [sheetOpen, setSheetOpen] = useState(false);
-  const [scenario, setScenario] = useState<'cold' | 'district' | 'product'>('cold');
+  const [scenario, setScenario] = useState<'cold' | 'district' | 'product' | 'empty'>('cold');
 
   // Simulated entry point contexts
   const districtContext = {
@@ -64,6 +64,15 @@ export default function GenerateDemoPage() {
         >
           Entry 3/4: From Product (product pre-filled)
         </Button>
+        <Button
+          variant="outline"
+          onClick={() => {
+            setScenario('empty');
+            setSheetOpen(true);
+          }}
+        >
+          Entry 0: Empty Product Catalog (no products)
+        </Button>
       </div>
 
       <GeneratePlaybookSheet
@@ -71,6 +80,7 @@ export default function GenerateDemoPage() {
         onOpenChange={setSheetOpen}
         initialDistrict={scenario === 'district' ? districtContext : undefined}
         initialProductIds={scenario === 'product' ? productContext : undefined}
+        _demoEmptyCatalog={scenario === 'empty'}
       />
     </div>
   );

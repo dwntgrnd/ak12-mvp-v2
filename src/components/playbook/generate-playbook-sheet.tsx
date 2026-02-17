@@ -38,6 +38,8 @@ export interface GeneratePlaybookSheetProps {
   onOpenChange: (open: boolean) => void;
   initialDistrict?: InitialDistrict;
   initialProductIds?: string[];
+  /** Demo-only: simulate empty product catalog. Do not use in production code. */
+  _demoEmptyCatalog?: boolean;
 }
 
 export function GeneratePlaybookSheet({
@@ -45,6 +47,7 @@ export function GeneratePlaybookSheet({
   onOpenChange,
   initialDistrict,
   initialProductIds,
+  _demoEmptyCatalog,
 }: GeneratePlaybookSheetProps) {
   const router = useRouter();
 
@@ -94,6 +97,11 @@ export function GeneratePlaybookSheet({
   // Load product catalog on open
   useEffect(() => {
     if (!open) return;
+    if (_demoEmptyCatalog) {
+      setProducts([]);
+      setProductsLoading(false);
+      return;
+    }
 
     let cancelled = false;
 
@@ -118,7 +126,7 @@ export function GeneratePlaybookSheet({
     return () => {
       cancelled = true;
     };
-  }, [open]);
+  }, [open, _demoEmptyCatalog]);
 
   // Focus management after products load
   useEffect(() => {
@@ -335,7 +343,24 @@ export function GeneratePlaybookSheet({
               </div>
             )}
 
-            {!productsLoading && !productsError && (
+            {!productsLoading && !productsError && products.length === 0 && (
+              <div className="text-center py-8 space-y-3">
+                <p className="text-sm text-muted-foreground">
+                  No products available. Add products to your Solutions Library to generate playbooks.
+                </p>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    onOpenChange(false);
+                    router.push('/solutions');
+                  }}
+                >
+                  Go to Solutions Library
+                </Button>
+              </div>
+            )}
+
+            {!productsLoading && !productsError && products.length > 0 && (
               <div className="space-y-2">
                 {products.map((product, index) => (
                   <div
@@ -357,7 +382,9 @@ export function GeneratePlaybookSheet({
           <div className="mt-8" />
 
           {/* Section B: District */}
-          <div>
+          <div className={cn(
+            products.length === 0 && !productsLoading && 'opacity-50 pointer-events-none'
+          )}>
             <p className="text-xs uppercase tracking-wider text-muted-foreground font-medium mb-2">
               District
             </p>
@@ -414,23 +441,25 @@ export function GeneratePlaybookSheet({
             </Alert>
           )}
 
-          {/* Generate button */}
-          <Button
-            className="w-full h-12 bg-[#FF7000] hover:bg-[#E56400] text-white"
-            disabled={!canGenerate}
-            aria-disabled={!canGenerate}
-            aria-busy={isGenerating}
-            onClick={handleGenerate}
-          >
-            {isGenerating ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin" />
-                Generating...
-              </>
-            ) : (
-              'Generate Playbook'
-            )}
-          </Button>
+          {/* Generate button — hidden when catalog is empty */}
+          {(products.length > 0 || productsLoading) && (
+            <Button
+              className="w-full h-12 bg-[#FF7000] hover:bg-[#E56400] text-white"
+              disabled={!canGenerate}
+              aria-disabled={!canGenerate}
+              aria-busy={isGenerating}
+              onClick={handleGenerate}
+            >
+              {isGenerating ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Generating...
+                </>
+              ) : (
+                'Generate Playbook'
+              )}
+            </Button>
+          )}
 
           {/* Cancel */}
           <Button
