@@ -10,6 +10,8 @@ interface SidebarContextValue {
   setSidebarCollapsed: (value: boolean) => void;
   pageActions: React.ReactNode | null;
   setPageActions: (node: React.ReactNode | null) => void;
+  breadcrumbOverride: string | null;
+  setBreadcrumbOverride: (label: string | null) => void;
 }
 
 const SidebarContext = createContext<SidebarContextValue | null>(null);
@@ -17,6 +19,7 @@ const SidebarContext = createContext<SidebarContextValue | null>(null);
 export function SidebarProvider({ children }: { children: React.ReactNode }) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [pageActions, setPageActions] = useState<React.ReactNode | null>(null);
+  const [breadcrumbOverride, setBreadcrumbOverride] = useState<string | null>(null);
 
   useEffect(() => {
     const stored = localStorage.getItem(STORAGE_KEY);
@@ -46,6 +49,8 @@ export function SidebarProvider({ children }: { children: React.ReactNode }) {
         setSidebarCollapsed: handleSetCollapsed,
         pageActions,
         setPageActions,
+        breadcrumbOverride,
+        setBreadcrumbOverride,
       }}
     >
       {children}

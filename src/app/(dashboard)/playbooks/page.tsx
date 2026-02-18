@@ -13,6 +13,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { PlaybookCard } from '@/components/playbook/playbook-card';
 import { EmptyPlaybooksState } from '@/components/playbook/empty-playbooks-state';
 import { GeneratePlaybookSheet } from '@/components/playbook/generate-playbook-sheet';
+import { useSidebar } from '@/components/layout/sidebar-context';
 
 type SortOption = 'recent' | 'fit';
 
@@ -69,6 +70,7 @@ export default function PlaybooksPage() {
   const [error, setError] = useState(false);
   const [sortOption, setSortOption] = useState<SortOption>('recent');
   const [sheetOpen, setSheetOpen] = useState(false);
+  const { setPageActions } = useSidebar();
 
   useEffect(() => {
     setLoading(true);
@@ -101,59 +103,50 @@ export default function PlaybooksPage() {
       });
   }, []);
 
+  useEffect(() => {
+    if (!loading && !error && playbooks.length > 0) {
+      setPageActions(
+        <Button
+          onClick={() => setSheetOpen(true)}
+          className="bg-brand-orange hover:bg-brand-orange/90 text-white"
+        >
+          New Playbook
+        </Button>
+      );
+    }
+    return () => setPageActions(null);
+  }, [loading, error, playbooks.length, setPageActions]);
+
   const sorted = sortPlaybooks(playbooks, sortOption);
 
   let content: React.ReactNode;
 
   if (loading) {
     content = (
-      <div className="p-6">
-        <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-semibold">Playbooks</h1>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <Skeleton key={i} className="h-[160px] rounded-lg" />
-          ))}
-        </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <Skeleton key={i} className="h-[160px] rounded-lg" />
+        ))}
       </div>
     );
   } else if (error) {
     content = (
-      <div className="p-6">
-        <h1 className="text-2xl font-semibold mb-4">Playbooks</h1>
-        <div className="text-center py-16">
-          <p className="text-muted-foreground">Failed to load playbooks.</p>
-          <Button
-            variant="outline"
-            className="mt-4"
-            onClick={() => window.location.reload()}
-          >
-            Try Again
-          </Button>
-        </div>
+      <div className="text-center py-16">
+        <p className="text-muted-foreground">Failed to load playbooks.</p>
+        <Button
+          variant="outline"
+          className="mt-4"
+          onClick={() => window.location.reload()}
+        >
+          Try Again
+        </Button>
       </div>
     );
   } else if (playbooks.length === 0) {
-    content = (
-      <div className="p-6">
-        <h1 className="text-2xl font-semibold mb-6">Playbooks</h1>
-        <EmptyPlaybooksState onCreateClick={() => setSheetOpen(true)} />
-      </div>
-    );
+    content = <EmptyPlaybooksState onCreateClick={() => setSheetOpen(true)} />;
   } else {
     content = (
-      <div className="p-6">
-        <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-semibold">Playbooks</h1>
-          <Button
-            className="bg-[#FF7000] hover:bg-[#FF7000]/90 text-white"
-            onClick={() => setSheetOpen(true)}
-          >
-            New Playbook
-          </Button>
-        </div>
-
+      <>
         <div className="mb-6">
           <Select
             value={sortOption}
@@ -174,7 +167,7 @@ export default function PlaybooksPage() {
             <PlaybookCard key={playbook.playbookId} playbook={playbook} />
           ))}
         </div>
-      </div>
+      </>
     );
   }
 

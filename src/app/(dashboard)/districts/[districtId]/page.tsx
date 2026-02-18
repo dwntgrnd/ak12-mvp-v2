@@ -3,7 +3,8 @@
 import { use, useEffect, useState, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { ChevronRight, RefreshCw } from 'lucide-react';
+import { RefreshCw } from 'lucide-react';
+import { useSidebar } from '@/components/layout/sidebar-context';
 import type { DistrictProfile } from '@/services/types/district';
 import type { FitAssessment } from '@/services/types/common';
 import type { DistrictYearData } from '@/services/providers/mock/fixtures/districts';
@@ -35,6 +36,7 @@ export default function DistrictProfilePage({
   const { districtId } = use(params);
   const searchParams = useSearchParams();
   const productId = searchParams.get('productId');
+  const { setBreadcrumbOverride } = useSidebar();
 
   const [district, setDistrict] = useState<DistrictProfile | null>(null);
   const [yearData, setYearData] = useState<DistrictYearData[]>([]);
@@ -89,6 +91,13 @@ export default function DistrictProfilePage({
     fetchData();
   }, [fetchData]);
 
+  useEffect(() => {
+    if (district) {
+      setBreadcrumbOverride(district.name);
+    }
+    return () => setBreadcrumbOverride(null);
+  }, [district, setBreadcrumbOverride]);
+
   // --- 404 state ---
   if (notFound) {
     return (
@@ -120,15 +129,6 @@ export default function DistrictProfilePage({
   if (loading || !district) {
     return (
       <div className="space-y-6">
-        {/* Breadcrumb skeleton */}
-        <nav className="flex items-center gap-1 text-sm text-muted-foreground">
-          <Link href="/discovery" className="hover:text-foreground transition-colors">
-            Discovery
-          </Link>
-          <ChevronRight className="h-3.5 w-3.5" />
-          <span>Loading...</span>
-        </nav>
-
         {/* Identity + metrics skeleton */}
         <div className="grid gap-6 lg:grid-cols-[1fr_1fr]">
           <div className="space-y-3">
@@ -153,8 +153,8 @@ export default function DistrictProfilePage({
           </div>
         </div>
 
-        {/* Tabs render immediately */}
-        <ResearchTabs />
+        {/* Tabs render with districtId */}
+        <ResearchTabs districtId={districtId} />
       </div>
     );
   }
@@ -199,7 +199,7 @@ export default function DistrictProfilePage({
       )}
 
       {/* Research Tabs */}
-      <ResearchTabs />
+      <ResearchTabs districtId={districtId} />
 
       {/* Generate Playbook Sheet */}
       <GeneratePlaybookSheet

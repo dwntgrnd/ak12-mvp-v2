@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Manrope, Inter } from 'next/font/google';
+import { Manrope, JetBrains_Mono } from 'next/font/google';
 import './globals.css';
 
 const manrope = Manrope({
@@ -8,8 +8,8 @@ const manrope = Manrope({
   display: 'swap',
 });
 
-const inter = Inter({
-  variable: '--font-inter',
+const jetbrainsMono = JetBrains_Mono({
+  variable: '--font-mono',
   subsets: ['latin'],
   display: 'swap',
 });
@@ -26,7 +26,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${manrope.variable} ${inter.variable} antialiased`}>
+      <body className={`${manrope.variable} ${jetbrainsMono.variable} antialiased`}>
         {children}
       </body>
     </html>

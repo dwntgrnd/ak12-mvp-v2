@@ -275,9 +275,7 @@ export default function DiscoveryPage() {
   const selectedProductName = products.find((p) => p.productId === selectedProductId)?.name;
 
   return (
-    <div className="p-6 space-y-4">
-      <h1 className="text-2xl font-semibold">Discovery &amp; Targeting</h1>
-
+    <div className="space-y-4">
       <DiscoveryToolbar
         products={products}
         productsLoading={productsLoading}

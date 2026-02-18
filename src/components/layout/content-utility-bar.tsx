@@ -14,9 +14,12 @@ import {
 } from '@/components/ui/breadcrumb';
 import { useSidebar } from './sidebar-context';
 
-function useBreadcrumbs(pathname: string) {
+function useBreadcrumbs(pathname: string, breadcrumbOverride: string | null) {
   if (pathname.startsWith('/districts/')) {
-    return { parent: { label: 'Discovery', href: '/discovery' }, current: 'District' };
+    return {
+      parent: { label: 'Discovery', href: '/discovery' },
+      current: breadcrumbOverride ?? 'District',
+    };
   }
 
   const routeMap: Record<string, string> = {
@@ -33,8 +36,8 @@ function useBreadcrumbs(pathname: string) {
 
 export function ContentUtilityBar() {
   const pathname = usePathname();
-  const { toggleSidebar, pageActions } = useSidebar();
-  const { parent, current } = useBreadcrumbs(pathname);
+  const { toggleSidebar, pageActions, breadcrumbOverride } = useSidebar();
+  const { parent, current } = useBreadcrumbs(pathname, breadcrumbOverride);
 
   return (
     <div className="h-10 bg-background border-b border-border flex items-center justify-between px-4 shrink-0">
