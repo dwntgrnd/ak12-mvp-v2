@@ -54,6 +54,12 @@
   --sidebar-fg: 180 3% 95%;
   --sidebar-hover: 217 33% 27%;
   --sidebar-active: 184 97% 42%;
+
+  /* Layout tokens */
+  --topbar-height: 3.5rem;
+  --utility-bar-height: 2.5rem;
+  --sidebar-width: 16rem;
+  --sidebar-width-collapsed: 4rem;
 }
 
 @theme inline {
@@ -86,6 +92,9 @@
   --color-sidebar-active: hsl(var(--sidebar-active));
   --font-heading: var(--font-manrope);
   --font-body: var(--font-inter);
+  --spacing-topbar-height: var(--topbar-height);
+  --spacing-sidebar-width: var(--sidebar-width);
+  --spacing-sidebar-width-collapsed: var(--sidebar-width-collapsed);
 }
 
 body {
