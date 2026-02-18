@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo } from 'react';
-import { Target, BarChart3, Shield, Users } from 'lucide-react';
+import { Target, BarChart3, Shield } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import {
   getDistrictIntelligence,
@@ -10,9 +10,8 @@ import {
 import type { IntelligenceCategory } from '@/services/types/district-intelligence';
 import type { LucideIcon } from 'lucide-react';
 import { GoalsFundingTab } from './goals-funding-tab';
-import { AcademicTab } from './academic-tab';
-import { CompetitiveTab } from './competitive-tab';
-import { ContactsTab } from './contacts-tab';
+import { AcademicPerformanceTab } from './academic-performance-tab';
+import { CompetitiveIntelTab } from './competitive-intel-tab';
 
 interface ResearchTabsProps {
   districtId: string;
@@ -26,9 +25,8 @@ interface TabConfig {
 
 const TAB_CONFIG: TabConfig[] = [
   { key: 'goalsFunding', label: 'Goals & Funding', icon: Target },
-  { key: 'academicDetail', label: 'Academic Deep Dive', icon: BarChart3 },
-  { key: 'competitiveLandscape', label: 'Competitive Landscape', icon: Shield },
-  { key: 'keyContacts', label: 'Key Contacts', icon: Users },
+  { key: 'academicPerformance', label: 'Academic Performance', icon: BarChart3 },
+  { key: 'competitiveIntel', label: 'Competitive Intel', icon: Shield },
 ];
 
 export function ResearchTabs({ districtId }: ResearchTabsProps) {
@@ -57,23 +55,11 @@ export function ResearchTabs({ districtId }: ResearchTabsProps) {
           {tab.key === 'goalsFunding' && (
             <GoalsFundingTab intel={intel} />
           )}
-          {tab.key === 'academicDetail' && intel.academicDetail && (
-            <AcademicTab
-              academic={intel.academicDetail}
-              sources={intel.sources}
-            />
+          {tab.key === 'academicPerformance' && (
+            <AcademicPerformanceTab intel={intel} />
           )}
-          {tab.key === 'competitiveLandscape' && intel.competitiveLandscape && (
-            <CompetitiveTab
-              competitors={intel.competitiveLandscape}
-              sources={intel.sources}
-            />
-          )}
-          {tab.key === 'keyContacts' && intel.keyContacts && (
-            <ContactsTab
-              contacts={intel.keyContacts}
-              sources={intel.sources}
-            />
+          {tab.key === 'competitiveIntel' && (
+            <CompetitiveIntelTab intel={intel} />
           )}
         </TabsContent>
       ))}
