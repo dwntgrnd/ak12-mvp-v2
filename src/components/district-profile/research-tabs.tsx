@@ -1,69 +1,80 @@
-import { Target, Newspaper, Users, BarChart3, FileSearch } from 'lucide-react';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import type { LucideIcon } from 'lucide-react';
+'use client';
 
-interface TabConfig {
-  value: string;
-  label: string;
-  icon: LucideIcon;
-  description: string;
+import { useMemo } from 'react';
+import { Target, BarChart3, Shield, Users } from 'lucide-react';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import {
+  getDistrictIntelligence,
+  getAvailableCategories,
+} from '@/services/providers/mock/fixtures/district-intelligence';
+import type { IntelligenceCategory } from '@/services/types/district-intelligence';
+import type { LucideIcon } from 'lucide-react';
+import { GoalsFundingTab } from './goals-funding-tab';
+import { AcademicTab } from './academic-tab';
+import { CompetitiveTab } from './competitive-tab';
+import { ContactsTab } from './contacts-tab';
+
+interface ResearchTabsProps {
+  districtId: string;
 }
 
-const tabs: TabConfig[] = [
-  {
-    value: 'goals',
-    label: 'Goals and Priorities',
-    icon: Target,
-    description: 'District goals and budget priorities from LCAP documents will appear here.',
-  },
-  {
-    value: 'news',
-    label: 'Recent News',
-    icon: Newspaper,
-    description: 'District news, board decisions, and press coverage will appear here.',
-  },
-  {
-    value: 'contacts',
-    label: 'Contact Directory',
-    icon: Users,
-    description: 'Key district personnel and department contacts will appear here.',
-  },
-  {
-    value: 'competitive',
-    label: 'Competitive Landscape',
-    icon: BarChart3,
-    description: 'Other publishers and vendors active in this district will appear here.',
-  },
-  {
-    value: 'rfps',
-    label: 'RFPs',
-    icon: FileSearch,
-    description: 'Active and historical requests for proposals will appear here.',
-  },
+interface TabConfig {
+  key: IntelligenceCategory;
+  label: string;
+  icon: LucideIcon;
+}
+
+const TAB_CONFIG: TabConfig[] = [
+  { key: 'goalsFunding', label: 'Goals & Funding', icon: Target },
+  { key: 'academicDetail', label: 'Academic Deep Dive', icon: BarChart3 },
+  { key: 'competitiveLandscape', label: 'Competitive Landscape', icon: Shield },
+  { key: 'keyContacts', label: 'Key Contacts', icon: Users },
 ];
 
-export function ResearchTabs() {
+export function ResearchTabs({ districtId }: ResearchTabsProps) {
+  const { intel, availableTabs } = useMemo(() => {
+    const data = getDistrictIntelligence(districtId);
+    const categories = getAvailableCategories(districtId);
+    const tabs = TAB_CONFIG.filter((t) => categories.includes(t.key));
+    return { intel: data, availableTabs: tabs };
+  }, [districtId]);
+
+  if (availableTabs.length === 0 || !intel) return null;
+
   return (
-    <Tabs defaultValue="goals">
+    <Tabs defaultValue={availableTabs[0].key}>
       <TabsList className="flex-wrap h-auto gap-1">
-        {tabs.map((tab) => (
-          <TabsTrigger key={tab.value} value={tab.value}>
+        {availableTabs.map((tab) => (
+          <TabsTrigger key={tab.key} value={tab.key} className="gap-1.5">
+            <tab.icon className="h-3.5 w-3.5" />
             {tab.label}
           </TabsTrigger>
         ))}
       </TabsList>
 
-      {tabs.map((tab) => (
-        <TabsContent key={tab.value} value={tab.value}>
-          <div className="flex min-h-[300px] flex-col items-center justify-center gap-3 rounded-lg border p-8">
-            <tab.icon className="h-12 w-12 text-muted-foreground/50" />
-            <h3 className="text-lg font-semibold text-muted-foreground">
-              Coming Soon
-            </h3>
-            <p className="max-w-md text-center text-sm text-muted-foreground">
-              {tab.description}
-            </p>
-          </div>
+      {availableTabs.map((tab) => (
+        <TabsContent key={tab.key} value={tab.key}>
+          {tab.key === 'goalsFunding' && (
+            <GoalsFundingTab intel={intel} />
+          )}
+          {tab.key === 'academicDetail' && intel.academicDetail && (
+            <AcademicTab
+              academic={intel.academicDetail}
+              sources={intel.sources}
+            />
+          )}
+          {tab.key === 'competitiveLandscape' && intel.competitiveLandscape && (
+            <CompetitiveTab
+              competitors={intel.competitiveLandscape}
+              sources={intel.sources}
+            />
+          )}
+          {tab.key === 'keyContacts' && intel.keyContacts && (
+            <ContactsTab
+              contacts={intel.keyContacts}
+              sources={intel.sources}
+            />
+          )}
         </TabsContent>
       ))}
     </Tabs>
