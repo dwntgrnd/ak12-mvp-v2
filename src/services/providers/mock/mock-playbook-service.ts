@@ -8,9 +8,10 @@ import type {
   PlaybookGenerationRequest,
   PlaybookStatusResponse,
 } from '../../types/playbook';
-import { PLAYBOOK_SECTION_TEMPLATES } from './fixtures/playbook-content';
+import { SECTION_ORDER, GENERIC_SECTION_TEMPLATES, DISTRICT_SPECIFIC_CONTENT } from './fixtures/playbook-content';
 import { MOCK_PRODUCTS } from './fixtures/products';
 import { SEED_PLAYBOOKS } from './fixtures/playbooks';
+import { DISTRICT_FIXTURES } from './fixtures/districts';
 
 // === In-memory store ===
 
@@ -50,21 +51,53 @@ function interpolateTemplate(template: string, districtName: string, productName
     .replace(/\{\{productList\}\}/g, productList);
 }
 
+// Resolve content for a section — district-specific first, generic template fallback
+function resolveContent(
+  districtId: string,
+  sectionType: typeof SECTION_ORDER[number],
+  districtName: string,
+  productNames: string[]
+): string {
+  const districtContent = DISTRICT_SPECIFIC_CONTENT[districtId]?.[sectionType];
+  if (districtContent) {
+    return districtContent.content;
+  }
+  const template = GENERIC_SECTION_TEMPLATES[sectionType];
+  return interpolateTemplate(template.template, districtName, productNames);
+}
+
+// Resolve district name from districtId using fixtures
+function resolveDistrictName(districtId: string): string {
+  // Map seed districtIds to fixture district names
+  const SEED_DISTRICT_MAP: Record<string, string> = {
+    'dist-la-001': 'Los Angeles Unified',
+    'dist-sd-001': 'San Diego Unified',
+    'dist-sf-001': 'San Francisco Unified',
+    'dist-sac-001': 'Sacramento City Unified',
+    'dist-fre-001': 'Fresno Unified',
+    'dist-oak-001': 'Oakland Unified',
+    'dist-lb-001': 'Long Beach Unified',
+  };
+
+  if (SEED_DISTRICT_MAP[districtId]) {
+    return SEED_DISTRICT_MAP[districtId];
+  }
+
+  // Try to find in DISTRICT_FIXTURES by id
+  const fixture = DISTRICT_FIXTURES.find((d) => d.district.id === districtId);
+  if (fixture) {
+    return fixture.district.name;
+  }
+
+  return 'California School District';
+}
+
 // Simulate progressive generation — sections complete one by one with delays
 function simulateGeneration(playbookId: string): void {
   const playbook = playbooks.get(playbookId);
   if (!playbook) return;
 
-  const sectionTypes = [
-    'district_data',
-    'key_themes',
-    'product_fit',
-    'fit_assessment',
-    'objections',
-    'stakeholders',
-  ];
-
-  sectionTypes.forEach((sectionType, index) => {
+  SECTION_ORDER.forEach((sectionType, index) => {
     // Set to generating after a short delay
     setTimeout(() => {
       const pb = playbooks.get(playbookId);
@@ -81,14 +114,12 @@ function simulateGeneration(playbookId: string): void {
       if (!pb) return;
       const section = pb.sections.find((s) => s.sectionType === sectionType);
       if (section) {
-        const template = PLAYBOOK_SECTION_TEMPLATES[sectionType];
-        if (template) {
-          section.content = interpolateTemplate(
-            template.template,
-            pb.districtName,
-            pb.productNames
-          );
-        }
+        section.content = resolveContent(
+          pb.districtId,
+          sectionType,
+          pb.districtName,
+          pb.productNames
+        );
         section.status = 'complete';
       }
 
@@ -104,16 +135,6 @@ function simulateGeneration(playbookId: string): void {
   });
 }
 
-// Section type ordering
-const SECTION_ORDER = [
-  'district_data',
-  'key_themes',
-  'product_fit',
-  'fit_assessment',
-  'objections',
-  'stakeholders',
-];
-
 export const mockPlaybookService: IPlaybookService = {
   async generatePlaybook(request: PlaybookGenerationRequest): Promise<{ playbookId: string }> {
     await delay(300);
@@ -124,20 +145,18 @@ export const mockPlaybookService: IPlaybookService = {
       return product ? product.name : `Unknown Product (${id})`;
     });
 
-    // TODO: In a real implementation, districtName would come from DistrictService
-    // For mock, use a placeholder that gets replaced when we have district data integration
-    const districtName = 'California School District';
+    const districtName = resolveDistrictName(request.districtId);
 
     const playbookId = generateId();
     const now = new Date().toISOString();
 
     const sections: PlaybookSection[] = SECTION_ORDER.map((sectionType, index) => {
-      const template = PLAYBOOK_SECTION_TEMPLATES[sectionType];
+      const template = GENERIC_SECTION_TEMPLATES[sectionType];
       return {
         sectionId: `${playbookId}-sec-${String(index + 1).padStart(3, '0')}`,
         sectionType,
-        sectionLabel: template?.sectionLabel || sectionType,
-        contentSource: template?.contentSource || 'synthesis',
+        sectionLabel: template.sectionLabel,
+        contentSource: template.contentSource,
         status: 'pending' as SectionStatus,
         content: undefined,
         isEdited: false,
@@ -319,10 +338,12 @@ export const mockPlaybookService: IPlaybookService = {
       if (!pb) return;
       const sec = pb.sections.find((s) => s.sectionId === sectionId);
       if (!sec) return;
-      const template = PLAYBOOK_SECTION_TEMPLATES[sec.sectionType];
-      if (template) {
-        sec.content = interpolateTemplate(template.template, pb.districtName, pb.productNames);
-      }
+      sec.content = resolveContent(
+        pb.districtId,
+        sec.sectionType,
+        pb.districtName,
+        pb.productNames
+      );
       sec.status = 'complete';
       const allComplete = pb.sections.every((s) => s.status === 'complete');
       pb.overallStatus = allComplete ? 'complete' : 'partial';

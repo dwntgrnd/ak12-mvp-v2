@@ -2,6 +2,14 @@
 
 import type { FitAssessment, ContentSource, SectionStatus } from './common';
 
+export type PlaybookSectionType =
+  | 'district_story'         // was 'district_data' — narrative lead with real metrics and trends
+  | 'key_themes'             // kept — strategic themes bridging district context to product relevance
+  | 'product_alignment'      // merged 'product_fit' + 'fit_assessment' — single alignment view with evidence
+  | 'stakeholder_map'        // was 'stakeholders' — named roles + what each cares about
+  | 'objection_handling'     // was 'objections' — conversation-ready objection/response pairs
+  | 'conversation_playbook'; // NEW — tactical prep: opening, proof points, questions, next steps
+
 export interface PlaybookSummary {
   playbookId: string;
   districtId: string;
@@ -27,7 +35,7 @@ export interface Playbook {
 
 export interface PlaybookSection {
   sectionId: string;
-  sectionType: string;       // 'key_themes', 'product_fit', 'objections', 'stakeholders', 'district_data', 'fit_assessment'
+  sectionType: PlaybookSectionType;
   sectionLabel: string;      // human-readable
   contentSource: ContentSource;
   status: SectionStatus;
@@ -55,7 +63,7 @@ export interface PlaybookStatusResponse {
   overallStatus: 'generating' | 'complete' | 'partial' | 'failed';
   sections: {
     sectionId: string;
-    sectionType: string;
+    sectionType: PlaybookSectionType;
     status: SectionStatus;
   }[];
 }
