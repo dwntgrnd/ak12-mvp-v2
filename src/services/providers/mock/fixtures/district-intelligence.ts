@@ -4,7 +4,7 @@
 // Content is generated (not real LCAP data) but modeled on realistic
 // district contexts consistent with existing playbook narratives.
 //
-// Tier 1 (rich): LA, Sacramento, Fresno — all 5 categories
+// Tier 1 (rich): LA, Sacramento, Fresno — all 3 brief categories
 // Tier 2 (moderate): SF, SD, Oakland, Long Beach — 3-4 categories
 // Tier 3 (sparse): remaining districts — none, handled by absence
 
@@ -60,12 +60,6 @@ export function getAvailableCategories(districtId: string): string[] {
   if (intel.goalsBrief || (intel.goals && intel.goals.length > 0)) categories.push('goalsFunding');
   if (intel.academicBrief || intel.academicDetail) categories.push('academicPerformance');
   if (intel.competitiveBrief || (intel.programMentions && intel.programMentions.length > 0)) categories.push('competitiveIntel');
-  // Legacy categories — preserved for backward compatibility with existing UI
-  if (intel.goals && intel.goals.length > 0) categories.push('goals');
-  if (intel.budgetSummary) categories.push('budgetSummary');
-  if (intel.academicDetail) categories.push('academicDetail');
-  if (intel.competitiveLandscape && intel.competitiveLandscape.length > 0) categories.push('competitiveLandscape');
-  if (intel.keyContacts && intel.keyContacts.length > 0) categories.push('keyContacts');
   return categories;
 }
 

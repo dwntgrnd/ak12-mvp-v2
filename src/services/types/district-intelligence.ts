@@ -56,13 +56,7 @@ export interface DistrictIntelligence {
 export type IntelligenceCategory =
   | 'goalsFunding'
   | 'academicPerformance'
-  | 'competitiveIntel'
-  // Legacy keys preserved for backward compatibility during migration
-  | 'goals'
-  | 'budgetSummary'
-  | 'academicDetail'
-  | 'competitiveLandscape'
-  | 'keyContacts';
+  | 'competitiveIntel';
 
 // ============================================================
 // Source Attribution
