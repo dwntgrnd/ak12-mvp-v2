@@ -84,8 +84,8 @@ export function KeyMetricsGrid({ district, yearData }: KeyMetricsGridProps) {
         )}
       </div>
 
-      <p className="mt-2 text-xs text-muted-foreground">
-        *Source: {district.name} {district.academicYear}
+      <p className="mt-4 pt-3 border-t border-border text-xs font-medium text-muted-foreground">
+        Sources: {district.name} {district.academicYear}
       </p>
     </div>
   );

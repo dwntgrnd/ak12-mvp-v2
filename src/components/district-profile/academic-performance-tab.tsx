@@ -33,10 +33,10 @@ function buildDetailContent(
   if (allGradeBreakdowns.length === 0 && topGaps.length === 0) return undefined;
 
   return (
-    <div className="space-y-6 mt-2">
+    <div className="space-y-6">
       {allGradeBreakdowns.length > 0 && (
         <div>
-          <h4 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
+          <h4 className="text-[13px] font-semibold text-foreground mb-2">
             Overall Proficiency
           </h4>
           {allGradeBreakdowns.map((b) => {
@@ -61,7 +61,7 @@ function buildDetailContent(
 
       {topGaps.length > 0 && (
         <div>
-          <h4 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
+          <h4 className="text-[13px] font-semibold text-foreground mb-2">
             Largest Achievement Gaps
           </h4>
           {topGaps.map((g, i) => (

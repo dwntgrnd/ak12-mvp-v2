@@ -23,7 +23,7 @@ export function DistrictProfileHeader({ district }: DistrictProfileHeaderProps) 
       </nav>
 
       {/* District name */}
-      <h1 className="text-2xl font-bold">{district.name}</h1>
+      <h1 className="text-2xl font-bold tracking-tight">{district.name}</h1>
 
       {/* Contact info */}
       <div className="mt-1.5 space-y-0.5 text-sm text-muted-foreground">

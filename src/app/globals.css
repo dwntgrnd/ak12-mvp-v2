@@ -2,7 +2,7 @@
 
 :root {
   /* Semantic tokens - Base colors */
-  --background: 0 0% 100%;
+  --background: 210 40% 98%;
   --foreground: 213 47% 17%;
 
   /* Card */
@@ -56,7 +56,11 @@
   --sidebar-active: 184 97% 42%;
 
   /* Brand tokens */
-  --brand-orange: 27 100% 50%;
+  --brand-orange: 27 87% 57%;
+
+  /* Emphasis surface tokens */
+  --emphasis-surface: 186 85% 93%;
+  --emphasis-surface-neutral: 210 40% 96%;
 
   /* Layout tokens */
   --topbar-height: 3.5rem;
@@ -94,6 +98,8 @@
   --color-sidebar-hover: hsl(var(--sidebar-hover));
   --color-sidebar-active: hsl(var(--sidebar-active));
   --color-brand-orange: hsl(var(--brand-orange));
+  --color-emphasis-surface: hsl(var(--emphasis-surface));
+  --color-emphasis-surface-neutral: hsl(var(--emphasis-surface-neutral));
   --font-heading: var(--font-manrope);
   --font-body: var(--font-manrope);
   --font-mono: var(--font-mono);

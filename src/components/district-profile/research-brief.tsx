@@ -28,36 +28,57 @@ export function ResearchBrief({
 
   return (
     <div>
-      <div className="rounded-lg bg-muted/40 p-4">
-        <p className="text-sm leading-relaxed">{leadInsight}</p>
+      {/* Lead Insight — emphasis surface, no border */}
+      <div className="bg-emphasis-surface rounded-md p-4">
+        <p className="text-sm leading-relaxed text-foreground">{leadInsight}</p>
       </div>
 
-      <div className="mt-4 space-y-2">
-        <dl>
+      {/* Key Signals — 2-column grid */}
+      {keySignals.length > 0 && (
+        <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
           {keySignals.map((signal, i) => (
             <div key={i}>
-              <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{signal.label}</dt>
-              <dd className="text-sm font-medium">{signal.value}</dd>
-              {signal.detail && <dd className="text-xs text-muted-foreground">{signal.detail}</dd>}
+              <p className="text-[11px] font-medium uppercase tracking-[0.05em] text-muted-foreground">
+                {signal.label}
+              </p>
+              <p className="mt-1 text-sm font-semibold text-foreground">{signal.value}</p>
+              {signal.detail && (
+                <p className="mt-0.5 text-xs text-muted-foreground">{signal.detail}</p>
+              )}
             </div>
           ))}
-        </dl>
-      </div>
-
-      {additionalContent && (
-        <div className="mt-4">{additionalContent}</div>
+        </div>
       )}
 
+      {/* Additional Content — inset surface */}
+      {additionalContent && (
+        <div className="mt-6 bg-slate-50 rounded-md p-4">{additionalContent}</div>
+      )}
+
+      {/* Collapsible Detail */}
       {detailContent && (
-        <div className="mt-4">
+        <div className="mt-6">
           <Collapsible open={open} onOpenChange={setOpen}>
             <CollapsibleTrigger asChild>
-              <button className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
-                <ChevronRight className={cn('h-4 w-4 transition-transform', open && 'rotate-90')} />
-                {detailLabel}
+              <button
+                className={cn(
+                  'flex w-full items-center gap-1.5 py-1.5 px-2 -mx-2 rounded-md',
+                  'transition-colors hover:bg-slate-50',
+                  'text-foreground hover:text-primary',
+                )}
+              >
+                <ChevronRight
+                  className={cn(
+                    'h-[18px] w-[18px] transition-transform duration-200 ease-out',
+                    open && 'rotate-90',
+                  )}
+                />
+                <span className="text-[15px] font-semibold">{detailLabel}</span>
               </button>
             </CollapsibleTrigger>
-            <CollapsibleContent>{detailContent}</CollapsibleContent>
+            <CollapsibleContent>
+              <div className="bg-slate-50 rounded-md p-4 mt-3">{detailContent}</div>
+            </CollapsibleContent>
           </Collapsible>
         </div>
       )}

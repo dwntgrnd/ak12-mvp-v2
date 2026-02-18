@@ -24,10 +24,10 @@ export function MetricTile({ label, value, trend, trendOptions, neutralTrend }: 
   const trendDisplay = getTrendDisplay(trend ?? null, trendOptions);
 
   return (
-    <dl className="rounded-lg border bg-card p-3">
-      <dt className="text-xs text-muted-foreground">{label}</dt>
+    <dl className="rounded-lg border bg-card p-4 shadow-sm">
+      <dt className="text-xs font-medium text-muted-foreground tracking-wide">{label}</dt>
       <dd className="mt-1 flex items-baseline gap-1.5">
-        <span className="text-lg font-semibold">{value}</span>
+        <span className="text-2xl font-bold">{value}</span>
         {trendDisplay && (
           <span
             className={cn(

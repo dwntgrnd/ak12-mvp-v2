@@ -18,7 +18,7 @@ function buildDetailContent(
 ): React.ReactNode | undefined {
   if (programMentions && programMentions.length > 0) {
     return (
-      <div className="mt-2">
+      <div>
         {programMentions.map((m) => (
           <div key={m.mentionId} className="py-2 first:pt-0">
             <p className="text-sm font-medium">
@@ -40,7 +40,7 @@ function buildDetailContent(
 
   if (competitiveLandscape && competitiveLandscape.length > 0) {
     return (
-      <div className="mt-2">
+      <div>
         {competitiveLandscape.map((c) => (
           <div key={c.entryId} className="py-2 first:pt-0">
             <p className="text-sm font-medium">

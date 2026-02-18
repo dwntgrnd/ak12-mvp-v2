@@ -41,9 +41,13 @@ export function ResearchTabs({ districtId }: ResearchTabsProps) {
 
   return (
     <Tabs defaultValue={availableTabs[0].key}>
-      <TabsList className="flex-wrap h-auto gap-1">
+      <TabsList className="h-auto w-full justify-start gap-0 rounded-none border-b border-border bg-transparent p-0">
         {availableTabs.map((tab) => (
-          <TabsTrigger key={tab.key} value={tab.key} className="gap-1.5">
+          <TabsTrigger
+            key={tab.key}
+            value={tab.key}
+            className="-mb-px gap-1.5 rounded-none border-b-2 border-transparent bg-transparent px-4 py-2 text-sm font-medium text-muted-foreground shadow-none transition-colors hover:text-foreground data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:font-semibold data-[state=active]:text-foreground data-[state=active]:shadow-none"
+          >
             <tab.icon className="h-3.5 w-3.5" />
             {tab.label}
           </TabsTrigger>

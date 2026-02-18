@@ -8,9 +8,10 @@ export const brandColors = {
     blue: '#03C4D4',
     green: '#00DE9C',
     gold: '#FFC205',
-    orange: '#FF7000',
+    orange: '#F08632',
+    midBlue: '#2990C5',
+    deepBlue: '#1E698F',
     red: '#FA2E57',
-    purple: '#BF47DE',
   },
   slate: {
     50: '#F8FAFC',

@@ -15,7 +15,7 @@ export function GoalsFundingTab({ intel }: GoalsFundingTabProps) {
   const additionalContent =
     intel.otherFundingSignals && intel.otherFundingSignals.length > 0 ? (
       <div>
-        <h4 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
+        <h4 className="text-[13px] font-semibold text-foreground mb-2">
           Other Funding Signals
         </h4>
         {intel.otherFundingSignals.map((signal) => (
@@ -34,7 +34,7 @@ export function GoalsFundingTab({ intel }: GoalsFundingTabProps) {
   const goals = intel.goals && intel.goals.length > 0 ? intel.goals : null;
 
   const detailContent = goals ? (
-    <div className="mt-2">
+    <div>
       {goals.map((goal) => (
         <div key={goal.goalId} className="py-3 first:pt-0">
           <p className="text-sm font-semibold">

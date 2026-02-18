@@ -120,7 +120,7 @@ export function DistrictChart({ yearData }: DistrictChartProps) {
               <Line
                 type="monotone"
                 dataKey="SPED"
-                stroke={brandColors.brand.purple}
+                stroke={brandColors.brand.midBlue}
                 strokeWidth={2}
                 dot={{ r: 3 }}
                 connectNulls
