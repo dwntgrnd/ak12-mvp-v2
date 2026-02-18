@@ -16,6 +16,9 @@ import type {
   AcademicDetail,
   CompetitorEntry,
   DistrictContact,
+  BriefContent,
+  OtherFundingSignal,
+  ProgramMention,
 } from '../../../types/district-intelligence';
 
 // ============================================================
@@ -53,6 +56,11 @@ export function getAvailableCategories(districtId: string): string[] {
   if (!intel) return [];
 
   const categories: string[] = [];
+  // New brief categories (Phase 6A)
+  if (intel.goalsBrief || (intel.goals && intel.goals.length > 0)) categories.push('goalsFunding');
+  if (intel.academicBrief || intel.academicDetail) categories.push('academicPerformance');
+  if (intel.competitiveBrief || (intel.programMentions && intel.programMentions.length > 0)) categories.push('competitiveIntel');
+  // Legacy categories — preserved for backward compatibility with existing UI
   if (intel.goals && intel.goals.length > 0) categories.push('goals');
   if (intel.budgetSummary) categories.push('budgetSummary');
   if (intel.academicDetail) categories.push('academicDetail');
@@ -374,6 +382,88 @@ const LA_CONTACTS: DistrictContact[] = [
   },
 ];
 
+const LA_GOALS_BRIEF: BriefContent = {
+  leadInsight: "LAUSD is actively evaluating K-8 math materials aligned to the CA Math Framework, with $12.5M allocated for 2024-25. A secondary ELA curriculum refresh is planned for 2025-26 with $6.8M budgeted. Both initiatives are driven by LCAP Goal 1: Proficiency for All.",
+  keySignals: [
+    { label: "Active evaluation", value: "K-8 Mathematics — $12.5M allocated", detail: "Aligned to CA Math Framework, evaluation committee convened" },
+    { label: "Planned refresh", value: "Secondary ELA — $6.8M planned for 2025-26", detail: "Focus on culturally responsive content and ELD integration" },
+    { label: "Driving priority", value: "LCAP Goal 1: Proficiency for All" },
+    { label: "Scale", value: "530,000 students across K-12" },
+  ],
+};
+
+const LA_ACADEMIC_BRIEF: BriefContent = {
+  leadInsight: "Math proficiency (32.8%) significantly trails ELA (43.1%), making math the more urgent instructional need. English Learners and Students with Disabilities show the largest achievement gaps — EL math proficiency is just 12.4%. Scores are improving slowly across both subjects, but remain well below state targets.",
+  keySignals: [
+    { label: "Weakest subject", value: "Mathematics — 32.8% proficient", detail: "10.3 points below ELA; Grade 8 at 22.4%" },
+    { label: "English Learners", value: "12.4% math / 8.7% ELA", detail: "20+ point gap below district average in both subjects" },
+    { label: "Students with Disabilities", value: "9.8% math / 11.2% ELA" },
+    { label: "Trend", value: "Improving — math up 2.2 pts, ELA up 1.4 pts year-over-year" },
+  ],
+};
+
+const LA_COMPETITIVE_BRIEF: BriefContent = {
+  leadInsight: "LAUSD's LCAP references an active evaluation of K-8 math materials, with HMH Into Math (current K-8 adoption) on a contract ending June 2026. The secondary ELA program (McGraw-Hill StudySync, 6-12) is flagged for a curriculum refresh in 2025-26. Amplify ELA is referenced as the K-5 ELA program in several local districts.",
+  keySignals: [
+    { label: "Active evaluation", value: "K-8 Mathematics — evaluation underway", detail: "HMH Into Math contract expires June 2026" },
+    { label: "Replacement signal", value: "Secondary ELA (McGraw-Hill StudySync 6-12) — refresh planned 2025-26" },
+    { label: "Current programs", value: "Amplify ELA (K-5), i-Ready Diagnostic (K-8 math intervention)" },
+  ],
+};
+
+const LA_OTHER_FUNDING: OtherFundingSignal[] = [
+  {
+    name: "Educator Effectiveness Block Grant",
+    amount: "$45,000,000",
+    sourceType: "state allocation",
+    expiration: "2026",
+    relevanceNote: "Available for PD, curriculum support, and coaching",
+  },
+];
+
+const LA_PROGRAM_MENTIONS: ProgramMention[] = [
+  {
+    mentionId: 'la-pm-1',
+    programName: 'Into Math',
+    vendorName: 'Houghton Mifflin Harcourt',
+    subjectArea: 'Mathematics',
+    gradeRange: 'K-8',
+    mentionType: 'in_use',
+    sourceContext: 'Current primary math adoption; contract approaching end June 2026.',
+    sourceId: 'src-la-lcap-2425',
+  },
+  {
+    mentionId: 'la-pm-2',
+    programName: 'Amplify ELA',
+    vendorName: 'Amplify',
+    subjectArea: 'English Language Arts',
+    gradeRange: 'K-5',
+    mentionType: 'in_use',
+    sourceContext: 'Referenced in board minutes as active elementary ELA in several local districts.',
+    sourceId: 'src-la-board',
+  },
+  {
+    mentionId: 'la-pm-3',
+    programName: 'StudySync',
+    vendorName: 'McGraw-Hill',
+    subjectArea: 'English Language Arts',
+    gradeRange: '6-12',
+    mentionType: 'in_use',
+    sourceContext: 'Secondary ELA in some local districts; LCAP actions signal evaluation for replacement.',
+    sourceId: 'src-la-lcap-2425',
+  },
+  {
+    mentionId: 'la-pm-4',
+    programName: 'i-Ready',
+    vendorName: 'Curriculum Associates',
+    subjectArea: 'Mathematics',
+    gradeRange: 'K-8',
+    mentionType: 'in_use',
+    sourceContext: 'Used district-wide for diagnostic assessment and intervention; separate from core materials.',
+    sourceId: 'src-la-web',
+  },
+];
+
 INTELLIGENCE_MAP['dist-la-001'] = {
   districtId: 'dist-la-001',
   lastUpdated: '2025-12-01T00:00:00Z',
@@ -382,6 +472,11 @@ INTELLIGENCE_MAP['dist-la-001'] = {
   academicDetail: LA_ACADEMIC,
   competitiveLandscape: LA_COMPETITORS,
   keyContacts: LA_CONTACTS,
+  goalsBrief: LA_GOALS_BRIEF,
+  academicBrief: LA_ACADEMIC_BRIEF,
+  competitiveBrief: LA_COMPETITIVE_BRIEF,
+  otherFundingSignals: LA_OTHER_FUNDING,
+  programMentions: LA_PROGRAM_MENTIONS,
   prioritySummary: 'LAUSD\'s 2024-25 priorities center on math proficiency recovery (32.8%, up from 28.5%), English Learner achievement and reclassification for its 106K EL population, and reducing chronic absenteeism from 25.1%. The district is actively evaluating K-8 math materials aligned to the CA Math Framework and planning a secondary ELA curriculum refresh with emphasis on culturally responsive content. Budget pressure from enrollment decline (548K → 530K over 3 years) drives demand for evidence-based ROI from every curriculum investment.',
   sources: LA_SOURCES,
 };
@@ -667,6 +762,88 @@ const SAC_CONTACTS: DistrictContact[] = [
   },
 ];
 
+const SAC_GOALS_BRIEF: BriefContent = {
+  leadInsight: "SCUSD is in an active adoption cycle for both K-8 mathematics ($3.2M) and secondary ELA 6-12 ($1.8M), with evaluation committees convened and board approval targeted for Spring 2026. Both initiatives are driven by LCAP Goal 1 and a district-wide commitment to closing achievement gaps.",
+  keySignals: [
+    { label: "Active adoption", value: "K-8 Mathematics — $3.2M allocated", detail: "Evaluation committee convened; board approval Spring 2026" },
+    { label: "Active adoption", value: "Secondary ELA (6-12) — $1.8M allocated", detail: "Evaluation underway; pilot planned Spring 2026" },
+    { label: "Driving priority", value: "LCAP Goal 1: Academic Excellence — Closing Achievement Gaps" },
+    { label: "Scale", value: "27,000 students K-12" },
+  ],
+};
+
+const SAC_ACADEMIC_BRIEF: BriefContent = {
+  leadInsight: "SCUSD math proficiency (26.0%) trails ELA (38.0%) by 12 points, with Grade 8 math at just 18.9%. English Learner achievement gaps are the most severe — EL ELA proficiency at 6.5% is the district's most critical equity challenge. Both subjects show steady upward trends, but proficiency remains well below state averages.",
+  keySignals: [
+    { label: "Weakest subject", value: "Mathematics — 26.0% proficient", detail: "12 points below ELA; Grade 8 at 18.9%" },
+    { label: "English Learners", value: "10.2% math / 6.5% ELA", detail: "Critical EL equity gap across both subjects" },
+    { label: "African American students", value: "11.5% math / 21.0% ELA", detail: "14-17 point gap below district average" },
+    { label: "Trend", value: "Improving — math up 1.9 pts, ELA up 1.7 pts year-over-year" },
+  ],
+};
+
+const SAC_COMPETITIVE_BRIEF: BriefContent = {
+  leadInsight: "SCUSD's LCAP references an active evaluation for both K-8 math and secondary ELA adoption cycles. HMH Go Math! (current K-8 math) is being replaced through the active adoption cycle, with its contract expiring June 2026. Amplify ELA and McGraw-Hill Reveal Math are identified as presenting to the respective adoption committees.",
+  keySignals: [
+    { label: "Being replaced", value: "HMH Go Math! (K-8 Math) — contract expiring June 2026" },
+    { label: "In evaluation", value: "Amplify ELA (6-8 ELA) — presenting to secondary ELA committee", detail: "Strong digital platform and culturally responsive content" },
+    { label: "In evaluation", value: "McGraw-Hill Reveal Math (K-8) — competing in math adoption evaluation" },
+  ],
+};
+
+const SAC_OTHER_FUNDING: OtherFundingSignal[] = [
+  {
+    name: "Educator Effectiveness Block Grant",
+    amount: "$8,500,000",
+    sourceType: "state allocation",
+    expiration: "2026",
+    relevanceNote: "One-time funding available for PD, coaching, and implementation support",
+  },
+];
+
+const SAC_PROGRAM_MENTIONS: ProgramMention[] = [
+  {
+    mentionId: 'sac-pm-1',
+    programName: 'Go Math!',
+    vendorName: 'Houghton Mifflin Harcourt',
+    subjectArea: 'Mathematics',
+    gradeRange: 'K-8',
+    mentionType: 'in_use',
+    sourceContext: 'Current math adoption; contract expiring June 2026 and being replaced through active adoption cycle.',
+    sourceId: 'src-sac-lcap-2425',
+  },
+  {
+    mentionId: 'sac-pm-2',
+    programName: 'Wonders',
+    vendorName: 'McGraw-Hill',
+    subjectArea: 'English Language Arts',
+    gradeRange: 'K-5',
+    mentionType: 'in_use',
+    sourceContext: 'Elementary ELA; not part of current adoption cycle.',
+    sourceId: 'src-sac-sales',
+  },
+  {
+    mentionId: 'sac-pm-3',
+    programName: 'Amplify ELA',
+    vendorName: 'Amplify',
+    subjectArea: 'English Language Arts',
+    gradeRange: '6-8',
+    mentionType: 'under_evaluation',
+    sourceContext: 'Presenting to the secondary ELA adoption committee; strong digital platform and culturally responsive content.',
+    sourceId: 'src-sac-sales',
+  },
+  {
+    mentionId: 'sac-pm-4',
+    programName: 'Reveal Math',
+    vendorName: 'McGraw-Hill',
+    subjectArea: 'Mathematics',
+    gradeRange: 'K-8',
+    mentionType: 'under_evaluation',
+    sourceContext: 'Competing in the K-8 math adoption evaluation; strong standards alignment marketing.',
+    sourceId: 'src-sac-sales',
+  },
+];
+
 INTELLIGENCE_MAP['dist-sac-001'] = {
   districtId: 'dist-sac-001',
   lastUpdated: '2025-12-01T00:00:00Z',
@@ -675,6 +852,11 @@ INTELLIGENCE_MAP['dist-sac-001'] = {
   academicDetail: SAC_ACADEMIC,
   competitiveLandscape: SAC_COMPETITORS,
   keyContacts: SAC_CONTACTS,
+  goalsBrief: SAC_GOALS_BRIEF,
+  academicBrief: SAC_ACADEMIC_BRIEF,
+  competitiveBrief: SAC_COMPETITIVE_BRIEF,
+  otherFundingSignals: SAC_OTHER_FUNDING,
+  programMentions: SAC_PROGRAM_MENTIONS,
   prioritySummary: 'SCUSD is in an active adoption cycle for both K-8 math and secondary ELA — the strongest timing signal in the pipeline. The district\'s LCAP priorities center on closing achievement gaps (math at 26%, ELA at 38%), EL reclassification, and culturally responsive curriculum. Evaluation committees are convened, budgets are allocated ($3.2M math, $1.8M ELA), and board approval is targeted for Spring 2026. As the state capital\'s urban core district, SCUSD\'s adoption decisions influence the broader Sacramento region.',
   sources: SAC_SOURCES,
 };
@@ -942,6 +1124,68 @@ const FRE_CONTACTS: DistrictContact[] = [
   },
 ];
 
+const FRE_GOALS_BRIEF: BriefContent = {
+  leadInsight: "Fresno Unified recently completed a K-8 math adoption (Curriculum Associates Ready Mathematics, contract through 2030), eliminating near-term math opportunity. Current LCAP priorities focus on successful implementation of the new math program, reducing 30.7% chronic absenteeism, and supporting 14,340 English Learners. No active materials evaluation is signaled for 2024-25.",
+  keySignals: [
+    { label: "Recently adopted", value: "K-8 Mathematics — Curriculum Associates, contract through 2030", detail: "Year 1 implementation underway; $2.8M PD and rollout budget" },
+    { label: "Primary priority", value: "Chronic Absenteeism — 30.7% rate, $3.1M intervention initiative" },
+    { label: "EL focus", value: "14,340 English Learners — ELD integration in math implementation" },
+    { label: "Next window", value: "Math adoption cycle estimated 2029-2031" },
+  ],
+};
+
+const FRE_ACADEMIC_BRIEF: BriefContent = {
+  leadInsight: "Fresno shows meaningful improvement from a low base — math up to 25.1% (from 22.5%), ELA up to 34.7% (from 32.2%) — but three-quarters of students remain below grade level in math. Grade 8 math proficiency at 16.3% is critically low. English Learner proficiency gaps are severe, with EL ELA at just 5.2%, and the Hmong student population shows persistent gaps across both subjects.",
+  keySignals: [
+    { label: "Weakest subject", value: "Mathematics — 25.1% proficient", detail: "Grade 8 at 16.3%; improving from 22.5% prior year" },
+    { label: "English Learners", value: "11.8% math / 5.2% ELA", detail: "Most severe EL ELA gap among comparable districts" },
+    { label: "African American students", value: "10.2% math / 16.8% ELA", detail: "15-18 point gap below district average" },
+    { label: "Hmong subgroup", value: "18.1% math / 22.5% ELA", detail: "Significant in Fresno's Central Valley demographics" },
+  ],
+};
+
+const FRE_COMPETITIVE_BRIEF: BriefContent = {
+  leadInsight: "Fresno's LCAP references Curriculum Associates Ready Mathematics as the recently adopted K-8 math program, with a multi-year contract through 2030. i-Ready Diagnostic is paired with the core adoption as the assessment and intervention platform. McGraw-Hill StudySync is referenced as the current secondary ELA program with no active replacement cycle signaled.",
+  keySignals: [
+    { label: "Recently adopted", value: "Curriculum Associates Ready Mathematics (K-8)", detail: "Multi-year contract through 2030; Year 1 implementation" },
+    { label: "Paired platform", value: "i-Ready Diagnostic — math assessment and adaptive intervention (K-8)" },
+    { label: "Current ELA", value: "McGraw-Hill StudySync (6-12) — no active replacement cycle" },
+  ],
+};
+
+const FRE_PROGRAM_MENTIONS: ProgramMention[] = [
+  {
+    mentionId: 'fre-pm-1',
+    programName: 'Ready Mathematics',
+    vendorName: 'Curriculum Associates',
+    subjectArea: 'Mathematics',
+    gradeRange: 'K-8',
+    mentionType: 'in_use',
+    sourceContext: 'Won the 2024 competitive adoption; multi-year contract through 2030 with Year 1 implementation underway.',
+    sourceId: 'src-fre-sales',
+  },
+  {
+    mentionId: 'fre-pm-2',
+    programName: 'i-Ready Diagnostic',
+    vendorName: 'Curriculum Associates',
+    subjectArea: 'Mathematics',
+    gradeRange: 'K-8',
+    mentionType: 'in_use',
+    sourceContext: 'Diagnostic and adaptive practice platform paired with Ready Mathematics core adoption.',
+    sourceId: 'src-fre-sales',
+  },
+  {
+    mentionId: 'fre-pm-3',
+    programName: 'StudySync',
+    vendorName: 'McGraw-Hill',
+    subjectArea: 'English Language Arts',
+    gradeRange: '6-12',
+    mentionType: 'in_use',
+    sourceContext: 'Current secondary ELA; no active replacement cycle signaled.',
+    sourceId: 'src-fre-sales',
+  },
+];
+
 INTELLIGENCE_MAP['dist-fre-001'] = {
   districtId: 'dist-fre-001',
   lastUpdated: '2025-12-01T00:00:00Z',
@@ -950,6 +1194,10 @@ INTELLIGENCE_MAP['dist-fre-001'] = {
   academicDetail: FRE_ACADEMIC,
   competitiveLandscape: FRE_COMPETITORS,
   keyContacts: FRE_CONTACTS,
+  goalsBrief: FRE_GOALS_BRIEF,
+  academicBrief: FRE_ACADEMIC_BRIEF,
+  competitiveBrief: FRE_COMPETITIVE_BRIEF,
+  programMentions: FRE_PROGRAM_MENTIONS,
   prioritySummary: 'Fresno Unified recently completed a K-8 math adoption (Curriculum Associates, contract through 2030), eliminating near-term math sales opportunity. Current priorities focus on successful implementation of the new math program, reducing 30.7% chronic absenteeism, and supporting 14,340 English Learners. Math proficiency at 25.1% and ELA at 34.7% will be the baseline against which the new adoption is measured. Long-term relationship building for the next adoption cycle (est. 2029-2031) is the strategic play.',
   sources: FRE_SOURCES,
 };
@@ -958,9 +1206,19 @@ INTELLIGENCE_MAP['dist-fre-001'] = {
 // TIER 2: SAN FRANCISCO UNIFIED (dist-sf-001)
 // ============================================================
 
+const SF_GOALS_BRIEF: BriefContent = {
+  leadInsight: "SFUSD is in a review phase for K-8 math materials, evaluating alignment with the CA Math Framework, but has not initiated an active adoption cycle. The district's Literacy Equity Initiative ($1.2M) focuses on culturally affirming texts — not a core curriculum replacement. No active curriculum procurement is signaled for 2024-25.",
+  keySignals: [
+    { label: "Math review", value: "K-8 Mathematics — framework alignment review, $250K", detail: "Review phase only; adoption timeline TBD based on findings" },
+    { label: "Active initiative", value: "Literacy Equity Initiative — $1.2M for culturally affirming texts" },
+    { label: "No active adoption", value: "No core curriculum procurement signaled for 2024-25" },
+  ],
+};
+
 INTELLIGENCE_MAP['dist-sf-001'] = {
   districtId: 'dist-sf-001',
   lastUpdated: '2025-11-15T00:00:00Z',
+  goalsBrief: SF_GOALS_BRIEF,
   goals: [
     {
       goalId: 'sf-goal-1',
@@ -1064,9 +1322,52 @@ INTELLIGENCE_MAP['dist-sf-001'] = {
 // TIER 2: SAN DIEGO UNIFIED (dist-sd-001)
 // ============================================================
 
+const SD_GOALS_BRIEF: BriefContent = {
+  leadInsight: "San Diego USD is planning a K-5 math materials pilot for Spring 2026, with 20 representative schools participating. The current HMH Into Math contract has 2 years remaining but an early performance-based review has been initiated. No active ELA procurement is signaled.",
+  keySignals: [
+    { label: "Planned pilot", value: "K-5 Mathematics — 20-school pilot, Spring 2026, $800K", detail: "Early review initiated due to performance concerns with current program" },
+    { label: "Stable ELA", value: "Elementary ELA (Amplify) — strong teacher satisfaction, no replacement cycle" },
+    { label: "Driving priority", value: "LCAP Goal 1: Accelerating Student Achievement" },
+  ],
+};
+
+const SD_COMPETITIVE_BRIEF: BriefContent = {
+  leadInsight: "SDUSD's LCAP references an early review of K-5 math materials, with HMH Into Math under performance-based early review despite 2 years remaining on contract. Amplify ELA is referenced as the elementary ELA program with strong teacher satisfaction and no active replacement cycle signaled.",
+  keySignals: [
+    { label: "Under review", value: "HMH Into Math (K-5 Math) — early review due to performance concerns", detail: "Contract has 2 years remaining (expires 2027)" },
+    { label: "Stable", value: "Amplify ELA (K-5 ELA) — strong teacher satisfaction, not up for replacement" },
+  ],
+};
+
+const SD_PROGRAM_MENTIONS: ProgramMention[] = [
+  {
+    mentionId: 'sd-pm-1',
+    programName: 'Into Math',
+    vendorName: 'Houghton Mifflin Harcourt',
+    subjectArea: 'Mathematics',
+    gradeRange: 'K-5',
+    mentionType: 'in_use',
+    sourceContext: 'Current elementary math; early review initiated due to performance concerns despite 2 years remaining on contract.',
+    sourceId: 'src-sd-sales',
+  },
+  {
+    mentionId: 'sd-pm-2',
+    programName: 'Amplify ELA',
+    vendorName: 'Amplify',
+    subjectArea: 'English Language Arts',
+    gradeRange: 'K-5',
+    mentionType: 'in_use',
+    sourceContext: 'Elementary ELA with strong teacher satisfaction; not expected to be replaced in near term.',
+    sourceId: 'src-sd-sales',
+  },
+];
+
 INTELLIGENCE_MAP['dist-sd-001'] = {
   districtId: 'dist-sd-001',
   lastUpdated: '2025-11-15T00:00:00Z',
+  goalsBrief: SD_GOALS_BRIEF,
+  competitiveBrief: SD_COMPETITIVE_BRIEF,
+  programMentions: SD_PROGRAM_MENTIONS,
   goals: [
     {
       goalId: 'sd-goal-1',
@@ -1163,9 +1464,52 @@ INTELLIGENCE_MAP['dist-sd-001'] = {
 // TIER 2: OAKLAND UNIFIED (dist-oak-001)
 // ============================================================
 
+const OAK_GOALS_BRIEF: BriefContent = {
+  leadInsight: "Oakland USD is conducting a needs assessment for potential math and ELA adoption cycles, but no active procurement has been initiated. Current K-8 math uses Illustrative Mathematics (OER), which has strong teacher buy-in but limited adaptive technology and EL supports. Budget constraints significantly shape any future materials decision.",
+  keySignals: [
+    { label: "Needs assessment", value: "K-8 Math and ELA — adoption needs assessment underway, $1.8M", detail: "OER-based math (Illustrative Mathematics) in place; assessing capability gaps" },
+    { label: "Fiscal constraint", value: "LCAP Goal 2: Fiscal Stability — school closures and budget pressure ongoing" },
+    { label: "No active adoption", value: "No confirmed adoption cycle for 2024-25" },
+  ],
+};
+
+const OAK_COMPETITIVE_BRIEF: BriefContent = {
+  leadInsight: "Oakland's LCAP references Illustrative Mathematics as the current K-8 math program — an OER curriculum with strong teacher buy-in but identified gaps in adaptive technology and differentiation for English Learners. No ELA program mentions were extracted from available district documents.",
+  keySignals: [
+    { label: "Current K-8 math", value: "Illustrative Mathematics (K-5 and 6-8)", detail: "OER-based; strong teacher support; limited adaptive technology and EL scaffolding" },
+    { label: "Identified gap", value: "Differentiation and EL support limitations reported by teachers" },
+  ],
+};
+
+const OAK_PROGRAM_MENTIONS: ProgramMention[] = [
+  {
+    mentionId: 'oak-pm-1',
+    programName: 'IM K-5 Math',
+    vendorName: 'Illustrative Mathematics',
+    subjectArea: 'Mathematics',
+    gradeRange: 'K-5',
+    mentionType: 'in_use',
+    sourceContext: 'OER-based math curriculum with strong teacher buy-in; limited adaptive technology and EL supports.',
+    sourceId: 'src-oak-sales',
+  },
+  {
+    mentionId: 'oak-pm-2',
+    programName: 'IM 6-8 Math',
+    vendorName: 'Illustrative Mathematics',
+    subjectArea: 'Mathematics',
+    gradeRange: '6-8',
+    mentionType: 'in_use',
+    sourceContext: 'Extension of K-5 OER adoption; teachers report challenges with differentiation.',
+    sourceId: 'src-oak-sales',
+  },
+];
+
 INTELLIGENCE_MAP['dist-oak-001'] = {
   districtId: 'dist-oak-001',
   lastUpdated: '2025-11-15T00:00:00Z',
+  goalsBrief: OAK_GOALS_BRIEF,
+  competitiveBrief: OAK_COMPETITIVE_BRIEF,
+  programMentions: OAK_PROGRAM_MENTIONS,
   goals: [
     {
       goalId: 'oak-goal-1',
@@ -1271,9 +1615,19 @@ INTELLIGENCE_MAP['dist-oak-001'] = {
 // TIER 2: LONG BEACH UNIFIED (dist-lb-001)
 // ============================================================
 
+const LB_GOALS_BRIEF: BriefContent = {
+  leadInsight: "Long Beach USD is focused on continuous improvement of current K-8 math materials rather than replacement, with ongoing coaching and PD driving the $1.5M LCAP action. The district is conducting a data-driven evaluation of whether supplemental or replacement materials are needed. No active adoption cycle has been initiated.",
+  keySignals: [
+    { label: "Improvement focus", value: "K-8 Mathematics — coaching and PD for current materials, $1.5M", detail: "Evaluating need for supplemental or replacement based on student outcome data" },
+    { label: "No active adoption", value: "No core curriculum procurement signaled for 2024-25" },
+    { label: "Driving priority", value: "LCAP Goal 1: Academic Achievement for Every Student" },
+  ],
+};
+
 INTELLIGENCE_MAP['dist-lb-001'] = {
   districtId: 'dist-lb-001',
   lastUpdated: '2025-11-15T00:00:00Z',
+  goalsBrief: LB_GOALS_BRIEF,
   goals: [
     {
       goalId: 'lb-goal-1',
