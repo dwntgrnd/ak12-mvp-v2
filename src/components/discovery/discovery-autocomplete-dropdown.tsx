@@ -43,7 +43,7 @@ export function DiscoveryAutocompleteDropdown({
       id="discovery-autocomplete-listbox"
       role="listbox"
       aria-label="District suggestions"
-      className="absolute top-full left-0 right-0 mt-1 bg-white border border-slate-200 rounded-lg shadow-lg z-50 overflow-hidden max-h-[320px] overflow-y-auto"
+      className="absolute top-full left-0 right-0 mt-1 bg-white border border-slate-200 rounded-lg shadow-lg z-50 overflow-hidden max-h-[320px] overflow-y-auto text-left"
     >
       {isLoading ? (
         <li
@@ -81,7 +81,7 @@ export function DiscoveryAutocompleteDropdown({
               onSelect(entry);
             }}
           >
-            <span className="text-sm font-medium text-foreground">
+            <span className="text-sm font-normal text-foreground">
               <HighlightedName name={entry.name} query={query} />
             </span>
             <span className="text-xs text-slate-500 font-normal ml-1.5">
