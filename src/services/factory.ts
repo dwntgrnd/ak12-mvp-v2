@@ -2,6 +2,7 @@ import type { IPlaybookService } from './interfaces/playbook-service';
 import type { IProductService } from './interfaces/product-service';
 import type { IConfigService } from './interfaces/config-service';
 import type { IDistrictService } from './interfaces/district-service';
+import type { IDiscoveryService } from './interfaces/discovery-service';
 
 // Provider type — determines which implementation is used
 type ProviderType = 'mock' | 'local' | 'api';
@@ -58,6 +59,18 @@ export async function getDistrictService(): Promise<IDistrictService> {
     case 'mock': {
       const { mockDistrictService } = await import('./providers/mock');
       return mockDistrictService;
+    }
+    default:
+      throw new Error(`Unknown provider type: ${provider}`);
+  }
+}
+
+export async function getDiscoveryService(): Promise<IDiscoveryService> {
+  const provider = getProviderType();
+  switch (provider) {
+    case 'mock': {
+      const { mockDiscoveryService } = await import('./providers/mock');
+      return mockDiscoveryService;
     }
     default:
       throw new Error(`Unknown provider type: ${provider}`);

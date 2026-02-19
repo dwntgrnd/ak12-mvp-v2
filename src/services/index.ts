@@ -6,9 +6,11 @@ export {
   getProductService,
   getConfigService,
   getDistrictService,
+  getDiscoveryService,
 } from './factory';
 
 // Service interfaces
+export type { IDiscoveryService } from './interfaces/discovery-service';
 export type { IAuthService } from './interfaces/auth-service';
 export type { IConfigService } from './interfaces/config-service';
 export type { ITenantService } from './interfaces/tenant-service';
@@ -93,3 +95,36 @@ export type {
   PlaybookGenerationRequest,
   PlaybookStatusResponse
 } from './types/playbook';
+
+// Discovery types
+export type {
+  QueryIntent,
+  ResponseFormat,
+  ConfidenceLevel,
+  CoverageCategory,
+  CategoryCoverage,
+  DistrictCoverage,
+  SectionConfidence,
+  ResponseConfidence,
+  FollowUpChip,
+  DiscoverySource,
+  BriefSection,
+  KeySignal,
+  BriefContent,
+  DirectAnswerContent,
+  ComparisonCell,
+  ComparisonEntity,
+  ComparisonDimension,
+  ComparisonContent,
+  CardSetEntry,
+  CardSetContent,
+  RankedListEntry,
+  RankedListContent,
+  RecoveryContent,
+  DiscoveryResponseContent,
+  DiscoveryQueryResponse,
+  DiscoveryQueryRequest,
+  DirectoryEntry,
+  DirectorySearchRequest,
+  DirectorySearchResponse,
+} from './types/discovery';
