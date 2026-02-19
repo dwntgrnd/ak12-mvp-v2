@@ -12,10 +12,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
-  DistrictProfileHeader,
-  KeyMetricsGrid,
-  QuickActionsPanel,
-  DistrictChart,
+  DistrictIdentityBar,
   ResearchTabs,
 } from '@/components/district-profile';
 import { GeneratePlaybookSheet } from '@/components/playbook/generate-playbook-sheet';
@@ -129,32 +126,27 @@ export default function DistrictProfilePage({
   if (loading || !district) {
     return (
       <div className="space-y-6">
-        {/* Identity + metrics skeleton */}
-        <div className="grid gap-6 lg:grid-cols-[1fr_1fr]">
-          <div className="space-y-3">
-            <Skeleton className="h-8 w-64" />
-            <Skeleton className="h-4 w-48" />
-            <Skeleton className="h-4 w-36" />
+        {/* Identity bar skeleton */}
+        <div className="max-w-[1024px] mx-auto space-y-3">
+          <div className="flex items-center justify-between">
+            <Skeleton className="h-7 w-64" />
+            <div className="flex gap-2">
+              <Skeleton className="h-9 w-28" />
+              <Skeleton className="h-9 w-28" />
+            </div>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+          <div className="pt-3 border-t border-border flex gap-4">
             {Array.from({ length: 5 }).map((_, i) => (
-              <Skeleton key={i} className="h-20 rounded-lg" />
+              <Skeleton key={i} className="h-12 w-24" />
             ))}
           </div>
         </div>
 
-        {/* Chart + actions skeleton */}
-        <div className="grid gap-6 lg:grid-cols-[1fr_280px]">
-          <Skeleton className="h-80 rounded-lg" />
-          <div className="space-y-2">
-            <Skeleton className="h-16 rounded-lg" />
-            <Skeleton className="h-16 rounded-lg" />
-            <Skeleton className="h-16 rounded-lg" />
-          </div>
+        {/* Content column skeleton */}
+        <div className="max-w-[1024px] mx-auto mt-6 space-y-4">
+          <Skeleton className="h-9 w-full" />
+          <Skeleton className="h-64 w-full" />
         </div>
-
-        {/* Tabs render with districtId */}
-        <ResearchTabs districtId={districtId} />
       </div>
     );
   }
@@ -164,42 +156,39 @@ export default function DistrictProfilePage({
   const fitColors = fitCategory ? fitCategoryColors[fitCategory] : null;
 
   return (
-    <div className="space-y-6">
-      {/* Row 1: Header + Metrics */}
-      <div className="grid gap-6 lg:grid-cols-[1fr_1fr]">
-        <DistrictProfileHeader district={district} />
-        <KeyMetricsGrid district={district} yearData={yearData} />
-      </div>
-
-      {/* Row 2: Chart + Quick Actions */}
-      <div className="grid gap-6 lg:grid-cols-[1fr_280px]">
-        <DistrictChart yearData={yearData} />
-        <QuickActionsPanel
+    <div>
+      {/* Zone 1 — Identity Bar (constrained to match content column) */}
+      <div className="max-w-[1024px] mx-auto">
+        <DistrictIdentityBar
           district={district}
+          yearData={yearData}
           productId={productId ?? undefined}
           onGeneratePlaybook={() => setPlaybookOpen(true)}
         />
       </div>
 
-      {/* Fit Assessment (if product context) */}
-      {fitAssessment && fitColors && (
-        <div className={cn('rounded-lg border p-4', fitColors.bg)}>
-          <div className="flex items-center gap-3">
-            <Badge className={cn(fitColors.bg, fitColors.text, fitColors.border, 'border')}>
-              {fitColors.label}
-            </Badge>
-            <span className="text-sm font-medium">
-              Fit Score: {fitAssessment.fitScore}/10
-            </span>
+      {/* Zone 2 — Content Column */}
+      <div className="max-w-[1024px] mx-auto mt-8 space-y-4">
+        {/* Fit Assessment (if product context) */}
+        {fitAssessment && fitColors && (
+          <div className={cn('rounded-lg border p-4', fitColors.bg)}>
+            <div className="flex items-center gap-3">
+              <Badge className={cn(fitColors.bg, fitColors.text, fitColors.border, 'border')}>
+                {fitColors.label}
+              </Badge>
+              <span className="text-sm font-medium">
+                Fit Score: {fitAssessment.fitScore}/10
+              </span>
+            </div>
+            <p className="mt-2 text-sm text-muted-foreground">
+              {fitAssessment.fitRationale}
+            </p>
           </div>
-          <p className="mt-2 text-sm text-muted-foreground">
-            {fitAssessment.fitRationale}
-          </p>
-        </div>
-      )}
+        )}
 
-      {/* Research Tabs */}
-      <ResearchTabs districtId={districtId} />
+        {/* Research Tabs */}
+        <ResearchTabs districtId={districtId} yearData={yearData} />
+      </div>
 
       {/* Generate Playbook Sheet */}
       <GeneratePlaybookSheet
