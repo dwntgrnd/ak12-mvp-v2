@@ -1,2 +1,14 @@
 export { DistrictCard } from './district-card';
 export { DiscoveryToolbar } from './discovery-toolbar';
+export { DiscoveryEntryState } from './discovery-entry-state';
+export { DiscoveryInput } from './discovery-input';
+export { DiscoveryLoadingState } from './discovery-loading-state';
+export { DiscoveryResultsLayout } from './discovery-results-layout';
+export { FollowUpChips } from './follow-up-chips';
+export { SourceCitations } from './source-citations';
+export { BriefRenderer } from './renderers/brief-renderer';
+export { TransparencyNote } from './renderers/transparency-note';
+export { DirectAnswerCard } from './renderers/direct-answer-card';
+export { RecoveryRenderer } from './renderers/recovery-renderer';
+export { DiscoveryFormatRouter } from './discovery-format-router';
+// DiscoveryAutocompleteDropdown not exported — internal to DiscoveryInput
