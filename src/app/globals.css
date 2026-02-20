@@ -69,13 +69,14 @@
   --sidebar-width-collapsed: 4rem;
 
   /* Typography scale tokens */
-  --font-size-page-title: 24px;
-  --font-size-section-heading: 18px;
-  --font-size-subsection-heading: 15px;
-  --font-size-subsection-sm: 13px;
-  --font-size-body: 14px;
-  --font-size-caption: 12px;
-  --font-size-overline: 11px;
+  --font-base: 14px;                                                /* ← change this to scale all sizes */
+  --font-size-overline:           calc(var(--font-base) * 0.786);  /* 11px at base 14 */
+  --font-size-caption:            calc(var(--font-base) * 0.857);  /* 12px */
+  --font-size-subsection-sm:      calc(var(--font-base) * 0.929);  /* 13px */
+  --font-size-body:               var(--font-base);                 /* 14px */
+  --font-size-subsection-heading: calc(var(--font-base) * 1.071);  /* 15px */
+  --font-size-section-heading:    calc(var(--font-base) * 1.286);  /* 18px */
+  --font-size-page-title:         calc(var(--font-base) * 1.714);  /* 24px */
 }
 
 @theme inline {
