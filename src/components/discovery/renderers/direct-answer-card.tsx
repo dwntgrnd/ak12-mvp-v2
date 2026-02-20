@@ -1,3 +1,6 @@
+'use client';
+
+import { useRouter } from 'next/navigation';
 import type { DirectAnswerContent, ResponseConfidence } from '@/services/types/discovery';
 
 interface DirectAnswerCardProps {
@@ -6,6 +9,8 @@ interface DirectAnswerCardProps {
 }
 
 export function DirectAnswerCard({ content }: DirectAnswerCardProps) {
+  const router = useRouter();
+
   return (
     <div className="bg-white border border-slate-200 rounded-lg shadow-sm p-5">
       {/* Emphasis surface — value + unit centered */}
@@ -20,10 +25,47 @@ export function DirectAnswerCard({ content }: DirectAnswerCardProps) {
         )}
       </div>
 
-      {/* Context line */}
+      {/* Context line — with linked district name when available */}
       <p className="mt-3 text-body font-[400] leading-[1.6] text-slate-500 text-center">
-        {content.contextLine}
+        {content.districtId && content.districtName ? (
+          <>
+            <a
+              href={`/districts/${content.districtId}`}
+              className="font-[500] text-primary hover:underline hover:decoration-primary/60 underline-offset-2 transition-colors"
+              onClick={(e) => {
+                e.preventDefault();
+                router.push(`/districts/${content.districtId}`);
+              }}
+            >
+              {content.districtName}
+            </a>
+            {' · '}
+            {content.contextLine.includes(content.districtName)
+              ? content.contextLine
+                  .substring(content.contextLine.indexOf(content.districtName) + content.districtName.length)
+                  .replace(/^\s*·\s*/, '')
+              : content.contextLine}
+          </>
+        ) : (
+          content.contextLine
+        )}
       </p>
+
+      {/* Action link — only when district context available */}
+      {content.districtId && (
+        <div className="mt-4 text-center">
+          <a
+            href={`/districts/${content.districtId}`}
+            className="text-caption font-[500] leading-[1.5] tracking-[0.025em] text-primary hover:underline hover:decoration-primary/60 underline-offset-2 transition-colors"
+            onClick={(e) => {
+              e.preventDefault();
+              router.push(`/districts/${content.districtId}`);
+            }}
+          >
+            View district profile →
+          </a>
+        </div>
+      )}
     </div>
   );
 }

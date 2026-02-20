@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { ChevronRight } from 'lucide-react';
 import type { BriefContent, ResponseConfidence } from '@/services/types/discovery';
 import { TransparencyNote } from './transparency-note';
@@ -13,6 +14,7 @@ interface BriefRendererProps {
 }
 
 export function BriefRenderer({ content, confidence, format }: BriefRendererProps) {
+  const router = useRouter();
   const [openSections, setOpenSections] = useState<Set<string>>(
     new Set(content.sections.length > 0 ? [content.sections[0].sectionId] : [])
   );
@@ -36,6 +38,22 @@ export function BriefRenderer({ content, confidence, format }: BriefRendererProp
         <p className="text-overline font-[500] leading-[1.4] tracking-[0.05em] uppercase text-slate-400 mb-3">
           READINESS ASSESSMENT
         </p>
+      )}
+
+      {/* Subject district name — linked, single-entity briefs only */}
+      {content.subjectDistrictId && content.subjectDistrictName && (
+        <div className="mb-3">
+          <a
+            href={`/districts/${content.subjectDistrictId}`}
+            className="text-section-heading font-[600] leading-[1.3] tracking-[-0.01em] text-primary hover:underline hover:decoration-primary/60 underline-offset-2 transition-colors"
+            onClick={(e) => {
+              e.preventDefault();
+              router.push(`/districts/${content.subjectDistrictId}`);
+            }}
+          >
+            {content.subjectDistrictName}
+          </a>
+        </div>
       )}
 
       {/* Lead insight — emphasis surface, no left border */}
@@ -162,6 +180,22 @@ export function BriefRenderer({ content, confidence, format }: BriefRendererProp
               </div>
             );
           })}
+        </div>
+      )}
+
+      {/* View district profile action — single-entity briefs only */}
+      {content.subjectDistrictId && (
+        <div className="mt-6">
+          <a
+            href={`/districts/${content.subjectDistrictId}`}
+            className="text-caption font-[500] leading-[1.5] tracking-[0.025em] text-primary hover:underline hover:decoration-primary/60 underline-offset-2 transition-colors"
+            onClick={(e) => {
+              e.preventDefault();
+              router.push(`/districts/${content.subjectDistrictId}`);
+            }}
+          >
+            View district profile →
+          </a>
         </div>
       )}
     </div>
