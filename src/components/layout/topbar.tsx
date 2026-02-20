@@ -1,10 +1,10 @@
 export function Topbar() {
   return (
     <header
-      className="fixed top-0 left-0 right-0 z-50 h-14 bg-sidebar border-b border-white/10 flex items-center justify-between px-6"
+      className="fixed top-0 left-0 right-0 z-50 h-14 bg-topbar border-b border-white/10 flex items-center justify-between px-6"
     >
-      <span className="font-heading text-xl font-semibold text-sidebar-foreground">
-        AlchemyK12
+      <span className="font-heading text-2xl font-bold text-sidebar-foreground">
+        Alchemy<span className="text-brand-orange">K12</span>
       </span>
 
       <nav className="flex items-center gap-6">

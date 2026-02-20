@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 :root {
   /* Semantic tokens - Base colors */
@@ -50,7 +50,8 @@
   --radius: 0.5rem;
 
   /* Sidebar tokens */
-  --sidebar-bg: 213 47% 17%;
+  --sidebar-bg: 219 27% 41%;
+  --topbar-bg: 213 47% 17%;
   --sidebar-fg: 180 3% 95%;
   --sidebar-hover: 217 33% 27%;
   --sidebar-active: 184 97% 42%;
@@ -69,14 +70,14 @@
   --sidebar-width-collapsed: 4rem;
 
   /* Typography scale tokens */
-  --font-base: 14px;                                                /* ← change this to scale all sizes */
-  --font-size-overline:           calc(var(--font-base) * 0.786);  /* 11px at base 14 */
-  --font-size-caption:            calc(var(--font-base) * 0.857);  /* 12px */
-  --font-size-subsection-sm:      calc(var(--font-base) * 0.929);  /* 13px */
-  --font-size-body:               var(--font-base);                 /* 14px */
-  --font-size-subsection-heading: calc(var(--font-base) * 1.071);  /* 15px */
-  --font-size-section-heading:    calc(var(--font-base) * 1.286);  /* 18px */
-  --font-size-page-title:         calc(var(--font-base) * 1.714);  /* 24px */
+  --font-base: 16px; /* ← change this to scale all sizes */
+  --font-size-overline: calc(var(--font-base) * 0.786); /* 11px at base 14 */
+  --font-size-caption: calc(var(--font-base) * 0.857); /* 12px */
+  --font-size-subsection-sm: calc(var(--font-base) * 0.929); /* 13px */
+  --font-size-body: var(--font-base); /* 14px */
+  --font-size-subsection-heading: calc(var(--font-base) * 1.071); /* 15px */
+  --font-size-section-heading: calc(var(--font-base) * 1.286); /* 18px */
+  --font-size-page-title: calc(var(--font-base) * 1.714); /* 24px */
 }
 
 @theme inline {
@@ -104,6 +105,7 @@
   --color-input: hsl(var(--input));
   --color-ring: hsl(var(--ring));
   --color-sidebar: hsl(var(--sidebar-bg));
+  --color-topbar: hsl(var(--topbar-bg));
   --color-sidebar-foreground: hsl(var(--sidebar-fg));
   --color-sidebar-hover: hsl(var(--sidebar-hover));
   --color-sidebar-active: hsl(var(--sidebar-active));
@@ -124,6 +126,15 @@
   --text-body: var(--font-size-body);
   --text-caption: var(--font-size-caption);
   --text-overline: var(--font-size-overline);
+
+  /* Tailwind default overrides — all derived from --font-base (÷14) */
+  --text-xs:   calc(var(--font-base) * 0.857);  /* 12px → caption */
+  --text-sm:   calc(var(--font-base) * 1.0);    /* 14px → body */
+  --text-base: calc(var(--font-base) * 1.143);  /* 16px */
+  --text-lg:   calc(var(--font-base) * 1.286);  /* 18px → section-heading */
+  --text-xl:   calc(var(--font-base) * 1.429);  /* 20px */
+  --text-2xl:  calc(var(--font-base) * 1.714);  /* 24px → page-title */
+  --text-3xl:  calc(var(--font-base) * 2.143);  /* 30px */
 }
 
 body {
@@ -133,8 +144,13 @@ body {
 }
 
 @keyframes blink-cursor {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
 }
 
 @utility animate-blink {

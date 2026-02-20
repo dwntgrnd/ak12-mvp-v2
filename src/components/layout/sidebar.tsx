@@ -54,7 +54,7 @@ export function Sidebar() {
       )}
     >
       {/* Main Navigation */}
-      <nav className="flex-1 py-4">
+      <nav className="flex-1 py-4" style={{ paddingTop: 'var(--utility-bar-height)' }}>
         <div className="space-y-1">
           {mainNavItems.map((item) => (
             <SidebarNavItem
