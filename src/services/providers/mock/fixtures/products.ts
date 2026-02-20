@@ -69,11 +69,18 @@ export const MOCK_PRODUCTS: Product[] = [
   },
 ];
 
+function truncateAtWord(text: string, maxLength: number): string {
+  if (text.length <= maxLength) return text;
+  const truncated = text.substring(0, maxLength);
+  const lastSpace = truncated.lastIndexOf(' ');
+  return (lastSpace > 0 ? truncated.substring(0, lastSpace) : truncated) + '\u2026';
+}
+
 export function getMockProductSummaries(): ProductSummary[] {
   return MOCK_PRODUCTS.map((p) => ({
     productId: p.productId,
     name: p.name,
-    description: p.description.substring(0, 150) + '...',
+    description: truncateAtWord(p.description, 150),
     gradeRange: p.gradeRange,
     subjectArea: p.subjectArea,
     assetCount: p.assets.length,

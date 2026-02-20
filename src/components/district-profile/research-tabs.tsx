@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo } from 'react';
-import { Target, BarChart3, Shield } from 'lucide-react';
+import { Target, BarChart3, Shield, TrendingUp } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import {
   getDistrictIntelligence,
@@ -9,16 +9,19 @@ import {
 } from '@/services/providers/mock/fixtures/district-intelligence';
 import type { IntelligenceCategory } from '@/services/types/district-intelligence';
 import type { LucideIcon } from 'lucide-react';
+import type { DistrictYearData } from '@/services/providers/mock/fixtures/districts';
 import { GoalsFundingTab } from './goals-funding-tab';
 import { AcademicPerformanceTab } from './academic-performance-tab';
 import { CompetitiveIntelTab } from './competitive-intel-tab';
+import { DistrictChart } from './district-chart';
 
 interface ResearchTabsProps {
   districtId: string;
+  yearData?: DistrictYearData[];
 }
 
 interface TabConfig {
-  key: IntelligenceCategory;
+  key: IntelligenceCategory | 'districtTrends';
   label: string;
   icon: LucideIcon;
 }
@@ -27,15 +30,27 @@ const TAB_CONFIG: TabConfig[] = [
   { key: 'goalsFunding', label: 'Goals & Funding', icon: Target },
   { key: 'academicPerformance', label: 'Academic Performance', icon: BarChart3 },
   { key: 'competitiveIntel', label: 'Competitive Intel', icon: Shield },
+  { key: 'districtTrends', label: 'District Trends', icon: TrendingUp },
 ];
 
-export function ResearchTabs({ districtId }: ResearchTabsProps) {
+export function ResearchTabs({ districtId, yearData }: ResearchTabsProps) {
   const { intel, availableTabs } = useMemo(() => {
     const data = getDistrictIntelligence(districtId);
     const categories = getAvailableCategories(districtId);
-    const tabs = TAB_CONFIG.filter((t) => categories.includes(t.key));
+
+    // Intelligence tabs filtered by available categories
+    const intelligenceTabs = TAB_CONFIG.filter(
+      (t) => t.key !== 'districtTrends' && categories.includes(t.key as IntelligenceCategory)
+    );
+
+    // District Trends tab appended conditionally based on yearData
+    const hasTrendsData = yearData != null && yearData.length > 0;
+    const tabs = hasTrendsData
+      ? [...intelligenceTabs, TAB_CONFIG.find((t) => t.key === 'districtTrends')!]
+      : intelligenceTabs;
+
     return { intel: data, availableTabs: tabs };
-  }, [districtId]);
+  }, [districtId, yearData]);
 
   if (availableTabs.length === 0 || !intel) return null;
 
@@ -56,14 +71,13 @@ export function ResearchTabs({ districtId }: ResearchTabsProps) {
 
       {availableTabs.map((tab) => (
         <TabsContent key={tab.key} value={tab.key}>
-          {tab.key === 'goalsFunding' && (
-            <GoalsFundingTab intel={intel} />
-          )}
-          {tab.key === 'academicPerformance' && (
-            <AcademicPerformanceTab intel={intel} />
-          )}
-          {tab.key === 'competitiveIntel' && (
-            <CompetitiveIntelTab intel={intel} />
+          {tab.key === 'goalsFunding' && <GoalsFundingTab intel={intel} />}
+          {tab.key === 'academicPerformance' && <AcademicPerformanceTab intel={intel} />}
+          {tab.key === 'competitiveIntel' && <CompetitiveIntelTab intel={intel} />}
+          {tab.key === 'districtTrends' && yearData && (
+            <div className="pt-4">
+              <DistrictChart yearData={yearData} />
+            </div>
           )}
         </TabsContent>
       ))}

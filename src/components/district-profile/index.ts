@@ -1,7 +1,6 @@
-export { DistrictProfileHeader } from './district-profile-header';
-export { MetricTile } from './metric-tile';
-export { KeyMetricsGrid } from './key-metrics-grid';
-export { QuickActionsPanel } from './quick-actions-panel';
+export { DistrictIdentityBar } from './district-identity-bar';
+// Retained for potential reuse — not currently used on district profile page
+// export { MetricTile } from './metric-tile';
 export { DistrictChart } from './district-chart';
 export { ResearchTabs } from './research-tabs';
 export { ResearchBrief } from './research-brief';

@@ -1,3 +1,4 @@
+// NOTE: Not currently used on the district profile page. Retained for potential reuse in discovery/comparison views.
 import { cn } from '@/lib/utils';
 import type { TrendResult } from '@/lib/utils/trends';
 import { getTrendDisplay } from '@/lib/utils/trends';

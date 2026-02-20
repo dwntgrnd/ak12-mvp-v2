@@ -651,6 +651,320 @@ export const DISCOVERY_SCENARIOS: { keywords: string[]; response: DiscoveryQuery
   },
 
   // ----------------------------------------------------------
+  // Scenario 7 — Ranked List (Sacramento County Math Declines)
+  // Query: Which Sacramento County districts have the steepest math score declines?
+  // ----------------------------------------------------------
+  {
+    keywords: ['rank', 'sacramento', 'math', 'decline'],
+    response: {
+      queryId: 'fixture-s7',
+      originalQuery: 'Which Sacramento County districts have the steepest math score declines?',
+      intent: 'comparative',
+      generatedAt: '2026-02-19T10:00:00Z',
+      content: {
+        format: 'ranked_list',
+        data: {
+          title: 'Sacramento County Districts by Math Proficiency Decline (2-Year)',
+          rankingCriterion: '2-year math proficiency percentage point change',
+          entries: [
+            {
+              rank: 1,
+              districtId: ID_TWIN_RIVERS,
+              name: 'Twin Rivers USD',
+              primaryMetric: { label: 'Math Decline', value: '-5.1pp' },
+              secondaryMetrics: [
+                { label: 'Current Proficiency', value: '31.2%' },
+                { label: 'Enrollment', value: '27,100' },
+              ],
+              confidence: 1,
+            },
+            {
+              rank: 2,
+              districtId: ID_SACRAMENTO_CITY,
+              name: 'Sacramento City USD',
+              primaryMetric: { label: 'Math Decline', value: '-4.6pp' },
+              secondaryMetrics: [
+                { label: 'Current Proficiency', value: '29.8%' },
+                { label: 'Enrollment', value: '42,500' },
+              ],
+              confidence: 2,
+              confidenceNote: 'Proficiency data from 2023-24; 2024-25 not yet published.',
+            },
+            {
+              rank: 3,
+              districtId: ID_ELK_GROVE,
+              name: 'Elk Grove USD',
+              primaryMetric: { label: 'Math Decline', value: '-3.8pp' },
+              secondaryMetrics: [
+                { label: 'Current Proficiency', value: '38.4%' },
+                { label: 'Enrollment', value: '59,800' },
+              ],
+              confidence: 1,
+            },
+            {
+              rank: 4,
+              districtId: ID_NATOMAS,
+              name: 'Natomas USD',
+              primaryMetric: { label: 'Math Decline', value: '-2.9pp' },
+              secondaryMetrics: [
+                { label: 'Current Proficiency', value: '35.1%' },
+                { label: 'Enrollment', value: '14,200' },
+              ],
+              confidence: 2,
+              confidenceNote: 'Limited LCAP data available for Natomas.',
+            },
+          ],
+          synthesis: 'Twin Rivers and Sacramento City show the most significant math proficiency declines in the county, both exceeding 4 percentage points over two years. Both districts have prioritized math intervention in their LCAPs. Elk Grove\'s decline is more moderate but notable given its large enrollment — the district has already initiated a K-8 math curriculum review. Natomas shows the smallest decline but limited LCAP documentation makes it harder to assess their response.',
+        },
+      },
+      confidence: {
+        overall: 2,
+        sections: {
+          'rank-1': { level: 1 },
+          'rank-2': { level: 2 },
+          'rank-3': { level: 1 },
+          'rank-4': { level: 2 },
+        },
+      },
+      followUpChips: [
+        {
+          chipId: 's7-chip-1',
+          label: 'Compare Twin Rivers and Sacramento City math programs',
+          query: 'Compare Twin Rivers and Sacramento City math programs',
+          backedBy: ['academic_performance', 'goals_priorities'],
+        },
+        {
+          chipId: 's7-chip-2',
+          label: 'Show EL subgroup math for these districts',
+          query: 'Show English Learner subgroup math proficiency for Twin Rivers, Sacramento City, Elk Grove, and Natomas',
+          backedBy: ['academic_performance', 'enrollment_demographics'],
+        },
+        {
+          chipId: 's7-chip-3',
+          label: 'View Twin Rivers full profile',
+          query: 'Show full profile for Twin Rivers Unified School District',
+          backedBy: ['enrollment_demographics'],
+        },
+      ],
+      sources: [
+        {
+          sourceId: 'cde-dataquest-2425',
+          label: 'CDE DataQuest 2024-25',
+          url: 'https://dq.cde.ca.gov/dataquest/',
+          academicYear: '2024-25',
+          sourceType: 'state_database',
+        },
+        {
+          sourceId: 'twin-rivers-lcap-2425',
+          label: 'Twin Rivers LCAP',
+          academicYear: '2024-25',
+          sourceType: 'lcap',
+        },
+        {
+          sourceId: 'sacramento-city-lcap-2425',
+          label: 'Sacramento City LCAP',
+          academicYear: '2024-25',
+          sourceType: 'lcap',
+        },
+        {
+          sourceId: 'egusd-lcap-2425',
+          label: 'Elk Grove LCAP',
+          academicYear: '2024-25',
+          sourceType: 'lcap',
+        },
+      ],
+    },
+  },
+
+  // ----------------------------------------------------------
+  // Scenario 8 — Card Set (Sacramento County EL Support) — primary keywords
+  // Query: Show me Sacramento County districts with English learner programs
+  // ----------------------------------------------------------
+  {
+    keywords: ['sacramento', 'county', 'districts', 'english learner'],
+    response: {
+      queryId: 'fixture-s8',
+      originalQuery: 'Show me Sacramento County districts with English learner programs',
+      intent: 'exploratory',
+      generatedAt: '2026-02-19T10:00:00Z',
+      content: {
+        format: 'card_set',
+        data: {
+          overview: 'Four Sacramento County districts with significant English Learner populations and active EL support programs identified from LCAP priorities and demographic data.',
+          districts: [
+            {
+              districtId: ID_ELK_GROVE,
+              name: 'Elk Grove USD',
+              location: 'Elk Grove, CA',
+              enrollment: 59800,
+              keyMetric: { label: 'EL Population', value: '24.3%' },
+              confidence: 1,
+            },
+            {
+              districtId: ID_SACRAMENTO_CITY,
+              name: 'Sacramento City USD',
+              location: 'Sacramento, CA',
+              enrollment: 42500,
+              keyMetric: { label: 'EL Population', value: '19.7%' },
+              confidence: 2,
+            },
+            {
+              districtId: ID_TWIN_RIVERS,
+              name: 'Twin Rivers USD',
+              location: 'North Highlands, CA',
+              enrollment: 27100,
+              keyMetric: { label: 'EL Population', value: '21.5%' },
+              confidence: 1,
+            },
+            {
+              districtId: ID_NATOMAS,
+              name: 'Natomas USD',
+              location: 'Sacramento, CA',
+              enrollment: 14200,
+              keyMetric: { label: 'EL Population', value: '16.8%' },
+              confidence: 2,
+            },
+          ],
+        },
+      },
+      confidence: {
+        overall: 2,
+        sections: {},
+      },
+      followUpChips: [
+        {
+          chipId: 's8-chip-1',
+          label: 'Compare EL proficiency across these districts',
+          query: 'Compare English Learner proficiency across Elk Grove, Sacramento City, Twin Rivers, and Natomas',
+          backedBy: ['academic_performance', 'enrollment_demographics'],
+        },
+        {
+          chipId: 's8-chip-2',
+          label: 'Which district has the largest EL budget allocation?',
+          query: 'Which Sacramento County district has the largest English Learner budget allocation?',
+          backedBy: ['budget_funding', 'goals_priorities'],
+        },
+        {
+          chipId: 's8-chip-3',
+          label: 'Show Elk Grove EL program details',
+          query: 'Show Elk Grove USD English Learner program details',
+          backedBy: ['goals_priorities', 'enrollment_demographics'],
+        },
+      ],
+      sources: [
+        {
+          sourceId: 'cde-dataquest-2425',
+          label: 'CDE DataQuest 2024-25',
+          url: 'https://dq.cde.ca.gov/dataquest/',
+          academicYear: '2024-25',
+          sourceType: 'state_database',
+        },
+        {
+          sourceId: 'cde-el-dashboard-2425',
+          label: 'CDE English Learner Dashboard',
+          url: 'https://www.caschooldashboard.org/',
+          academicYear: '2024-25',
+          sourceType: 'state_database',
+        },
+      ],
+    },
+  },
+
+  // ----------------------------------------------------------
+  // Scenario 8b — Card Set (Sacramento County EL Support) — alternate keywords
+  // Same response, alternate trigger: ['sacramento', 'el', 'support']
+  // ----------------------------------------------------------
+  {
+    keywords: ['sacramento', 'el', 'support'],
+    response: {
+      queryId: 'fixture-s8',
+      originalQuery: 'Show me Sacramento County districts with English learner programs',
+      intent: 'exploratory',
+      generatedAt: '2026-02-19T10:00:00Z',
+      content: {
+        format: 'card_set',
+        data: {
+          overview: 'Four Sacramento County districts with significant English Learner populations and active EL support programs identified from LCAP priorities and demographic data.',
+          districts: [
+            {
+              districtId: ID_ELK_GROVE,
+              name: 'Elk Grove USD',
+              location: 'Elk Grove, CA',
+              enrollment: 59800,
+              keyMetric: { label: 'EL Population', value: '24.3%' },
+              confidence: 1,
+            },
+            {
+              districtId: ID_SACRAMENTO_CITY,
+              name: 'Sacramento City USD',
+              location: 'Sacramento, CA',
+              enrollment: 42500,
+              keyMetric: { label: 'EL Population', value: '19.7%' },
+              confidence: 2,
+            },
+            {
+              districtId: ID_TWIN_RIVERS,
+              name: 'Twin Rivers USD',
+              location: 'North Highlands, CA',
+              enrollment: 27100,
+              keyMetric: { label: 'EL Population', value: '21.5%' },
+              confidence: 1,
+            },
+            {
+              districtId: ID_NATOMAS,
+              name: 'Natomas USD',
+              location: 'Sacramento, CA',
+              enrollment: 14200,
+              keyMetric: { label: 'EL Population', value: '16.8%' },
+              confidence: 2,
+            },
+          ],
+        },
+      },
+      confidence: {
+        overall: 2,
+        sections: {},
+      },
+      followUpChips: [
+        {
+          chipId: 's8-chip-1',
+          label: 'Compare EL proficiency across these districts',
+          query: 'Compare English Learner proficiency across Elk Grove, Sacramento City, Twin Rivers, and Natomas',
+          backedBy: ['academic_performance', 'enrollment_demographics'],
+        },
+        {
+          chipId: 's8-chip-2',
+          label: 'Which district has the largest EL budget allocation?',
+          query: 'Which Sacramento County district has the largest English Learner budget allocation?',
+          backedBy: ['budget_funding', 'goals_priorities'],
+        },
+        {
+          chipId: 's8-chip-3',
+          label: 'Show Elk Grove EL program details',
+          query: 'Show Elk Grove USD English Learner program details',
+          backedBy: ['goals_priorities', 'enrollment_demographics'],
+        },
+      ],
+      sources: [
+        {
+          sourceId: 'cde-dataquest-2425',
+          label: 'CDE DataQuest 2024-25',
+          url: 'https://dq.cde.ca.gov/dataquest/',
+          academicYear: '2024-25',
+          sourceType: 'state_database',
+        },
+        {
+          sourceId: 'cde-el-dashboard-2425',
+          label: 'CDE English Learner Dashboard',
+          url: 'https://www.caschooldashboard.org/',
+          academicYear: '2024-25',
+          sourceType: 'state_database',
+        },
+      ],
+    },
+  },
+
+  // ----------------------------------------------------------
   // Scenario 6 — Narrative Brief at Level 3 (Quantitative Only)
   // Query: Plumas County math
   // ----------------------------------------------------------

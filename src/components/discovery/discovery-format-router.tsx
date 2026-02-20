@@ -1,21 +1,14 @@
-import type { DiscoveryQueryResponse, ResponseFormat } from '@/services/types/discovery';
+import type { DiscoveryQueryResponse } from '@/services/types/discovery';
 import { BriefRenderer } from './renderers/brief-renderer';
 import { DirectAnswerCard } from './renderers/direct-answer-card';
 import { RecoveryRenderer } from './renderers/recovery-renderer';
+import { ComparisonTableRenderer } from './renderers/comparison-table-renderer';
+import { RankedListRenderer } from './renderers/ranked-list-renderer';
+import { CardSetRenderer } from './renderers/card-set-renderer';
 
 interface DiscoveryFormatRouterProps {
   response: DiscoveryQueryResponse;
   onNewQuery: (query: string) => void;
-}
-
-function UnsupportedFormatPlaceholder({ format }: { format: ResponseFormat }) {
-  return (
-    <div className="bg-slate-50 rounded-md p-4 text-center">
-      <p className="text-[12px] font-[500] leading-[1.5] tracking-[0.025em] text-slate-500">
-        This response format ({format}) is not yet available in this build.
-      </p>
-    </div>
-  );
 }
 
 export function DiscoveryFormatRouter({ response, onNewQuery }: DiscoveryFormatRouterProps) {
@@ -31,9 +24,11 @@ export function DiscoveryFormatRouter({ response, onNewQuery }: DiscoveryFormatR
     case 'recovery':
       return <RecoveryRenderer content={content.data} onRedirectQuery={onNewQuery} />;
     case 'comparison_table':
-    case 'card_set':
+      return <ComparisonTableRenderer content={content.data} confidence={confidence} />;
     case 'ranked_list':
-      return <UnsupportedFormatPlaceholder format={content.format} />;
+      return <RankedListRenderer content={content.data} confidence={confidence} />;
+    case 'card_set':
+      return <CardSetRenderer content={content.data} confidence={confidence} />;
     default:
       return null;
   }

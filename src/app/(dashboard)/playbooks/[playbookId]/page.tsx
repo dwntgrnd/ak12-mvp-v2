@@ -455,6 +455,15 @@ export default function PlaybookDetailPage({
         districtName={district?.name || playbook.districtName}
         districtLocation={district?.location}
         districtEnrollment={district?.totalEnrollment}
+        elaProficiency={district?.elaProficiency}
+        mathProficiency={district?.mathProficiency}
+        frpmRate={
+          district?.frpmCount != null && district?.totalEnrollment
+            ? Math.round((district.frpmCount / district.totalEnrollment) * 100 * 10) / 10
+            : undefined
+        }
+        fitScore={playbook.fitAssessment?.fitScore}
+        fitRationale={playbook.fitAssessment?.fitRationale}
         products={displayProducts}
       />
 

@@ -12,6 +12,13 @@ import type {
 } from '../../types/product';
 import { MOCK_PRODUCTS } from './fixtures/products';
 
+function truncateAtWord(text: string, maxLength: number): string {
+  if (text.length <= maxLength) return text;
+  const truncated = text.substring(0, maxLength);
+  const lastSpace = truncated.lastIndexOf(' ');
+  return (lastSpace > 0 ? truncated.substring(0, lastSpace) : truncated) + '\u2026';
+}
+
 // In-memory store — shallow clone of fixtures so mutations don't affect source
 let products: Product[] = JSON.parse(JSON.stringify(MOCK_PRODUCTS));
 
@@ -51,7 +58,7 @@ export const mockProductService: IProductService = {
     const items: ProductSummary[] = filtered.slice(start, start + pageSize).map((p) => ({
       productId: p.productId,
       name: p.name,
-      description: p.description.substring(0, 150) + '...',
+      description: truncateAtWord(p.description, 150),
       gradeRange: p.gradeRange,
       subjectArea: p.subjectArea,
       assetCount: p.assets.length,

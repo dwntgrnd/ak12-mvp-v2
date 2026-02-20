@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { Search } from 'lucide-react';
+import { Search, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { getDiscoveryService } from '@/services';
 import type { IDiscoveryService, DirectoryEntry } from '@/services';
@@ -31,10 +31,21 @@ type TypewriterPhase = 'typing' | 'holding' | 'deleting' | 'pausing';
 interface DiscoveryInputProps {
   onSubmit: (query: string) => void;
   onDirectNavigation: (districtId: string) => void;
+  variant?: 'full' | 'compact';
+  initialValue?: string;
+  disabled?: boolean;
+  onClear?: () => void;
 }
 
-export function DiscoveryInput({ onSubmit, onDirectNavigation }: DiscoveryInputProps) {
-  const [value, setValue] = useState('');
+export function DiscoveryInput({
+  onSubmit,
+  onDirectNavigation,
+  variant = 'full',
+  initialValue,
+  disabled = false,
+  onClear,
+}: DiscoveryInputProps) {
+  const [value, setValue] = useState(initialValue ?? '');
   const [isFocused, setIsFocused] = useState(false);
 
   // Typewriter animation state
@@ -70,8 +81,8 @@ export function DiscoveryInput({ onSubmit, onDirectNavigation }: DiscoveryInputP
     return serviceRef.current;
   }
 
-  // Typewriter overlay is visible when: no value AND not focused AND twVisible flag AND dropdown closed
-  const showTypewriter = !value && !isFocused && twVisible && !dropdownOpen;
+  // Typewriter overlay visible when: full variant AND no value AND not focused AND flag AND dropdown closed
+  const showTypewriter = variant !== 'compact' && !value && !isFocused && twVisible && !dropdownOpen;
 
   // Animation engine — driven by state changes
   useEffect(() => {
@@ -251,11 +262,25 @@ export function DiscoveryInput({ onSubmit, onDirectNavigation }: DiscoveryInputP
     }
   }
 
+  function handleClear() {
+    setValue('');
+    onClear?.();
+  }
+
   // Cursor shows during typing, holding, and deleting — not during pausing
   const showCursor = showTypewriter && phase !== 'pausing';
 
+  // Right padding: compact mode needs extra room when clear button is present
+  const inputPrClass = variant === 'compact' && value.length > 0 ? 'pr-9' : 'pr-4';
+
   return (
-    <div className="relative max-w-[680px] w-full mx-auto">
+    <div
+      className={cn(
+        'relative w-full',
+        variant === 'full' ? 'max-w-[680px] mx-auto' : 'max-w-none',
+        disabled && 'opacity-60',
+      )}
+    >
       {/* Search icon */}
       <Search
         className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none z-10"
@@ -275,21 +300,37 @@ export function DiscoveryInput({ onSubmit, onDirectNavigation }: DiscoveryInputP
         }
         aria-autocomplete="list"
         aria-label="Search districts or ask a question"
-        autoFocus
+        autoFocus={variant === 'full'}
         autoComplete="off"
+        disabled={disabled}
         value={value}
         onChange={(e) => setValue(e.target.value)}
         onFocus={handleFocus}
         onBlur={handleBlur}
         onKeyDown={handleKeyDown}
         className={cn(
-          'w-full h-12 pl-10 pr-4',
+          'w-full pl-10',
+          variant === 'full' ? 'h-12' : 'h-10',
+          inputPrClass,
           'bg-white border border-slate-200 rounded-lg shadow-sm',
           'text-sm text-foreground',
           'outline-none transition-shadow duration-200',
           'focus:ring-2 focus:ring-[#03C4D4]/30 focus:border-[#03C4D4]',
+          disabled && 'cursor-not-allowed',
         )}
       />
+
+      {/* Clear button — compact mode only, when value present and not disabled */}
+      {variant === 'compact' && value.length > 0 && !disabled && (
+        <button
+          type="button"
+          aria-label="Clear search"
+          onClick={handleClear}
+          className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors z-10"
+        >
+          <X className="w-4 h-4" />
+        </button>
+      )}
 
       {/* Typewriter overlay — pointer-events-none so clicks pass through to input */}
       {showTypewriter && (

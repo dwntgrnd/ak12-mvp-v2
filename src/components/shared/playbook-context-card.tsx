@@ -15,6 +15,11 @@ interface PlaybookContextCardProps {
   districtName: string;
   districtLocation?: string;
   districtEnrollment?: number;
+  elaProficiency?: number;
+  mathProficiency?: number;
+  frpmRate?: number;
+  fitScore?: number;
+  fitRationale?: string;
   products: {
     productId: string;
     name: string;
@@ -29,6 +34,11 @@ export function PlaybookContextCard({
   districtName,
   districtLocation,
   districtEnrollment,
+  elaProficiency,
+  mathProficiency,
+  frpmRate,
+  fitScore,
+  fitRationale,
   products,
 }: PlaybookContextCardProps) {
   const [isOpen, setIsOpen] = useState(false);
@@ -64,14 +74,44 @@ export function PlaybookContextCard({
           <div className="px-4 pb-4 pt-2 grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* District column */}
             <div>
-              <h3 className="font-semibold text-foreground mb-2">{districtName}</h3>
+              <h3 className="font-semibold text-foreground mb-2">District Overview</h3>
               {districtLocation && (
                 <p className="text-sm text-muted-foreground">{districtLocation}</p>
               )}
-              {districtEnrollment != null && (
-                <p className="text-sm text-muted-foreground">
-                  Enrollment: {formatNumber(districtEnrollment)}
-                </p>
+              <div className="mt-2 grid grid-cols-2 gap-2 text-sm">
+                {districtEnrollment != null && (
+                  <div>
+                    <span className="text-muted-foreground">Enrollment:</span>{' '}
+                    <span className="font-medium">{formatNumber(districtEnrollment)}</span>
+                  </div>
+                )}
+                {elaProficiency != null && (
+                  <div>
+                    <span className="text-muted-foreground">ELA:</span>{' '}
+                    <span className="font-medium">{elaProficiency}%</span>
+                  </div>
+                )}
+                {mathProficiency != null && (
+                  <div>
+                    <span className="text-muted-foreground">Math:</span>{' '}
+                    <span className="font-medium">{mathProficiency}%</span>
+                  </div>
+                )}
+                {frpmRate != null && (
+                  <div>
+                    <span className="text-muted-foreground">FRPM:</span>{' '}
+                    <span className="font-medium">{frpmRate}%</span>
+                  </div>
+                )}
+              </div>
+              {fitScore != null && (
+                <div className="mt-2 text-sm">
+                  <span className="text-muted-foreground">Fit Score:</span>{' '}
+                  <span className="font-medium">{fitScore}/10</span>
+                  {fitRationale && (
+                    <p className="mt-1 text-xs text-muted-foreground">{fitRationale}</p>
+                  )}
+                </div>
               )}
             </div>
 
