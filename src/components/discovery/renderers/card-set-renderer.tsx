@@ -1,13 +1,14 @@
 import { DiscoveryResultCard } from '@/components/discovery/discovery-result-card';
 import { TransparencyNote } from './transparency-note';
-import type { CardSetContent, ResponseConfidence } from '@/services/types/discovery';
+import type { CardSetContent, ResponseConfidence, ProductRelevance } from '@/services/types/discovery';
 
 interface CardSetRendererProps {
   content: CardSetContent;
   confidence: ResponseConfidence;
+  productRelevanceMap?: Record<string, ProductRelevance>;
 }
 
-export function CardSetRenderer({ content }: CardSetRendererProps) {
+export function CardSetRenderer({ content, productRelevanceMap }: CardSetRendererProps) {
   const { overview, districts } = content;
 
   return (
@@ -31,6 +32,7 @@ export function CardSetRenderer({ content }: CardSetRendererProps) {
             location={entry.location}
             enrollment={entry.enrollment}
             variant="inset"
+            productRelevance={productRelevanceMap?.[entry.districtId]}
           >
             {/* Content slot: key metric emphasis surface */}
             {entry.keyMetric && (

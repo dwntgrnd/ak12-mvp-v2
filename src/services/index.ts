@@ -121,6 +121,7 @@ export type {
   RankedListEntry,
   RankedListContent,
   RecoveryContent,
+  ProductRelevance,
   DiscoveryResponseContent,
   DiscoveryQueryResponse,
   DiscoveryQueryRequest,

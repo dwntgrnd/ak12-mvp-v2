@@ -1,14 +1,16 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import type { DirectAnswerContent, ResponseConfidence } from '@/services/types/discovery';
+import type { DirectAnswerContent, ResponseConfidence, ProductRelevance } from '@/services/types/discovery';
+import { ProductRelevanceBadge } from '@/components/discovery/product-relevance-badge';
 
 interface DirectAnswerCardProps {
   content: DirectAnswerContent;
   confidence: ResponseConfidence;
+  productRelevanceMap?: Record<string, ProductRelevance>;
 }
 
-export function DirectAnswerCard({ content }: DirectAnswerCardProps) {
+export function DirectAnswerCard({ content, productRelevanceMap }: DirectAnswerCardProps) {
   const router = useRouter();
 
   return (
@@ -64,6 +66,13 @@ export function DirectAnswerCard({ content }: DirectAnswerCardProps) {
           >
             View district profile →
           </a>
+        </div>
+      )}
+
+      {/* Product relevance — when lens active and district has relevance */}
+      {content.districtId && productRelevanceMap?.[content.districtId] && (
+        <div className="mt-3 flex items-center justify-center gap-2">
+          <ProductRelevanceBadge relevance={productRelevanceMap[content.districtId]!} />
         </div>
       )}
     </div>

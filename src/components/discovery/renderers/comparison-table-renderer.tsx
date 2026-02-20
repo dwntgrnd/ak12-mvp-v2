@@ -3,11 +3,13 @@
 import { useRouter } from 'next/navigation';
 import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
 import { TransparencyNote } from './transparency-note';
-import type { ComparisonContent, ResponseConfidence, ComparisonCell } from '@/services/types/discovery';
+import { ProductRelevanceBadge } from '@/components/discovery/product-relevance-badge';
+import type { ComparisonContent, ResponseConfidence, ComparisonCell, ProductRelevance } from '@/services/types/discovery';
 
 interface ComparisonTableRendererProps {
   content: ComparisonContent;
   confidence: ResponseConfidence;
+  productRelevanceMap?: Record<string, ProductRelevance>;
 }
 
 function getCell(
@@ -18,9 +20,12 @@ function getCell(
   return cells.find((c) => c.dimensionId === dimensionId && c.entityId === entityId);
 }
 
-export function ComparisonTableRenderer({ content, confidence }: ComparisonTableRendererProps) {
+export function ComparisonTableRenderer({ content, confidence, productRelevanceMap }: ComparisonTableRendererProps) {
   const router = useRouter();
   const { title, contextBanner, entities, dimensions, cells, synthesis } = content;
+
+  const hasAnyRelevance = productRelevanceMap &&
+    entities.some((e) => e.districtId && productRelevanceMap[e.districtId]);
 
   return (
     <div className="bg-white border border-slate-200 rounded-lg shadow-sm p-5">
@@ -132,6 +137,30 @@ export function ComparisonTableRenderer({ content, confidence }: ComparisonTable
                 })}
               </tr>
             ))}
+
+            {/* Product Alignment row — conditional */}
+            {hasAnyRelevance && (
+              <tr className="border-t border-slate-200">
+                <th
+                  scope="row"
+                  className="py-3 pr-4 text-left text-caption font-[500] leading-[1.5] tracking-[0.025em] text-muted-foreground align-top"
+                >
+                  Product Alignment
+                </th>
+                {entities.map((entity) => {
+                  const relevance = entity.districtId ? productRelevanceMap![entity.districtId] : undefined;
+                  return (
+                    <td key={entity.entityId} className="py-3 pl-4 align-top">
+                      {relevance ? (
+                        <ProductRelevanceBadge relevance={relevance} />
+                      ) : (
+                        <span className="text-slate-300">—</span>
+                      )}
+                    </td>
+                  );
+                })}
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
@@ -143,6 +172,7 @@ export function ComparisonTableRenderer({ content, confidence }: ComparisonTable
       >
         {entities.map((entity) => {
           const entityNote = confidence.sections[entity.entityId];
+          const relevance = entity.districtId ? productRelevanceMap?.[entity.districtId] : undefined;
           return (
             <div
               key={entity.entityId}
@@ -197,6 +227,18 @@ export function ComparisonTableRenderer({ content, confidence }: ComparisonTable
                   );
                 })}
               </div>
+
+              {/* Product relevance — conditional */}
+              {relevance && (
+                <div className="mt-3 pt-3 border-t border-slate-100">
+                  <p className="text-overline font-[500] leading-[1.4] tracking-[0.05em] uppercase text-slate-400">
+                    Product Alignment
+                  </p>
+                  <div className="mt-1">
+                    <ProductRelevanceBadge relevance={relevance} />
+                  </div>
+                </div>
+              )}
             </div>
           );
         })}

@@ -11,6 +11,7 @@ import {
   DISCOVERY_COVERAGE,
   DISCOVERY_SCENARIOS,
   DISCOVERY_FALLBACK_RESPONSE,
+  PRODUCT_RELEVANCE_MAPS,
 } from './fixtures/discovery';
 
 function delay(ms: number): Promise<void> {
@@ -47,19 +48,19 @@ export const mockDiscoveryService: IDiscoveryService = {
       }
     }
 
-    if (!bestMatch || bestMatchCount < 1) {
+    const baseResponse = (!bestMatch || bestMatchCount < 1)
+      ? { ...DISCOVERY_FALLBACK_RESPONSE, queryId: freshQueryId(), originalQuery: request.query }
+      : { ...bestMatch.response, queryId: freshQueryId(), originalQuery: request.query };
+
+    // Augment with product relevance if lens is active
+    if (request.productLensId && PRODUCT_RELEVANCE_MAPS[request.productLensId]) {
       return {
-        ...DISCOVERY_FALLBACK_RESPONSE,
-        queryId: freshQueryId(),
-        originalQuery: request.query,
+        ...baseResponse,
+        productRelevanceMap: PRODUCT_RELEVANCE_MAPS[request.productLensId],
       };
     }
 
-    return {
-      ...bestMatch.response,
-      queryId: freshQueryId(),
-      originalQuery: request.query,
-    };
+    return baseResponse;
   },
 
   async searchDirectory(request: DirectorySearchRequest): Promise<DirectorySearchResponse> {

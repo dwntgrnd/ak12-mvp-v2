@@ -1,12 +1,12 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { DiscoveryEntryState } from '@/components/discovery/discovery-entry-state';
 import { DiscoveryLoadingState } from '@/components/discovery/discovery-loading-state';
 import { DiscoveryResultsLayout } from '@/components/discovery/discovery-results-layout';
-import { getDiscoveryService } from '@/services';
-import type { IDiscoveryService } from '@/services';
+import { getDiscoveryService, getProductService } from '@/services';
+import type { IDiscoveryService, IProductService } from '@/services';
 import type { DiscoveryQueryResponse } from '@/services/types/discovery';
 
 type DiscoveryPageState = 'entry' | 'loading' | 'results';
@@ -17,8 +17,11 @@ export default function DiscoveryPage() {
   const [activeQuery, setActiveQuery] = useState('');
   const [response, setResponse] = useState<DiscoveryQueryResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [productLensId, setProductLensId] = useState<string | undefined>(undefined);
+  const [products, setProducts] = useState<Array<{ productId: string; name: string }>>([]);
 
   const serviceRef = useRef<IDiscoveryService | null>(null);
+  const productServiceRef = useRef<IProductService | null>(null);
 
   async function getService(): Promise<IDiscoveryService> {
     if (!serviceRef.current) {
@@ -26,6 +29,21 @@ export default function DiscoveryPage() {
     }
     return serviceRef.current;
   }
+
+  useEffect(() => {
+    async function loadProducts() {
+      try {
+        if (!productServiceRef.current) {
+          productServiceRef.current = await getProductService();
+        }
+        const result = await productServiceRef.current.getProducts();
+        setProducts(result.items.map((p) => ({ productId: p.productId, name: p.name })));
+      } catch {
+        setProducts([]);
+      }
+    }
+    loadProducts();
+  }, []);
 
   async function handleQuerySubmit(query: string) {
     setActiveQuery(query);
@@ -35,7 +53,7 @@ export default function DiscoveryPage() {
 
     try {
       const service = await getService();
-      const result = await service.query({ query });
+      const result = await service.query({ query, productLensId });
       setResponse(result);
       setPageState('results');
     } catch (err: unknown) {
@@ -57,6 +75,7 @@ export default function DiscoveryPage() {
     setResponse(null);
     setError(null);
     setPageState('entry');
+    // productLensId intentionally NOT reset — lens persists across query clears
   }
 
   return (
@@ -65,6 +84,9 @@ export default function DiscoveryPage() {
         <DiscoveryEntryState
           onQuerySubmit={handleQuerySubmit}
           onDirectNavigation={handleDirectNavigation}
+          products={products}
+          productLensId={productLensId}
+          onProductLensChange={setProductLensId}
         />
       )}
 
@@ -80,6 +102,9 @@ export default function DiscoveryPage() {
           onNewQuery={handleQuerySubmit}
           onDirectNavigation={handleDirectNavigation}
           onClearResults={handleClearResults}
+          products={products}
+          productLensId={productLensId}
+          onProductLensChange={setProductLensId}
         />
       )}
     </>

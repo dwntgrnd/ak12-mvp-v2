@@ -240,6 +240,7 @@ export interface DiscoveryQueryResponse {
   followUpChips: FollowUpChip[];
   sources: DiscoverySource[];
   generatedAt: string;  // ISO 8601
+  productRelevanceMap?: Record<string, ProductRelevance>;  // keyed by districtId
 }
 
 // ============================================================

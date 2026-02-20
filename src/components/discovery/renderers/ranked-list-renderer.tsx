@@ -1,13 +1,15 @@
 import { TransparencyNote } from './transparency-note';
 import { DiscoveryResultCard } from '@/components/discovery/discovery-result-card';
-import type { RankedListContent, ResponseConfidence } from '@/services/types/discovery';
+import { ProductRelevanceBadge } from '@/components/discovery/product-relevance-badge';
+import type { RankedListContent, ResponseConfidence, ProductRelevance } from '@/services/types/discovery';
 
 interface RankedListRendererProps {
   content: RankedListContent;
   confidence: ResponseConfidence;
+  productRelevanceMap?: Record<string, ProductRelevance>;
 }
 
-export function RankedListRenderer({ content }: RankedListRendererProps) {
+export function RankedListRenderer({ content, productRelevanceMap }: RankedListRendererProps) {
   const { title, rankingCriterion, entries, synthesis } = content;
 
   return (
@@ -31,6 +33,7 @@ export function RankedListRenderer({ content }: RankedListRendererProps) {
             name={entry.name}
             variant="inset"
             rank={entry.rank}
+            productRelevance={productRelevanceMap?.[entry.districtId]}
           >
             {/* Content slot: metrics */}
             <div className="mt-2 flex items-baseline gap-2">

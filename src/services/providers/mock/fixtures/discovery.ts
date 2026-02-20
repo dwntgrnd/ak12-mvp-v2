@@ -2,6 +2,7 @@ import type {
   DirectoryEntry,
   DistrictCoverage,
   DiscoveryQueryResponse,
+  ProductRelevance,
 } from '../../../types/discovery';
 import { MOCK_DISTRICTS } from './districts';
 
@@ -1077,6 +1078,81 @@ export const DISCOVERY_SCENARIOS: { keywords: string[]; response: DiscoveryQuery
     },
   },
 ];
+
+// ============================================================
+// E. Product Relevance Maps (Static Mock)
+// Per-product relevance indicators keyed by districtId.
+// Used when productLensId is present in the query request.
+// ============================================================
+
+export const PRODUCT_RELEVANCE_MAPS: Record<string, Record<string, ProductRelevance>> = {
+  // EnvisionMath (prod-001) — math curriculum, K-8
+  'prod-001': {
+    [ID_ELK_GROVE]: {
+      alignmentLevel: 'strong',
+      signals: ['Active K-8 math curriculum review matches product grade range', 'LCAP Goal 2 math priority aligns with product focus'],
+      productName: 'EnvisionMath',
+    },
+    [ID_TWIN_RIVERS]: {
+      alignmentLevel: 'strong',
+      signals: ['$4.2M math materials budget allocated', 'Current Go Math! adoption aging — replacement cycle active'],
+      productName: 'EnvisionMath',
+    },
+    [ID_SACRAMENTO_CITY]: {
+      alignmentLevel: 'moderate',
+      signals: ['LCAP math priority present but no active RFP', 'Math proficiency 29.1% indicates need'],
+      productName: 'EnvisionMath',
+    },
+    [ID_NATOMAS]: {
+      alignmentLevel: 'limited',
+      signals: ['Math decline noted but no budget allocation or formal evaluation'],
+      productName: 'EnvisionMath',
+    },
+    [ID_FRESNO]: {
+      alignmentLevel: 'moderate',
+      signals: ['Large district with math needs but evaluation status unknown'],
+      productName: 'EnvisionMath',
+    },
+    [ID_PLUMAS_COUNTY]: {
+      alignmentLevel: 'limited',
+      signals: ['Small rural district — math proficiency below average but limited LCAP data'],
+      productName: 'EnvisionMath',
+    },
+  },
+  // myPerspectives (prod-002) — ELA curriculum, 6-12
+  'prod-002': {
+    [ID_ELK_GROVE]: {
+      alignmentLevel: 'limited',
+      signals: ['No active ELA evaluation signals detected'],
+      productName: 'myPerspectives',
+    },
+    [ID_TWIN_RIVERS]: {
+      alignmentLevel: 'unknown',
+      signals: ['Insufficient data to assess ELA alignment'],
+      productName: 'myPerspectives',
+    },
+    [ID_SACRAMENTO_CITY]: {
+      alignmentLevel: 'moderate',
+      signals: ['ELA proficiency gaps present', 'Diverse student population aligns with product strengths'],
+      productName: 'myPerspectives',
+    },
+    [ID_NATOMAS]: {
+      alignmentLevel: 'limited',
+      signals: ['No ELA-specific evaluation activity detected'],
+      productName: 'myPerspectives',
+    },
+    [ID_FRESNO]: {
+      alignmentLevel: 'strong',
+      signals: ['High EL population benefits from culturally responsive texts', 'District has active ELA initiatives'],
+      productName: 'myPerspectives',
+    },
+    [ID_PLUMAS_COUNTY]: {
+      alignmentLevel: 'unknown',
+      signals: ['Insufficient data for ELA assessment'],
+      productName: 'myPerspectives',
+    },
+  },
+};
 
 // ============================================================
 // D. Fallback Response

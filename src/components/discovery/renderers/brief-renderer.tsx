@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ChevronRight } from 'lucide-react';
-import type { BriefContent, ResponseConfidence } from '@/services/types/discovery';
+import type { BriefContent, ResponseConfidence, ProductRelevance } from '@/services/types/discovery';
 import { TransparencyNote } from './transparency-note';
 import { DiscoveryResultCard } from '@/components/discovery/discovery-result-card';
 
@@ -11,9 +11,10 @@ interface BriefRendererProps {
   content: BriefContent;
   confidence: ResponseConfidence;
   format: 'narrative_brief' | 'intelligence_brief';
+  productRelevanceMap?: Record<string, ProductRelevance>;
 }
 
-export function BriefRenderer({ content, confidence, format }: BriefRendererProps) {
+export function BriefRenderer({ content, confidence, format, productRelevanceMap }: BriefRendererProps) {
   const router = useRouter();
   const [openSections, setOpenSections] = useState<Set<string>>(
     new Set(content.sections.length > 0 ? [content.sections[0].sectionId] : [])
@@ -77,6 +78,7 @@ export function BriefRenderer({ content, confidence, format }: BriefRendererProp
                   location={signal.location}
                   enrollment={signal.enrollment}
                   variant="inset"
+                  productRelevance={productRelevanceMap?.[signal.districtId]}
                 >
                   {/* Content slot: activity signal + detail */}
                   <p className="mt-1 text-body font-[600] leading-[1.6] text-foreground">
