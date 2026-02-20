@@ -13,7 +13,7 @@ export function CardSetRenderer({ content }: CardSetRendererProps) {
     <div className="bg-white border border-slate-200 rounded-lg shadow-sm p-5">
       {/* Overview text */}
       {overview && (
-        <p className="text-[14px] font-[400] leading-[1.6] text-foreground">{overview}</p>
+        <p className="text-body font-[400] leading-[1.6] text-foreground">{overview}</p>
       )}
 
       {/* Card grid */}

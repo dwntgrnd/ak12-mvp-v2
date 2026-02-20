@@ -11,14 +11,14 @@ export function RecoveryRenderer({ content, onRedirectQuery }: RecoveryRendererP
   return (
     <div className="bg-white border border-slate-200 rounded-lg shadow-sm p-5">
       {/* Acknowledgment */}
-      <p className="text-[14px] font-[400] leading-[1.6] text-foreground">
+      <p className="text-body font-[400] leading-[1.6] text-foreground">
         {content.acknowledgment}
       </p>
 
       {/* Alternative suggestion — inset surface */}
       {content.alternativeSuggestion && (
         <div className="mt-4 bg-slate-50 rounded-md p-4">
-          <p className="text-[14px] font-[400] leading-[1.6] text-foreground">
+          <p className="text-body font-[400] leading-[1.6] text-foreground">
             {content.alternativeSuggestion}
           </p>
         </div>

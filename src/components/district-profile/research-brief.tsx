@@ -38,7 +38,7 @@ export function ResearchBrief({
         <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
           {keySignals.map((signal, i) => (
             <div key={i}>
-              <p className="text-[11px] font-medium uppercase tracking-[0.05em] text-muted-foreground">
+              <p className="text-overline font-medium uppercase tracking-[0.05em] text-muted-foreground">
                 {signal.label}
               </p>
               <p className="mt-1 text-sm font-semibold text-foreground">{signal.value}</p>
@@ -73,7 +73,7 @@ export function ResearchBrief({
                     open && 'rotate-90',
                   )}
                 />
-                <span className="text-[15px] font-semibold">{detailLabel}</span>
+                <span className="text-subsection-heading font-semibold">{detailLabel}</span>
               </button>
             </CollapsibleTrigger>
             <CollapsibleContent>

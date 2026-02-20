@@ -15,7 +15,7 @@ export function GoalsFundingTab({ intel }: GoalsFundingTabProps) {
   const additionalContent =
     intel.otherFundingSignals && intel.otherFundingSignals.length > 0 ? (
       <div>
-        <h4 className="text-[13px] font-semibold text-foreground mb-2">
+        <h4 className="text-subsection-sm font-semibold text-foreground mb-2">
           Other Funding Signals
         </h4>
         {intel.otherFundingSignals.map((signal) => (

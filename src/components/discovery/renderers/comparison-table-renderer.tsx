@@ -1,0 +1,188 @@
+'use client';
+
+import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
+import { TransparencyNote } from './transparency-note';
+import type { ComparisonContent, ResponseConfidence, ComparisonCell } from '@/services/types/discovery';
+
+interface ComparisonTableRendererProps {
+  content: ComparisonContent;
+  confidence: ResponseConfidence;
+}
+
+function getCell(
+  cells: ComparisonCell[],
+  dimensionId: string,
+  entityId: string
+): ComparisonCell | undefined {
+  return cells.find((c) => c.dimensionId === dimensionId && c.entityId === entityId);
+}
+
+export function ComparisonTableRenderer({ content, confidence }: ComparisonTableRendererProps) {
+  const { title, contextBanner, entities, dimensions, cells, synthesis } = content;
+
+  return (
+    <div className="bg-white border border-slate-200 rounded-lg shadow-sm p-5">
+      {/* Title */}
+      <h2 className="text-section-heading font-[600] leading-[1.4] text-foreground">{title}</h2>
+
+      {/* Context banner (optional) */}
+      {contextBanner && (
+        <div className="bg-[#E0F9FC] rounded-md p-3 mt-4">
+          <p className="text-body font-[400] leading-[1.6] text-foreground">{contextBanner}</p>
+        </div>
+      )}
+
+      {/* ── Desktop table (md+) ── */}
+      <div className="hidden md:block mt-6 overflow-x-auto">
+        <table className="w-full border-collapse">
+          <thead>
+            <tr>
+              {/* Empty first cell — dimension label column header */}
+              <th className="w-[180px] pb-3 text-left" />
+
+              {entities.map((entity) => {
+                const headerNote = confidence.sections[entity.entityId];
+                return (
+                  <th
+                    key={entity.entityId}
+                    scope="col"
+                    className="pb-3 text-left pl-4"
+                  >
+                    <span className="text-body font-[600] leading-[1.4] text-foreground">
+                      {entity.name}
+                    </span>
+                    {entity.overallConfidence >= 3 && headerNote?.transparencyNote && (
+                      <TransparencyNote
+                        note={headerNote.transparencyNote}
+                        level={entity.overallConfidence}
+                      />
+                    )}
+                  </th>
+                );
+              })}
+            </tr>
+          </thead>
+
+          <tbody>
+            {dimensions.map((dim, dimIdx) => (
+              <tr
+                key={dim.dimensionId}
+                className={dimIdx < dimensions.length - 1 ? 'border-b border-slate-100' : ''}
+              >
+                {/* Dimension label */}
+                <th
+                  scope="row"
+                  className="py-3 pr-4 text-left text-caption font-[500] leading-[1.5] tracking-[0.025em] text-muted-foreground align-top"
+                >
+                  {dim.label}
+                </th>
+
+                {/* Entity value cells */}
+                {entities.map((entity) => {
+                  const cell = getCell(cells, dim.dimensionId, entity.entityId);
+                  const note = cell?.confidence.transparencyNote;
+
+                  return (
+                    <td
+                      key={entity.entityId}
+                      className="py-3 pl-4 text-body font-[400] leading-[1.6] text-foreground align-top"
+                    >
+                      {cell ? (
+                        <>
+                          {cell.value}
+                          {note && (
+                            <Popover>
+                              <PopoverTrigger asChild>
+                                <button
+                                  type="button"
+                                  className="text-overline text-slate-400 ml-1 cursor-help inline"
+                                  aria-label={`Data coverage note for ${dim.label} — ${entity.name}`}
+                                >
+                                  ◆
+                                </button>
+                              </PopoverTrigger>
+                              <PopoverContent className="max-w-[280px] p-3" align="start">
+                                <p className="text-caption font-[500] leading-[1.5] tracking-[0.025em] text-muted-foreground">
+                                  {note}
+                                </p>
+                              </PopoverContent>
+                            </Popover>
+                          )}
+                        </>
+                      ) : (
+                        <span className="text-slate-300">—</span>
+                      )}
+                    </td>
+                  );
+                })}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* ── Mobile stacked cards (below md) ── */}
+      <div
+        className="block md:hidden mt-6 flex flex-col gap-3"
+        role="list"
+      >
+        {entities.map((entity) => {
+          const entityNote = confidence.sections[entity.entityId];
+          return (
+            <div
+              key={entity.entityId}
+              className="bg-slate-50 rounded-md p-4"
+              role="listitem"
+              aria-label={entity.name}
+            >
+              {/* Entity name */}
+              <p className="text-body font-[600] leading-[1.4] text-foreground">
+                {entity.name}
+              </p>
+
+              {/* Overall confidence note if level >= 3 */}
+              {entity.overallConfidence >= 3 && entityNote?.transparencyNote && (
+                <TransparencyNote
+                  note={entityNote.transparencyNote}
+                  level={entity.overallConfidence}
+                />
+              )}
+
+              {/* Dimensions */}
+              <div className="mt-3 space-y-3">
+                {dimensions.map((dim) => {
+                  const cell = getCell(cells, dim.dimensionId, entity.entityId);
+                  const note = cell?.confidence.transparencyNote;
+
+                  return (
+                    <div key={dim.dimensionId}>
+                      <p className="text-overline font-[500] leading-[1.4] tracking-[0.05em] uppercase text-slate-400">
+                        {dim.label}
+                      </p>
+                      <p className="text-body font-[400] leading-[1.6] text-foreground">
+                        {cell?.value ?? '—'}
+                      </p>
+                      {note && cell && (
+                        <TransparencyNote note={note} level={cell.confidence.level} />
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* ── Synthesis ── */}
+      {synthesis && (
+        <div className="mt-6 bg-slate-50 rounded-md p-4">
+          <p className="text-overline font-[500] leading-[1.4] tracking-[0.05em] uppercase text-slate-400 mb-2">
+            SYNTHESIS
+          </p>
+          <p className="text-body font-[400] leading-[1.6] text-foreground">{synthesis}</p>
+        </div>
+      )}
+    </div>
+  );
+}

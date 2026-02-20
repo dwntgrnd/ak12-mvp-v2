@@ -67,6 +67,15 @@
   --utility-bar-height: 2.5rem;
   --sidebar-width: 16rem;
   --sidebar-width-collapsed: 4rem;
+
+  /* Typography scale tokens */
+  --font-size-page-title: 24px;
+  --font-size-section-heading: 18px;
+  --font-size-subsection-heading: 15px;
+  --font-size-subsection-sm: 13px;
+  --font-size-body: 14px;
+  --font-size-caption: 12px;
+  --font-size-overline: 11px;
 }
 
 @theme inline {
@@ -106,10 +115,27 @@
   --spacing-topbar-height: var(--topbar-height);
   --spacing-sidebar-width: var(--sidebar-width);
   --spacing-sidebar-width-collapsed: var(--sidebar-width-collapsed);
+  /* Font size utilities */
+  --text-page-title: var(--font-size-page-title);
+  --text-section-heading: var(--font-size-section-heading);
+  --text-subsection-heading: var(--font-size-subsection-heading);
+  --text-subsection-sm: var(--font-size-subsection-sm);
+  --text-body: var(--font-size-body);
+  --text-caption: var(--font-size-caption);
+  --text-overline: var(--font-size-overline);
 }
 
 body {
   background: hsl(var(--background));
   color: hsl(var(--foreground));
   font-family: var(--font-manrope), sans-serif;
+}
+
+@keyframes blink-cursor {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+@utility animate-blink {
+  animation: blink-cursor 1.06s step-start infinite;
 }

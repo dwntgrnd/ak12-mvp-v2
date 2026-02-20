@@ -218,7 +218,7 @@ export function DistrictIdentityBar({
 
       {/* Row B — Contact Info */}
       {hasContactInfo && (
-        <p className="mt-1.5 text-[12px] font-medium text-muted-foreground tracking-[0.025em]">
+        <p className="mt-1.5 text-caption font-medium text-muted-foreground tracking-[0.025em]">
           {contactSegments.map((seg, i) => (
             <span key={seg.key}>
               {i > 0 && <span className="mx-1.5 select-none">·</span>}
@@ -242,7 +242,7 @@ export function DistrictIdentityBar({
               i < metrics.length - 1 && 'md:border-r md:border-border'
             )}
           >
-            <span className="text-[11px] font-medium uppercase tracking-[0.05em] text-muted-foreground/70">
+            <span className="text-overline font-medium uppercase tracking-[0.05em] text-muted-foreground/70">
               {metric.label}
             </span>
             <div className="flex items-baseline gap-1">
@@ -252,7 +252,7 @@ export function DistrictIdentityBar({
               {metric.trendDisplay && (
                 <span
                   className={cn(
-                    'text-[12px] font-medium',
+                    'text-caption font-medium',
                     metric.neutral
                       ? trendSentimentClasses.neutral
                       : trendSentimentClasses[metric.trendDisplay.sentiment]

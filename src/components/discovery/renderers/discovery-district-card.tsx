@@ -31,20 +31,20 @@ export function DiscoveryDistrictCard({ entry }: DiscoveryDistrictCardProps) {
       className="bg-slate-50 rounded-md p-4 cursor-pointer hover:bg-slate-100 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
     >
       {/* District name */}
-      <p className="text-[14px] font-[600] leading-[1.6] text-foreground">{entry.name}</p>
+      <p className="text-body font-[600] leading-[1.6] text-foreground">{entry.name}</p>
 
       {/* Location */}
-      <p className="text-[12px] font-[500] leading-[1.5] tracking-[0.025em] text-muted-foreground">
+      <p className="text-caption font-[500] leading-[1.5] tracking-[0.025em] text-muted-foreground">
         {entry.location}
       </p>
 
       {/* Key metric emphasis surface */}
       {entry.keyMetric && (
         <div className="bg-[#E0F9FC] rounded-md p-3 mt-3 flex items-baseline gap-2">
-          <span className="text-[11px] font-[500] leading-[1.4] tracking-[0.05em] uppercase text-slate-400">
+          <span className="text-overline font-[500] leading-[1.4] tracking-[0.05em] uppercase text-slate-400">
             {entry.keyMetric.label}
           </span>
-          <span className="text-[14px] font-[600] leading-[1.6] text-foreground">
+          <span className="text-body font-[600] leading-[1.6] text-foreground">
             {entry.keyMetric.value}
           </span>
         </div>
@@ -52,7 +52,7 @@ export function DiscoveryDistrictCard({ entry }: DiscoveryDistrictCardProps) {
 
       {/* Enrollment */}
       {entry.enrollment !== undefined && (
-        <p className="mt-2 text-[12px] font-[500] leading-[1.5] tracking-[0.025em] text-muted-foreground">
+        <p className="mt-2 text-caption font-[500] leading-[1.5] tracking-[0.025em] text-muted-foreground">
           Enrollment: {formatNumber(entry.enrollment)}
         </p>
       )}
