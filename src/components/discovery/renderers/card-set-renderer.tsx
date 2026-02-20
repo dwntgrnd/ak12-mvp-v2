@@ -1,4 +1,5 @@
-import { DiscoveryDistrictCard } from './discovery-district-card';
+import { DiscoveryResultCard } from '@/components/discovery/discovery-result-card';
+import { TransparencyNote } from './transparency-note';
 import type { CardSetContent, ResponseConfidence } from '@/services/types/discovery';
 
 interface CardSetRendererProps {
@@ -16,14 +17,38 @@ export function CardSetRenderer({ content }: CardSetRendererProps) {
         <p className="text-body font-[400] leading-[1.6] text-foreground">{overview}</p>
       )}
 
-      {/* Card grid */}
+      {/* Single-column stacked list */}
       <div
-        className={`grid grid-cols-1 md:grid-cols-2 gap-3 ${overview ? 'mt-4' : ''}`}
+        className={`flex flex-col gap-3 ${overview ? 'mt-4' : ''}`}
         role="list"
         aria-label="Districts matching your query"
       >
         {districts.map((entry) => (
-          <DiscoveryDistrictCard key={entry.districtId} entry={entry} />
+          <DiscoveryResultCard
+            key={entry.districtId}
+            districtId={entry.districtId}
+            name={entry.name}
+            location={entry.location}
+            enrollment={entry.enrollment}
+            variant="inset"
+          >
+            {/* Content slot: key metric emphasis surface */}
+            {entry.keyMetric && (
+              <div className="bg-[#E0F9FC] rounded-md p-3 mt-3 flex items-baseline gap-2">
+                <span className="text-overline font-[500] leading-[1.4] tracking-[0.05em] uppercase text-slate-400">
+                  {entry.keyMetric.label}
+                </span>
+                <span className="text-body font-[600] leading-[1.6] text-foreground">
+                  {entry.keyMetric.value}
+                </span>
+              </div>
+            )}
+            {entry.confidence >= 3 && (
+              <div className="mt-2">
+                <TransparencyNote note="Limited data coverage" level={entry.confidence} />
+              </div>
+            )}
+          </DiscoveryResultCard>
         ))}
       </div>
     </div>

@@ -1,5 +1,6 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
 import { TransparencyNote } from './transparency-note';
 import type { ComparisonContent, ResponseConfidence, ComparisonCell } from '@/services/types/discovery';
@@ -18,6 +19,7 @@ function getCell(
 }
 
 export function ComparisonTableRenderer({ content, confidence }: ComparisonTableRendererProps) {
+  const router = useRouter();
   const { title, contextBanner, entities, dimensions, cells, synthesis } = content;
 
   return (
@@ -48,9 +50,22 @@ export function ComparisonTableRenderer({ content, confidence }: ComparisonTable
                     scope="col"
                     className="pb-3 text-left pl-4"
                   >
-                    <span className="text-body font-[600] leading-[1.4] text-foreground">
-                      {entity.name}
-                    </span>
+                    {entity.districtId ? (
+                      <a
+                        href={`/districts/${entity.districtId}`}
+                        className="text-body font-[600] leading-[1.4] text-primary hover:underline hover:decoration-primary/60 underline-offset-2 transition-colors"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          router.push(`/districts/${entity.districtId}`);
+                        }}
+                      >
+                        {entity.name}
+                      </a>
+                    ) : (
+                      <span className="text-body font-[600] leading-[1.4] text-foreground">
+                        {entity.name}
+                      </span>
+                    )}
                     {entity.overallConfidence >= 3 && headerNote?.transparencyNote && (
                       <TransparencyNote
                         note={headerNote.transparencyNote}
@@ -136,9 +151,22 @@ export function ComparisonTableRenderer({ content, confidence }: ComparisonTable
               aria-label={entity.name}
             >
               {/* Entity name */}
-              <p className="text-body font-[600] leading-[1.4] text-foreground">
-                {entity.name}
-              </p>
+              {entity.districtId ? (
+                <a
+                  href={`/districts/${entity.districtId}`}
+                  className="text-body font-[600] leading-[1.4] text-primary hover:underline hover:decoration-primary/60 underline-offset-2 transition-colors block"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    router.push(`/districts/${entity.districtId}`);
+                  }}
+                >
+                  {entity.name}
+                </a>
+              ) : (
+                <p className="text-body font-[600] leading-[1.4] text-foreground">
+                  {entity.name}
+                </p>
+              )}
 
               {/* Overall confidence note if level >= 3 */}
               {entity.overallConfidence >= 3 && entityNote?.transparencyNote && (

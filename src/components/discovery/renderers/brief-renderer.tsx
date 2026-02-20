@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { ChevronRight } from 'lucide-react';
 import type { BriefContent, ResponseConfidence } from '@/services/types/discovery';
 import { TransparencyNote } from './transparency-note';
+import { DiscoveryResultCard } from '@/components/discovery/discovery-result-card';
 
 interface BriefRendererProps {
   content: BriefContent;
@@ -47,21 +48,48 @@ export function BriefRenderer({ content, confidence, format }: BriefRendererProp
       {/* Key signals — 2-col grid */}
       {content.keySignals.length > 0 && (
         <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
-          {content.keySignals.map((signal, i) => (
-            <div key={i}>
-              <p className="text-overline font-[500] leading-[1.4] tracking-[0.05em] uppercase text-slate-400">
-                {signal.label}
-              </p>
-              <p className="mt-1 text-body font-[600] leading-[1.6] text-foreground">
-                {signal.value}
-              </p>
-              {signal.detail && (
-                <p className="mt-0.5 text-caption font-[500] leading-[1.5] text-slate-500">
-                  {signal.detail}
+          {content.keySignals.map((signal, i) => {
+            // District-linked signal → render as navigable card
+            if (signal.districtId) {
+              return (
+                <DiscoveryResultCard
+                  key={signal.districtId}
+                  districtId={signal.districtId}
+                  name={signal.label}
+                  location={signal.location}
+                  enrollment={signal.enrollment}
+                  variant="inset"
+                >
+                  {/* Content slot: activity signal + detail */}
+                  <p className="mt-1 text-body font-[600] leading-[1.6] text-foreground">
+                    {signal.value}
+                  </p>
+                  {signal.detail && (
+                    <p className="mt-0.5 text-caption font-[500] leading-[1.5] text-slate-500">
+                      {signal.detail}
+                    </p>
+                  )}
+                </DiscoveryResultCard>
+              );
+            }
+
+            // Plain metric tile (no district context)
+            return (
+              <div key={i}>
+                <p className="text-overline font-[500] leading-[1.4] tracking-[0.05em] uppercase text-slate-400">
+                  {signal.label}
                 </p>
-              )}
-            </div>
-          ))}
+                <p className="mt-1 text-body font-[600] leading-[1.6] text-foreground">
+                  {signal.value}
+                </p>
+                {signal.detail && (
+                  <p className="mt-0.5 text-caption font-[500] leading-[1.5] text-slate-500">
+                    {signal.detail}
+                  </p>
+                )}
+              </div>
+            );
+          })}
         </div>
       )}
 
