@@ -197,23 +197,35 @@ export const DISCOVERY_SCENARIOS: { keywords: string[]; response: DiscoveryQuery
           keySignals: [
             {
               label: 'Elk Grove USD',
-              value: '59,800 students · Active K-8 math curriculum review',
+              value: 'Active K-8 math curriculum review',
               detail: 'RFP expected spring 2026',
+              districtId: ID_ELK_GROVE,
+              location: 'Elk Grove, CA · Sacramento County',
+              enrollment: 59800,
             },
             {
               label: 'Twin Rivers USD',
-              value: '27,100 students · $4.2M allocated for math materials',
+              value: '$4.2M allocated for math materials',
               detail: 'Board approved evaluation timeline',
+              districtId: ID_TWIN_RIVERS,
+              location: 'North Highlands, CA · Sacramento County',
+              enrollment: 27100,
             },
             {
               label: 'Sacramento City USD',
-              value: '40,900 students · Math proficiency 29.1%',
-              detail: 'LCAP Goal 2 prioritizes math intervention',
+              value: 'Math proficiency 29.1% · LCAP Goal 2 priority',
+              detail: 'LCAP prioritizes math intervention',
+              districtId: ID_SACRAMENTO_CITY,
+              location: 'Sacramento, CA · Sacramento County',
+              enrollment: 42500,
             },
             {
               label: 'Natomas USD',
-              value: '14,800 students · Math proficiency trending down 4.2pp',
+              value: 'Math proficiency trending down 4.2pp',
               detail: 'Exploring supplemental programs',
+              districtId: ID_NATOMAS,
+              location: 'Sacramento, CA · Sacramento County',
+              enrollment: 14800,
             },
           ],
           sections: [
@@ -310,6 +322,8 @@ export const DISCOVERY_SCENARIOS: { keywords: string[]; response: DiscoveryQuery
           value: '71,673',
           valueUnit: 'students',
           contextLine: 'Fresno Unified School District · 2024-25 enrollment',
+          districtId: ID_FRESNO,
+          districtName: 'Fresno Unified School District',
         },
       },
       confidence: {
@@ -422,6 +436,8 @@ export const DISCOVERY_SCENARIOS: { keywords: string[]; response: DiscoveryQuery
               },
             },
           ],
+          subjectDistrictId: ID_TWIN_RIVERS,
+          subjectDistrictName: 'Twin Rivers USD',
         },
       },
       confidence: {
@@ -1020,6 +1036,8 @@ export const DISCOVERY_SCENARIOS: { keywords: string[]; response: DiscoveryQuery
               },
             },
           ],
+          subjectDistrictId: ID_PLUMAS_COUNTY,
+          subjectDistrictName: 'Plumas County Office of Education',
         },
       },
       confidence: {

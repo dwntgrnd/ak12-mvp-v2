@@ -115,12 +115,17 @@ export interface KeySignal {
   label: string;
   value: string;
   detail?: string;
+  districtId?: string;   // when present, signal renders as a DiscoveryResultCard
+  location?: string;     // city, county text for card identity zone
+  enrollment?: number;   // enrollment for card identity zone
 }
 
 export interface BriefContent {
   leadInsight: string;
   keySignals: KeySignal[];
   sections: BriefSection[];
+  subjectDistrictId?: string;    // identifies single-entity briefs
+  subjectDistrictName?: string;  // display name for link text
 }
 
 /** Direct Answer content */
@@ -129,6 +134,8 @@ export interface DirectAnswerContent {
   value: string;
   valueUnit?: string;
   contextLine: string;
+  districtId?: string;     // enables district profile navigation
+  districtName?: string;   // display name for link text
 }
 
 /** Comparison content */
@@ -205,6 +212,12 @@ export interface RecoveryContent {
   redirectQuery?: string;
 }
 
+export interface ProductRelevance {
+  alignmentLevel: 'strong' | 'moderate' | 'limited' | 'unknown';
+  signals: string[];      // e.g., ["LCAP math priority matches product focus"]
+  productName: string;
+}
+
 // ============================================================
 // Response Envelope — Discriminated Union
 // ============================================================
@@ -235,7 +248,8 @@ export interface DiscoveryQueryResponse {
 
 export interface DiscoveryQueryRequest {
   query: string;
-  productIds?: string[];  // Optional product context (future)
+  productIds?: string[];
+  productLensId?: string;   // optional, omitted when no lens active
 }
 
 // ============================================================

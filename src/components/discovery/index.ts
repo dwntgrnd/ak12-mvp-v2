@@ -14,5 +14,6 @@ export { ComparisonTableRenderer } from './renderers/comparison-table-renderer';
 export { RankedListRenderer } from './renderers/ranked-list-renderer';
 export { CardSetRenderer } from './renderers/card-set-renderer';
 export { DiscoveryDistrictCard } from './renderers/discovery-district-card';
+export { DiscoveryResultCard } from './discovery-result-card';
 export { DiscoveryFormatRouter } from './discovery-format-router';
 // DiscoveryAutocompleteDropdown not exported — internal to DiscoveryInput
