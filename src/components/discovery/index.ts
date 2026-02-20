@@ -10,5 +10,9 @@ export { BriefRenderer } from './renderers/brief-renderer';
 export { TransparencyNote } from './renderers/transparency-note';
 export { DirectAnswerCard } from './renderers/direct-answer-card';
 export { RecoveryRenderer } from './renderers/recovery-renderer';
+export { ComparisonTableRenderer } from './renderers/comparison-table-renderer';
+export { RankedListRenderer } from './renderers/ranked-list-renderer';
+export { CardSetRenderer } from './renderers/card-set-renderer';
+export { DiscoveryDistrictCard } from './renderers/discovery-district-card';
 export { DiscoveryFormatRouter } from './discovery-format-router';
 // DiscoveryAutocompleteDropdown not exported — internal to DiscoveryInput
