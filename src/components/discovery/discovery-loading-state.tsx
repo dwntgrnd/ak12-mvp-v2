@@ -41,7 +41,7 @@ export function DiscoveryLoadingState({ query }: DiscoveryLoadingStateProps) {
     <div className="w-full">
       {/* Compact input — disabled, showing active query */}
       <DiscoveryInput
-        variant="compact"
+        variant="full"
         disabled
         initialValue={query}
         onSubmit={() => {}}

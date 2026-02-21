@@ -198,10 +198,14 @@ export function DiscoveryInput({
     };
   }, [clearTimer]);
 
-  function handleFocus() {
+  function handleFocus(e: React.FocusEvent<HTMLInputElement>) {
     nextPhraseRef.current = (phraseIndex + 1) % TYPEWRITER_CONFIG.phrases.length;
     setIsFocused(true);
     clearTimer();
+    // Select existing text so the user can immediately replace the prior query
+    if (value) {
+      e.target.select();
+    }
   }
 
   function handleBlur() {
@@ -327,7 +331,7 @@ export function DiscoveryInput({
         onBlur={handleBlur}
         onKeyDown={handleKeyDown}
         className={cn(
-          'w-full bg-white border text-sm text-foreground outline-none transition-all duration-200',
+          'w-full bg-white border text-sm text-foreground outline-none transition-[border-color,box-shadow] duration-200',
           variant === 'full'
             ? cn('h-14 rounded-xl pl-11', value.length > 0 ? 'pr-14' : 'pr-5')
             : cn('h-10 rounded-lg pl-10', value.length > 0 ? 'pr-9' : 'pr-4'),
