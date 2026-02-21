@@ -1,16 +1,9 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { MoreVertical } from 'lucide-react';
+import { Bookmark, ArrowRight } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import { fitCategoryColors, type FitCategoryKey } from '@/lib/design-tokens';
 import { formatNumber } from '@/lib/utils/format';
 import { cn } from '@/lib/utils';
@@ -23,19 +16,16 @@ interface DistrictListCardProps {
   location?: string;
   enrollment?: number;
   gradesServed?: string;
-
   variant?: 'surface' | 'inset';
-
   rank?: number;
   fitAssessment?: FitAssessment;
   fitLoading?: boolean;
   productRelevance?: ProductRelevance;
-
+  metrics?: Array<{ label: string; value: string }>;
   isSaved?: boolean;
   onSave?: (districtId: string) => void;
   onRemoveSaved?: (districtId: string) => void;
   onGeneratePlaybook?: (districtId: string) => void;
-
   children?: React.ReactNode;
 }
 
@@ -63,6 +53,7 @@ export function DistrictListCard({
   fitAssessment,
   fitLoading,
   productRelevance,
+  metrics,
   isSaved,
   onSave,
   onRemoveSaved,
@@ -70,8 +61,6 @@ export function DistrictListCard({
   children,
 }: DistrictListCardProps) {
   const router = useRouter();
-
-  const hasActions = !!(onSave || onRemoveSaved || onGeneratePlaybook);
 
   const metaParts = [
     location,
@@ -103,6 +92,8 @@ export function DistrictListCard({
   const fitCategory = fitAssessment ? getFitCategory(fitAssessment.fitScore) : null;
   const fitColors = fitCategory ? fitCategoryColors[fitCategory] : null;
 
+  const hasRow2 = !!(metrics?.length || productRelevance || (fitLoading && !fitAssessment));
+
   return (
     <article
       role="listitem"
@@ -111,110 +102,118 @@ export function DistrictListCard({
       onClick={handleClick}
       onKeyDown={handleKeyDown}
       className={cn(
-        'cursor-pointer p-4 focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#FF7000]',
+        'cursor-pointer px-4 py-2.5 focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#FF7000]',
         variant === 'inset'
           ? 'bg-slate-50 rounded-md hover:bg-slate-100 transition-colors duration-150'
           : 'bg-white border border-border rounded-lg shadow-sm hover:shadow-md hover:border-slate-300 transition-shadow duration-150'
       )}
     >
-      {/* Zone 1 — Identity */}
-      <div className="flex items-start justify-between gap-2">
-        <div className="flex items-start gap-2 min-w-0 flex-1">
+      {/* Row 1 — Identity + Fit + Actions */}
+      <div className="flex items-center justify-between gap-2">
+        {/* Left zone: rank + name + meta */}
+        <div className="flex items-center gap-2 min-w-0 flex-1">
           {rank != null && (
-            <div className="w-7 h-7 rounded-full bg-slate-200 flex items-center justify-center shrink-0">
-              <span className="text-caption font-[600] text-foreground">{rank}</span>
+            <div className="w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center shrink-0">
+              <span className="text-xs font-semibold text-foreground">{rank}</span>
             </div>
           )}
-          <div className="min-w-0">
-            <div className="text-subsection-heading font-semibold text-district-link leading-snug">
+          <div className="flex items-baseline gap-1.5 min-w-0 flex-1">
+            <span className="text-sm font-semibold text-district-link truncate shrink-0">
               {name}
-            </div>
+            </span>
             {metaParts.length > 0 && (
-              <div className="text-caption text-muted-foreground mt-0.5">
+              <span className="text-xs text-muted-foreground truncate">
+                <span className="mx-1 select-none">&middot;</span>
                 {metaParts.join(' · ')}
-              </div>
+              </span>
             )}
           </div>
         </div>
 
-        {hasActions && (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8 shrink-0"
-                onClick={(e) => e.stopPropagation()}
-                aria-label={`Actions for ${name}`}
-              >
-                <MoreVertical className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
-              <DropdownMenuItem
-                onClick={() => router.push(`/districts/${districtId}`)}
-              >
-                View Profile
-              </DropdownMenuItem>
-              {(onSave || onRemoveSaved) && (
-                <DropdownMenuItem
-                  onClick={() =>
-                    isSaved
-                      ? onRemoveSaved?.(districtId)
-                      : onSave?.(districtId)
-                  }
-                >
-                  {isSaved ? 'Remove from Saved' : 'Save District'}
-                </DropdownMenuItem>
+        {/* Right zone: fit badge + save + playbook */}
+        <div className="flex items-center gap-2 shrink-0">
+          {fitLoading && !fitAssessment && (
+            <Skeleton className="h-5 w-20" />
+          )}
+          {fitAssessment && fitColors && (
+            <Badge
+              className={`${fitColors.bg} ${fitColors.text} ${fitColors.border} border`}
+              variant="outline"
+            >
+              {fitColors.label}
+            </Badge>
+          )}
+
+          {(onSave || onRemoveSaved) && (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                isSaved ? onRemoveSaved?.(districtId) : onSave?.(districtId);
+              }}
+              aria-pressed={isSaved}
+              aria-label={isSaved ? 'Remove saved district' : 'Save district'}
+              className={cn(
+                'flex items-center gap-1 rounded-md px-1.5 py-1 text-xs font-medium transition-colors',
+                'hover:bg-muted/50',
+                isSaved ? 'text-foreground' : 'text-muted-foreground'
               )}
-              {onGeneratePlaybook && (
-                <DropdownMenuItem onClick={() => onGeneratePlaybook(districtId)}>
-                  Generate Playbook
-                </DropdownMenuItem>
-              )}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        )}
+            >
+              <Bookmark className={cn('h-4 w-4', isSaved && 'fill-current')} />
+              <span>{isSaved ? 'Saved' : 'Save'}</span>
+            </button>
+          )}
+
+          {onGeneratePlaybook && (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onGeneratePlaybook(districtId);
+              }}
+              className="flex items-center gap-0.5 text-xs text-muted-foreground font-medium hover:text-primary transition-colors"
+            >
+              Playbook
+              <ArrowRight className="h-3 w-3" />
+            </button>
+          )}
+        </div>
       </div>
 
-      {/* Zone 2 — Fit Assessment (conditional) */}
-      {fitLoading && !fitAssessment && (
-        <div className="mt-3">
-          <Skeleton className="h-5 w-48" />
-        </div>
-      )}
-      {fitAssessment && fitColors && (
-        <div className="mt-3 flex items-center gap-2 min-w-0">
-          <Badge
-            className={`${fitColors.bg} ${fitColors.text} ${fitColors.border} border shrink-0`}
-            variant="outline"
-          >
-            {fitColors.label}
-          </Badge>
-          <span className="text-sm text-muted-foreground truncate">
-            {fitAssessment.fitRationale}
-          </span>
-        </div>
-      )}
+      {/* Row 2 — Metrics + Product Relevance (conditional) */}
+      {hasRow2 && (
+        <div className="mt-0.5 flex items-center justify-between gap-2">
+          {/* Left: inline metrics */}
+          <div className="flex items-baseline gap-1 min-w-0 truncate">
+            {metrics?.map((m, i) => (
+              <span key={i} className="inline-flex items-baseline">
+                {i > 0 && <span className="mx-1.5 text-xs text-muted-foreground select-none">&middot;</span>}
+                <span className="text-xs text-muted-foreground">{m.label}:</span>
+                <span className="text-xs font-semibold text-foreground ml-1">{m.value}</span>
+              </span>
+            ))}
+          </div>
 
-      {/* Zone 3 — Product Relevance (conditional) */}
-      {productRelevance && (
-        <div className="mt-3 flex items-center gap-2">
-          <span
-            className={`inline-flex items-center px-2 py-0.5 rounded text-caption font-medium ${alignmentBadgeClass[productRelevance.alignmentLevel]}`}
-          >
-            {productRelevance.alignmentLevel}
-          </span>
-          {productRelevance.signals[0] && (
-            <span className="text-caption text-muted-foreground truncate">
-              {productRelevance.signals[0]}
-            </span>
+          {/* Right: product relevance */}
+          {productRelevance && (
+            <div className="flex items-center gap-1.5 shrink-0">
+              <span
+                className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${alignmentBadgeClass[productRelevance.alignmentLevel]}`}
+              >
+                {productRelevance.alignmentLevel}
+              </span>
+              {productRelevance.signals[0] && (
+                <span className="text-xs text-muted-foreground truncate max-w-[180px]">
+                  {productRelevance.signals[0]}
+                </span>
+              )}
+            </div>
           )}
         </div>
       )}
 
-      {/* Zone 4 — Children slot (conditional) */}
-      {children && <div className="mt-3">{children}</div>}
+      {/* Children slot — escape hatch (TransparencyNote only) */}
+      {children && <div className="mt-1">{children}</div>}
     </article>
   );
 }

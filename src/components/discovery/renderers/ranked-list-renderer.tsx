@@ -1,6 +1,5 @@
 import { TransparencyNote } from './transparency-note';
 import { DistrictListCard } from '@/components/shared/district-list-card';
-import { ProductRelevanceBadge } from '@/components/discovery/product-relevance-badge';
 import { ProductLensSelector } from '@/components/discovery/product-lens-selector';
 import type { RankedListContent, ResponseConfidence, ProductRelevance } from '@/services/types/discovery';
 
@@ -45,7 +44,7 @@ export function RankedListRenderer({ content, productRelevanceMap, products, pro
       )}
 
       {/* Entries list */}
-      <div className="mt-4 space-y-3" role="list" aria-label={title}>
+      <div className="mt-4 flex flex-col gap-2" role="list" aria-label={title}>
         {entries.map((entry) => (
           <DistrictListCard
             key={entry.districtId}
@@ -53,35 +52,15 @@ export function RankedListRenderer({ content, productRelevanceMap, products, pro
             name={entry.name}
             variant="inset"
             rank={entry.rank}
+            metrics={[entry.primaryMetric, ...(entry.secondaryMetrics || [])]}
             productRelevance={productRelevanceMap?.[entry.districtId]}
             isSaved={savedDistricts?.has(entry.districtId)}
             onSave={onSaveDistrict}
             onRemoveSaved={onRemoveSaved}
             onGeneratePlaybook={onGeneratePlaybook}
           >
-            {/* Content slot: metrics */}
-            <div className="mt-2 flex items-baseline gap-2">
-              <span className="text-overline font-[500] leading-[1.4] tracking-[0.05em] uppercase text-slate-400">
-                {entry.primaryMetric.label}
-              </span>
-              <span className="text-body font-[600] leading-[1.6] text-foreground">
-                {entry.primaryMetric.value}
-              </span>
-            </div>
-            {entry.secondaryMetrics && entry.secondaryMetrics.length > 0 && (
-              <p className="mt-1 text-caption font-[500] leading-[1.5] tracking-[0.025em] text-muted-foreground">
-                {entry.secondaryMetrics.map((m, i) => (
-                  <span key={i}>
-                    {i > 0 && <span className="mx-1.5">·</span>}
-                    {m.label}: {m.value}
-                  </span>
-                ))}
-              </p>
-            )}
             {entry.confidenceNote && (
-              <div className="mt-1.5">
-                <TransparencyNote note={entry.confidenceNote} level={entry.confidence} />
-              </div>
+              <TransparencyNote note={entry.confidenceNote} level={entry.confidence} />
             )}
           </DistrictListCard>
         ))}

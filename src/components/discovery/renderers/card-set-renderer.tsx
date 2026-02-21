@@ -40,7 +40,7 @@ export function CardSetRenderer({ content, productRelevanceMap, products, produc
 
       {/* Single-column stacked list */}
       <div
-        className={`flex flex-col gap-3 ${overview || products.length > 0 ? 'mt-4' : ''}`}
+        className={`flex flex-col gap-2 ${overview || products.length > 0 ? 'mt-4' : ''}`}
         role="list"
         aria-label="Districts matching your query"
       >
@@ -52,27 +52,15 @@ export function CardSetRenderer({ content, productRelevanceMap, products, produc
             location={entry.location}
             enrollment={entry.enrollment}
             variant="inset"
+            metrics={entry.keyMetric ? [entry.keyMetric] : undefined}
             productRelevance={productRelevanceMap?.[entry.districtId]}
             isSaved={savedDistricts?.has(entry.districtId)}
             onSave={onSaveDistrict}
             onRemoveSaved={onRemoveSaved}
             onGeneratePlaybook={onGeneratePlaybook}
           >
-            {/* Content slot: key metric emphasis surface */}
-            {entry.keyMetric && (
-              <div className="bg-[#E0F9FC] rounded-md p-3 mt-3 flex items-baseline gap-2">
-                <span className="text-overline font-[500] leading-[1.4] tracking-[0.05em] uppercase text-slate-400">
-                  {entry.keyMetric.label}
-                </span>
-                <span className="text-body font-[600] leading-[1.6] text-foreground">
-                  {entry.keyMetric.value}
-                </span>
-              </div>
-            )}
             {entry.confidence >= 3 && (
-              <div className="mt-2">
-                <TransparencyNote note="Limited data coverage" level={entry.confidence} />
-              </div>
+              <TransparencyNote note="Limited data coverage" level={entry.confidence} />
             )}
           </DistrictListCard>
         ))}

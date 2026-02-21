@@ -89,22 +89,13 @@ export function BriefRenderer({ content, confidence, format, productRelevanceMap
                     location={signal.location}
                     enrollment={signal.enrollment}
                     variant="inset"
+                    metrics={[{ label: signal.detail || '', value: signal.value }]}
                     productRelevance={productRelevanceMap?.[signal.districtId]}
                     isSaved={savedDistricts?.has(signal.districtId!)}
                     onSave={onSaveDistrict}
                     onRemoveSaved={onRemoveSaved}
                     onGeneratePlaybook={onGeneratePlaybook}
-                  >
-                    {/* Content slot: activity signal + detail */}
-                    <p className="mt-1 text-body font-[600] leading-[1.6] text-foreground">
-                      {signal.value}
-                    </p>
-                    {signal.detail && (
-                      <p className="mt-0.5 text-caption font-[500] leading-[1.5] text-slate-500">
-                        {signal.detail}
-                      </p>
-                    )}
-                  </DistrictListCard>
+                  />
                 );
               }
 
