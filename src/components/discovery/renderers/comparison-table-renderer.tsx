@@ -4,16 +4,13 @@ import { useRouter } from 'next/navigation';
 import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
 import { TransparencyNote } from './transparency-note';
 import { ProductRelevanceBadge } from '@/components/discovery/product-relevance-badge';
-import { ProductLensSelector } from '@/components/discovery/product-lens-selector';
+import { cn } from '@/lib/utils';
 import type { ComparisonContent, ResponseConfidence, ComparisonCell, ProductRelevance } from '@/services/types/discovery';
 
 interface ComparisonTableRendererProps {
   content: ComparisonContent;
   confidence: ResponseConfidence;
   productRelevanceMap?: Record<string, ProductRelevance>;
-  products: Array<{ productId: string; name: string }>;
-  productLensId: string | undefined;
-  onProductLensChange: (productId: string | undefined) => void;
 }
 
 function getCell(
@@ -24,34 +21,29 @@ function getCell(
   return cells.find((c) => c.dimensionId === dimensionId && c.entityId === entityId);
 }
 
-export function ComparisonTableRenderer({ content, confidence, productRelevanceMap, products, productLensId, onProductLensChange }: ComparisonTableRendererProps) {
+export function ComparisonTableRenderer({
+  content,
+  confidence,
+  productRelevanceMap,
+}: ComparisonTableRendererProps) {
   const router = useRouter();
   const { title, contextBanner, entities, dimensions, cells, synthesis } = content;
 
-  const hasAnyRelevance = productRelevanceMap &&
-    entities.some((e) => e.districtId && productRelevanceMap[e.districtId]);
+  const hasAnyRelevance =
+    productRelevanceMap && entities.some((e) => e.districtId && productRelevanceMap[e.districtId]);
 
   return (
-    <div className="bg-white border border-slate-200 rounded-lg shadow-sm p-5">
-      {/* Title */}
-      <h2 className="text-section-heading font-[600] leading-[1.4] text-foreground">{title}</h2>
+    <div className="bg-white border border-border rounded-lg shadow-sm p-5">
 
-      {/* Context banner (optional) */}
+      {/* ── Header ── */}
+      <h2 className="text-section-heading font-[600] leading-[1.4] tracking-[-0.01em] text-foreground">
+        {title}
+      </h2>
+
+      {/* Context banner */}
       {contextBanner && (
         <div className="bg-[#E0F9FC] rounded-md p-3 mt-4">
           <p className="text-body font-[400] leading-[1.6] text-foreground">{contextBanner}</p>
-        </div>
-      )}
-
-      {/* Product lens selector */}
-      {products.length > 0 && (
-        <div className="mt-4 flex justify-end">
-          <ProductLensSelector
-            products={products}
-            selectedProductId={productLensId}
-            onProductChange={onProductLensChange}
-            variant="compact"
-          />
         </div>
       )}
 
@@ -59,40 +51,45 @@ export function ComparisonTableRenderer({ content, confidence, productRelevanceM
       <div className="hidden md:block mt-6 overflow-x-auto">
         <table className="w-full border-collapse">
           <thead>
-            <tr>
-              {/* Empty first cell — dimension label column header */}
-              <th className="w-[180px] pb-3 text-left" />
+            <tr className="border-b-2 border-slate-200">
+              {/* Empty corner cell — dimension label column */}
+              <th className="w-[176px] pb-3 text-left" />
 
-              {entities.map((entity) => {
+              {entities.map((entity, entityIdx) => {
                 const headerNote = confidence.sections[entity.entityId];
                 return (
                   <th
                     key={entity.entityId}
                     scope="col"
-                    className="pb-3 text-left pl-4"
+                    className={cn(
+                      'pb-3 text-left pl-6',
+                      entityIdx > 0 && 'border-l border-slate-100'
+                    )}
                   >
-                    {entity.districtId ? (
-                      <a
-                        href={`/districts/${entity.districtId}`}
-                        className="text-body font-[600] leading-[1.4] text-district-link hover:underline hover:decoration-district-link/60 underline-offset-2 transition-colors"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          router.push(`/districts/${entity.districtId}`);
-                        }}
-                      >
-                        {entity.name}
-                      </a>
-                    ) : (
-                      <span className="text-body font-[600] leading-[1.4] text-foreground">
-                        {entity.name}
-                      </span>
-                    )}
-                    {entity.overallConfidence >= 3 && headerNote?.transparencyNote && (
-                      <TransparencyNote
-                        note={headerNote.transparencyNote}
-                        level={entity.overallConfidence}
-                      />
-                    )}
+                    <div className="space-y-1">
+                      {entity.districtId ? (
+                        <a
+                          href={`/districts/${entity.districtId}`}
+                          className="text-body font-[600] leading-[1.4] text-district-link underline decoration-district-link/30 underline-offset-2 hover:decoration-district-link transition-colors"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            router.push(`/districts/${entity.districtId}`);
+                          }}
+                        >
+                          {entity.name}
+                        </a>
+                      ) : (
+                        <span className="text-body font-[600] leading-[1.4] text-foreground">
+                          {entity.name}
+                        </span>
+                      )}
+                      {entity.overallConfidence >= 3 && headerNote?.transparencyNote && (
+                        <TransparencyNote
+                          note={headerNote.transparencyNote}
+                          level={entity.overallConfidence}
+                        />
+                      )}
+                    </div>
                   </th>
                 );
               })}
@@ -103,25 +100,33 @@ export function ComparisonTableRenderer({ content, confidence, productRelevanceM
             {dimensions.map((dim, dimIdx) => (
               <tr
                 key={dim.dimensionId}
-                className={dimIdx < dimensions.length - 1 ? 'border-b border-slate-100' : ''}
+                className={cn(
+                  'group hover:bg-slate-50 transition-colors',
+                  dimIdx < dimensions.length - 1 && 'border-b border-slate-100'
+                )}
               >
-                {/* Dimension label */}
+                {/* Dimension label — overline tier */}
                 <th
                   scope="row"
-                  className="py-3 pr-4 text-left text-caption font-[500] leading-[1.5] tracking-[0.025em] text-muted-foreground align-top"
+                  className="py-3.5 pr-4 text-left align-top"
                 >
-                  {dim.label}
+                  <span className="text-overline font-[500] leading-[1.4] tracking-[0.05em] uppercase text-slate-400">
+                    {dim.label}
+                  </span>
                 </th>
 
                 {/* Entity value cells */}
-                {entities.map((entity) => {
+                {entities.map((entity, entityIdx) => {
                   const cell = getCell(cells, dim.dimensionId, entity.entityId);
                   const note = cell?.confidence.transparencyNote;
 
                   return (
                     <td
                       key={entity.entityId}
-                      className="py-3 pl-4 text-body font-[400] leading-[1.6] text-foreground align-top"
+                      className={cn(
+                        'py-3.5 pl-6 text-body font-[400] leading-[1.6] text-foreground align-top',
+                        entityIdx > 0 && 'border-l border-slate-100'
+                      )}
                     >
                       {cell ? (
                         <>
@@ -131,7 +136,7 @@ export function ComparisonTableRenderer({ content, confidence, productRelevanceM
                               <PopoverTrigger asChild>
                                 <button
                                   type="button"
-                                  className="text-overline text-slate-400 ml-1 cursor-help inline"
+                                  className="text-overline text-slate-400 ml-1 cursor-help inline hover:text-slate-600 transition-colors"
                                   aria-label={`Data coverage note for ${dim.label} — ${entity.name}`}
                                 >
                                   ◆
@@ -154,19 +159,29 @@ export function ComparisonTableRenderer({ content, confidence, productRelevanceM
               </tr>
             ))}
 
-            {/* Product Alignment row — conditional */}
+            {/* Product Alignment row — separated by a heavier rule */}
             {hasAnyRelevance && (
-              <tr className="border-t border-slate-200">
+              <tr className="group hover:bg-slate-50 transition-colors border-t-2 border-slate-200">
                 <th
                   scope="row"
-                  className="py-3 pr-4 text-left text-caption font-[500] leading-[1.5] tracking-[0.025em] text-muted-foreground align-top"
+                  className="py-3.5 pr-4 text-left align-top"
                 >
-                  Product Alignment
+                  <span className="text-overline font-[500] leading-[1.4] tracking-[0.05em] uppercase text-slate-400">
+                    Product Alignment
+                  </span>
                 </th>
-                {entities.map((entity) => {
-                  const relevance = entity.districtId ? productRelevanceMap![entity.districtId] : undefined;
+                {entities.map((entity, entityIdx) => {
+                  const relevance = entity.districtId
+                    ? productRelevanceMap![entity.districtId]
+                    : undefined;
                   return (
-                    <td key={entity.entityId} className="py-3 pl-4 align-top">
+                    <td
+                      key={entity.entityId}
+                      className={cn(
+                        'py-3.5 pl-6 align-top',
+                        entityIdx > 0 && 'border-l border-slate-100'
+                      )}
+                    >
                       {relevance ? (
                         <ProductRelevanceBadge relevance={relevance} />
                       ) : (
@@ -182,13 +197,12 @@ export function ComparisonTableRenderer({ content, confidence, productRelevanceM
       </div>
 
       {/* ── Mobile stacked cards (below md) ── */}
-      <div
-        className="block md:hidden mt-6 flex flex-col gap-3"
-        role="list"
-      >
+      <div className="block md:hidden mt-6 flex flex-col gap-3" role="list">
         {entities.map((entity) => {
           const entityNote = confidence.sections[entity.entityId];
-          const relevance = entity.districtId ? productRelevanceMap?.[entity.districtId] : undefined;
+          const relevance = entity.districtId
+            ? productRelevanceMap?.[entity.districtId]
+            : undefined;
           return (
             <div
               key={entity.entityId}
@@ -200,7 +214,7 @@ export function ComparisonTableRenderer({ content, confidence, productRelevanceM
               {entity.districtId ? (
                 <a
                   href={`/districts/${entity.districtId}`}
-                  className="text-body font-[600] leading-[1.4] text-district-link hover:underline hover:decoration-district-link/60 underline-offset-2 transition-colors block"
+                  className="text-body font-[600] leading-[1.4] text-district-link underline decoration-district-link/30 underline-offset-2 hover:decoration-district-link transition-colors block"
                   onClick={(e) => {
                     e.preventDefault();
                     router.push(`/districts/${entity.districtId}`);
@@ -209,12 +223,9 @@ export function ComparisonTableRenderer({ content, confidence, productRelevanceM
                   {entity.name}
                 </a>
               ) : (
-                <p className="text-body font-[600] leading-[1.4] text-foreground">
-                  {entity.name}
-                </p>
+                <p className="text-body font-[600] leading-[1.4] text-foreground">{entity.name}</p>
               )}
 
-              {/* Overall confidence note if level >= 3 */}
               {entity.overallConfidence >= 3 && entityNote?.transparencyNote && (
                 <TransparencyNote
                   note={entityNote.transparencyNote}
@@ -233,7 +244,7 @@ export function ComparisonTableRenderer({ content, confidence, productRelevanceM
                       <p className="text-overline font-[500] leading-[1.4] tracking-[0.05em] uppercase text-slate-400">
                         {dim.label}
                       </p>
-                      <p className="text-body font-[400] leading-[1.6] text-foreground">
+                      <p className="mt-0.5 text-body font-[400] leading-[1.6] text-foreground">
                         {cell?.value ?? '—'}
                       </p>
                       {note && cell && (
@@ -244,15 +255,13 @@ export function ComparisonTableRenderer({ content, confidence, productRelevanceM
                 })}
               </div>
 
-              {/* Product relevance — conditional */}
+              {/* Product relevance */}
               {relevance && (
-                <div className="mt-3 pt-3 border-t border-slate-100">
-                  <p className="text-overline font-[500] leading-[1.4] tracking-[0.05em] uppercase text-slate-400">
+                <div className="mt-3 pt-3 border-t border-slate-200">
+                  <p className="text-overline font-[500] leading-[1.4] tracking-[0.05em] uppercase text-slate-400 mb-1.5">
                     Product Alignment
                   </p>
-                  <div className="mt-1">
-                    <ProductRelevanceBadge relevance={relevance} />
-                  </div>
+                  <ProductRelevanceBadge relevance={relevance} />
                 </div>
               )}
             </div>
@@ -262,9 +271,9 @@ export function ComparisonTableRenderer({ content, confidence, productRelevanceM
 
       {/* ── Synthesis ── */}
       {synthesis && (
-        <div className="mt-6 bg-slate-50 rounded-md p-4">
+        <div className="mt-6 bg-[#E0F9FC] rounded-md p-4">
           <p className="text-overline font-[500] leading-[1.4] tracking-[0.05em] uppercase text-slate-400 mb-2">
-            SYNTHESIS
+            Synthesis
           </p>
           <p className="text-body font-[400] leading-[1.6] text-foreground">{synthesis}</p>
         </div>

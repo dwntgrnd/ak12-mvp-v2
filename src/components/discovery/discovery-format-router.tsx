@@ -30,7 +30,7 @@ export function DiscoveryFormatRouter({ response, onNewQuery, products, productL
     case 'recovery':
       return <RecoveryRenderer content={content.data} onRedirectQuery={onNewQuery} />;
     case 'comparison_table':
-      return <ComparisonTableRenderer content={content.data} confidence={confidence} productRelevanceMap={relevanceMap} {...lensProps} />;
+      return <ComparisonTableRenderer content={content.data} confidence={confidence} productRelevanceMap={relevanceMap} />;
     case 'ranked_list':
       return <RankedListRenderer content={content.data} confidence={confidence} productRelevanceMap={relevanceMap} {...lensProps} />;
     case 'card_set':
