@@ -12,19 +12,24 @@ interface DiscoveryFormatRouterProps {
   products: Array<{ productId: string; name: string }>;
   productLensId: string | undefined;
   onProductLensChange: (productId: string | undefined) => void;
+  savedDistricts?: Set<string>;
+  onSaveDistrict?: (districtId: string) => void;
+  onRemoveSaved?: (districtId: string) => void;
+  onGeneratePlaybook?: (districtId: string) => void;
 }
 
-export function DiscoveryFormatRouter({ response, onNewQuery, products, productLensId, onProductLensChange }: DiscoveryFormatRouterProps) {
+export function DiscoveryFormatRouter({ response, onNewQuery, products, productLensId, onProductLensChange, savedDistricts, onSaveDistrict, onRemoveSaved, onGeneratePlaybook }: DiscoveryFormatRouterProps) {
   const { content, confidence } = response;
   const relevanceMap: Record<string, ProductRelevance> | undefined = response.productRelevanceMap;
 
   const lensProps = { products, productLensId, onProductLensChange };
+  const actionProps = { savedDistricts, onSaveDistrict, onRemoveSaved, onGeneratePlaybook };
 
   switch (content.format) {
     case 'narrative_brief':
-      return <BriefRenderer content={content.data} confidence={confidence} format="narrative_brief" productRelevanceMap={relevanceMap} />;
+      return <BriefRenderer content={content.data} confidence={confidence} format="narrative_brief" productRelevanceMap={relevanceMap} {...actionProps} />;
     case 'intelligence_brief':
-      return <BriefRenderer content={content.data} confidence={confidence} format="intelligence_brief" productRelevanceMap={relevanceMap} />;
+      return <BriefRenderer content={content.data} confidence={confidence} format="intelligence_brief" productRelevanceMap={relevanceMap} {...actionProps} />;
     case 'direct_answer_card':
       return <DirectAnswerCard content={content.data} confidence={confidence} productRelevanceMap={relevanceMap} />;
     case 'recovery':
@@ -32,9 +37,9 @@ export function DiscoveryFormatRouter({ response, onNewQuery, products, productL
     case 'comparison_table':
       return <ComparisonTableRenderer content={content.data} confidence={confidence} productRelevanceMap={relevanceMap} />;
     case 'ranked_list':
-      return <RankedListRenderer content={content.data} confidence={confidence} productRelevanceMap={relevanceMap} {...lensProps} />;
+      return <RankedListRenderer content={content.data} confidence={confidence} productRelevanceMap={relevanceMap} {...lensProps} {...actionProps} />;
     case 'card_set':
-      return <CardSetRenderer content={content.data} confidence={confidence} productRelevanceMap={relevanceMap} {...lensProps} />;
+      return <CardSetRenderer content={content.data} confidence={confidence} productRelevanceMap={relevanceMap} {...lensProps} {...actionProps} />;
     default:
       return null;
   }

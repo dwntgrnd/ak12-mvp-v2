@@ -15,6 +15,10 @@ interface DiscoveryResultsLayoutProps {
   products: Array<{ productId: string; name: string }>;
   productLensId: string | undefined;
   onProductLensChange: (productId: string | undefined) => void;
+  savedDistricts?: Set<string>;
+  onSaveDistrict?: (districtId: string) => void;
+  onRemoveSaved?: (districtId: string) => void;
+  onGeneratePlaybook?: (districtId: string) => void;
 }
 
 export function DiscoveryResultsLayout({
@@ -27,6 +31,10 @@ export function DiscoveryResultsLayout({
   products,
   productLensId,
   onProductLensChange,
+  savedDistricts,
+  onSaveDistrict,
+  onRemoveSaved,
+  onGeneratePlaybook,
 }: DiscoveryResultsLayoutProps) {
   return (
     <div className="w-full">
@@ -67,6 +75,10 @@ export function DiscoveryResultsLayout({
               products={products}
               productLensId={productLensId}
               onProductLensChange={onProductLensChange}
+              savedDistricts={savedDistricts}
+              onSaveDistrict={onSaveDistrict}
+              onRemoveSaved={onRemoveSaved}
+              onGeneratePlaybook={onGeneratePlaybook}
             />
 
             {/* Follow-up chips */}

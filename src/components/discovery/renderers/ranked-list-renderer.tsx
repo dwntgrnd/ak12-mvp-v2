@@ -11,9 +11,13 @@ interface RankedListRendererProps {
   products: Array<{ productId: string; name: string }>;
   productLensId: string | undefined;
   onProductLensChange: (productId: string | undefined) => void;
+  savedDistricts?: Set<string>;
+  onSaveDistrict?: (districtId: string) => void;
+  onRemoveSaved?: (districtId: string) => void;
+  onGeneratePlaybook?: (districtId: string) => void;
 }
 
-export function RankedListRenderer({ content, productRelevanceMap, products, productLensId, onProductLensChange }: RankedListRendererProps) {
+export function RankedListRenderer({ content, productRelevanceMap, products, productLensId, onProductLensChange, savedDistricts, onSaveDistrict, onRemoveSaved, onGeneratePlaybook }: RankedListRendererProps) {
   const { title, rankingCriterion, entries, synthesis } = content;
 
   return (
@@ -50,6 +54,10 @@ export function RankedListRenderer({ content, productRelevanceMap, products, pro
             variant="inset"
             rank={entry.rank}
             productRelevance={productRelevanceMap?.[entry.districtId]}
+            isSaved={savedDistricts?.has(entry.districtId)}
+            onSave={onSaveDistrict}
+            onRemoveSaved={onRemoveSaved}
+            onGeneratePlaybook={onGeneratePlaybook}
           >
             {/* Content slot: metrics */}
             <div className="mt-2 flex items-baseline gap-2">
