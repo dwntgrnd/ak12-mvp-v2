@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { ChevronRight, ArrowRight, ExternalLink } from 'lucide-react';
 import type { BriefContent, ResponseConfidence, ProductRelevance } from '@/services/types/discovery';
 import { TransparencyNote } from './transparency-note';
-import { DiscoveryResultCard } from '@/components/discovery/discovery-result-card';
+import { DistrictListCard } from '@/components/shared/district-list-card';
 
 interface BriefRendererProps {
   content: BriefContent;
@@ -78,7 +78,7 @@ export function BriefRenderer({ content, confidence, format, productRelevanceMap
               // District-linked signal → render as navigable card
               if (signal.districtId) {
                 return (
-                  <DiscoveryResultCard
+                  <DistrictListCard
                     key={signal.districtId}
                     districtId={signal.districtId}
                     name={signal.label}
@@ -96,7 +96,7 @@ export function BriefRenderer({ content, confidence, format, productRelevanceMap
                         {signal.detail}
                       </p>
                     )}
-                  </DiscoveryResultCard>
+                  </DistrictListCard>
                 );
               }
 

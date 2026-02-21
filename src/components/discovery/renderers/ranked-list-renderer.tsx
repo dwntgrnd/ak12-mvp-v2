@@ -1,5 +1,5 @@
 import { TransparencyNote } from './transparency-note';
-import { DiscoveryResultCard } from '@/components/discovery/discovery-result-card';
+import { DistrictListCard } from '@/components/shared/district-list-card';
 import { ProductRelevanceBadge } from '@/components/discovery/product-relevance-badge';
 import { ProductLensSelector } from '@/components/discovery/product-lens-selector';
 import type { RankedListContent, ResponseConfidence, ProductRelevance } from '@/services/types/discovery';
@@ -43,7 +43,7 @@ export function RankedListRenderer({ content, productRelevanceMap, products, pro
       {/* Entries list */}
       <div className="mt-4 space-y-3" role="list" aria-label={title}>
         {entries.map((entry) => (
-          <DiscoveryResultCard
+          <DistrictListCard
             key={entry.districtId}
             districtId={entry.districtId}
             name={entry.name}
@@ -75,7 +75,7 @@ export function RankedListRenderer({ content, productRelevanceMap, products, pro
                 <TransparencyNote note={entry.confidenceNote} level={entry.confidence} />
               </div>
             )}
-          </DiscoveryResultCard>
+          </DistrictListCard>
         ))}
       </div>
 

@@ -1,4 +1,4 @@
-import { DiscoveryResultCard } from '@/components/discovery/discovery-result-card';
+import { DistrictListCard } from '@/components/shared/district-list-card';
 import { TransparencyNote } from './transparency-note';
 import { ProductLensSelector } from '@/components/discovery/product-lens-selector';
 import type { CardSetContent, ResponseConfidence, ProductRelevance } from '@/services/types/discovery';
@@ -41,7 +41,7 @@ export function CardSetRenderer({ content, productRelevanceMap, products, produc
         aria-label="Districts matching your query"
       >
         {districts.map((entry) => (
-          <DiscoveryResultCard
+          <DistrictListCard
             key={entry.districtId}
             districtId={entry.districtId}
             name={entry.name}
@@ -66,7 +66,7 @@ export function CardSetRenderer({ content, productRelevanceMap, products, produc
                 <TransparencyNote note="Limited data coverage" level={entry.confidence} />
               </div>
             )}
-          </DiscoveryResultCard>
+          </DistrictListCard>
         ))}
       </div>
     </div>
