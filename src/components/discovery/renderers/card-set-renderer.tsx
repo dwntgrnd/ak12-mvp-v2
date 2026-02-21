@@ -1,14 +1,18 @@
 import { DiscoveryResultCard } from '@/components/discovery/discovery-result-card';
 import { TransparencyNote } from './transparency-note';
+import { ProductLensSelector } from '@/components/discovery/product-lens-selector';
 import type { CardSetContent, ResponseConfidence, ProductRelevance } from '@/services/types/discovery';
 
 interface CardSetRendererProps {
   content: CardSetContent;
   confidence: ResponseConfidence;
   productRelevanceMap?: Record<string, ProductRelevance>;
+  products: Array<{ productId: string; name: string }>;
+  productLensId: string | undefined;
+  onProductLensChange: (productId: string | undefined) => void;
 }
 
-export function CardSetRenderer({ content, productRelevanceMap }: CardSetRendererProps) {
+export function CardSetRenderer({ content, productRelevanceMap, products, productLensId, onProductLensChange }: CardSetRendererProps) {
   const { overview, districts } = content;
 
   return (
@@ -18,9 +22,21 @@ export function CardSetRenderer({ content, productRelevanceMap }: CardSetRendere
         <p className="text-body font-[400] leading-[1.6] text-foreground">{overview}</p>
       )}
 
+      {/* Product lens selector */}
+      {products.length > 0 && (
+        <div className={`flex justify-end ${overview ? 'mt-4' : ''}`}>
+          <ProductLensSelector
+            products={products}
+            selectedProductId={productLensId}
+            onProductChange={onProductLensChange}
+            variant="compact"
+          />
+        </div>
+      )}
+
       {/* Single-column stacked list */}
       <div
-        className={`flex flex-col gap-3 ${overview ? 'mt-4' : ''}`}
+        className={`flex flex-col gap-3 ${overview || products.length > 0 ? 'mt-4' : ''}`}
         role="list"
         aria-label="Districts matching your query"
       >

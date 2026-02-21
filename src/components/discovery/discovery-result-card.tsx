@@ -76,7 +76,7 @@ export function DiscoveryResultCard({
       )}
 
       <div>
-        <div className="text-sm font-semibold text-primary leading-snug">{name}</div>
+        <div className="text-subsection-heading font-semibold text-district-link leading-snug">{name}</div>
         {location && (
           <div className="text-caption text-muted-foreground mt-0.5">{location}</div>
         )}

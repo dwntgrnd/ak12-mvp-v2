@@ -2,7 +2,6 @@ import { DiscoveryInput } from './discovery-input';
 import { FollowUpChips } from './follow-up-chips';
 import { SourceCitations } from './source-citations';
 import { DiscoveryFormatRouter } from './discovery-format-router';
-import { ProductLensSelector } from './product-lens-selector';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import type { DiscoveryQueryResponse } from '@/services/types/discovery';
 
@@ -31,29 +30,19 @@ export function DiscoveryResultsLayout({
 }: DiscoveryResultsLayoutProps) {
   return (
     <div className="w-full">
-      {/* Compact input bar + product lens — full width row */}
-      <div className="flex items-center gap-3 w-full">
-        <div className="flex-1">
-          <DiscoveryInput
-            variant="compact"
-            initialValue={query}
-            onSubmit={onNewQuery}
-            onDirectNavigation={onDirectNavigation}
-            onClear={onClearResults}
-          />
-        </div>
-        {products.length > 0 && (
-          <ProductLensSelector
-            products={products}
-            selectedProductId={productLensId}
-            onProductChange={onProductLensChange}
-            variant="compact"
-          />
-        )}
-      </div>
+      {/* Search input — full size, centered */}
+      <DiscoveryInput
+        variant="full"
+        initialValue={query}
+        onSubmit={onNewQuery}
+        onDirectNavigation={onDirectNavigation}
+        onClear={onClearResults}
+        placeholder="Find districts, explore market intelligence, or ask a question."
+        autoFocus={false}
+      />
 
       {/* Content area — constrained to reading width */}
-      <div className="max-w-3xl mx-auto mt-6">
+      <div className="max-w-[1024px] mx-auto mt-6">
         {error && !response && (
           <div className="space-y-3">
             <Alert variant="destructive">
@@ -72,7 +61,13 @@ export function DiscoveryResultsLayout({
         {response && (
           <div className="space-y-6">
             {/* Format router — switches on content.format */}
-            <DiscoveryFormatRouter response={response} onNewQuery={onNewQuery} />
+            <DiscoveryFormatRouter
+              response={response}
+              onNewQuery={onNewQuery}
+              products={products}
+              productLensId={productLensId}
+              onProductLensChange={onProductLensChange}
+            />
 
             {/* Follow-up chips */}
             <FollowUpChips

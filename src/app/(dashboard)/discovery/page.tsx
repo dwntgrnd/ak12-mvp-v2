@@ -84,9 +84,6 @@ export default function DiscoveryPage() {
         <DiscoveryEntryState
           onQuerySubmit={handleQuerySubmit}
           onDirectNavigation={handleDirectNavigation}
-          products={products}
-          productLensId={productLensId}
-          onProductLensChange={setProductLensId}
         />
       )}
 

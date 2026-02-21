@@ -9,11 +9,16 @@ import { CardSetRenderer } from './renderers/card-set-renderer';
 interface DiscoveryFormatRouterProps {
   response: DiscoveryQueryResponse;
   onNewQuery: (query: string) => void;
+  products: Array<{ productId: string; name: string }>;
+  productLensId: string | undefined;
+  onProductLensChange: (productId: string | undefined) => void;
 }
 
-export function DiscoveryFormatRouter({ response, onNewQuery }: DiscoveryFormatRouterProps) {
+export function DiscoveryFormatRouter({ response, onNewQuery, products, productLensId, onProductLensChange }: DiscoveryFormatRouterProps) {
   const { content, confidence } = response;
   const relevanceMap: Record<string, ProductRelevance> | undefined = response.productRelevanceMap;
+
+  const lensProps = { products, productLensId, onProductLensChange };
 
   switch (content.format) {
     case 'narrative_brief':
@@ -25,11 +30,11 @@ export function DiscoveryFormatRouter({ response, onNewQuery }: DiscoveryFormatR
     case 'recovery':
       return <RecoveryRenderer content={content.data} onRedirectQuery={onNewQuery} />;
     case 'comparison_table':
-      return <ComparisonTableRenderer content={content.data} confidence={confidence} productRelevanceMap={relevanceMap} />;
+      return <ComparisonTableRenderer content={content.data} confidence={confidence} productRelevanceMap={relevanceMap} {...lensProps} />;
     case 'ranked_list':
-      return <RankedListRenderer content={content.data} confidence={confidence} productRelevanceMap={relevanceMap} />;
+      return <RankedListRenderer content={content.data} confidence={confidence} productRelevanceMap={relevanceMap} {...lensProps} />;
     case 'card_set':
-      return <CardSetRenderer content={content.data} confidence={confidence} productRelevanceMap={relevanceMap} />;
+      return <CardSetRenderer content={content.data} confidence={confidence} productRelevanceMap={relevanceMap} {...lensProps} />;
     default:
       return null;
   }

@@ -4,12 +4,16 @@ import { useRouter } from 'next/navigation';
 import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
 import { TransparencyNote } from './transparency-note';
 import { ProductRelevanceBadge } from '@/components/discovery/product-relevance-badge';
+import { ProductLensSelector } from '@/components/discovery/product-lens-selector';
 import type { ComparisonContent, ResponseConfidence, ComparisonCell, ProductRelevance } from '@/services/types/discovery';
 
 interface ComparisonTableRendererProps {
   content: ComparisonContent;
   confidence: ResponseConfidence;
   productRelevanceMap?: Record<string, ProductRelevance>;
+  products: Array<{ productId: string; name: string }>;
+  productLensId: string | undefined;
+  onProductLensChange: (productId: string | undefined) => void;
 }
 
 function getCell(
@@ -20,7 +24,7 @@ function getCell(
   return cells.find((c) => c.dimensionId === dimensionId && c.entityId === entityId);
 }
 
-export function ComparisonTableRenderer({ content, confidence, productRelevanceMap }: ComparisonTableRendererProps) {
+export function ComparisonTableRenderer({ content, confidence, productRelevanceMap, products, productLensId, onProductLensChange }: ComparisonTableRendererProps) {
   const router = useRouter();
   const { title, contextBanner, entities, dimensions, cells, synthesis } = content;
 
@@ -36,6 +40,18 @@ export function ComparisonTableRenderer({ content, confidence, productRelevanceM
       {contextBanner && (
         <div className="bg-[#E0F9FC] rounded-md p-3 mt-4">
           <p className="text-body font-[400] leading-[1.6] text-foreground">{contextBanner}</p>
+        </div>
+      )}
+
+      {/* Product lens selector */}
+      {products.length > 0 && (
+        <div className="mt-4 flex justify-end">
+          <ProductLensSelector
+            products={products}
+            selectedProductId={productLensId}
+            onProductChange={onProductLensChange}
+            variant="compact"
+          />
         </div>
       )}
 
@@ -58,7 +74,7 @@ export function ComparisonTableRenderer({ content, confidence, productRelevanceM
                     {entity.districtId ? (
                       <a
                         href={`/districts/${entity.districtId}`}
-                        className="text-body font-[600] leading-[1.4] text-primary hover:underline hover:decoration-primary/60 underline-offset-2 transition-colors"
+                        className="text-body font-[600] leading-[1.4] text-district-link hover:underline hover:decoration-district-link/60 underline-offset-2 transition-colors"
                         onClick={(e) => {
                           e.preventDefault();
                           router.push(`/districts/${entity.districtId}`);
@@ -184,7 +200,7 @@ export function ComparisonTableRenderer({ content, confidence, productRelevanceM
               {entity.districtId ? (
                 <a
                   href={`/districts/${entity.districtId}`}
-                  className="text-body font-[600] leading-[1.4] text-primary hover:underline hover:decoration-primary/60 underline-offset-2 transition-colors block"
+                  className="text-body font-[600] leading-[1.4] text-district-link hover:underline hover:decoration-district-link/60 underline-offset-2 transition-colors block"
                   onClick={(e) => {
                     e.preventDefault();
                     router.push(`/districts/${entity.districtId}`);

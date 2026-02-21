@@ -1,20 +1,13 @@
 import { DiscoveryInput } from './discovery-input';
-import { ProductLensSelector } from './product-lens-selector';
 
 interface DiscoveryEntryStateProps {
   onQuerySubmit: (query: string) => void;
   onDirectNavigation: (districtId: string) => void;
-  products: Array<{ productId: string; name: string }>;
-  productLensId: string | undefined;
-  onProductLensChange: (productId: string | undefined) => void;
 }
 
 export function DiscoveryEntryState({
   onQuerySubmit,
   onDirectNavigation,
-  products,
-  productLensId,
-  onProductLensChange,
 }: DiscoveryEntryStateProps) {
   return (
     <div className="flex flex-col items-center justify-center min-h-[calc(100vh-var(--topbar-height)-120px)] -mt-[10vh]">
@@ -40,18 +33,6 @@ export function DiscoveryEntryState({
             onDirectNavigation={onDirectNavigation}
           />
         </div>
-
-        {/* Product lens selector — below input, centered */}
-        {products.length > 0 && (
-          <div className="mt-3 flex justify-center">
-            <ProductLensSelector
-              products={products}
-              selectedProductId={productLensId}
-              onProductChange={onProductLensChange}
-              variant="full"
-            />
-          </div>
-        )}
 
         {/* Helper text */}
         <p className="mt-3 text-xs font-medium text-muted-foreground/70 max-w-[480px] mx-auto">

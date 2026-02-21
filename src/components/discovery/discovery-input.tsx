@@ -35,6 +35,8 @@ interface DiscoveryInputProps {
   initialValue?: string;
   disabled?: boolean;
   onClear?: () => void;
+  placeholder?: string;
+  autoFocus?: boolean;
 }
 
 export function DiscoveryInput({
@@ -44,6 +46,8 @@ export function DiscoveryInput({
   initialValue,
   disabled = false,
   onClear,
+  placeholder,
+  autoFocus,
 }: DiscoveryInputProps) {
   const [value, setValue] = useState(initialValue ?? '');
   const [isFocused, setIsFocused] = useState(false);
@@ -81,8 +85,8 @@ export function DiscoveryInput({
     return serviceRef.current;
   }
 
-  // Typewriter overlay visible when: full variant AND no value AND not focused AND flag AND dropdown closed
-  const showTypewriter = variant !== 'compact' && !value && !isFocused && twVisible && !dropdownOpen;
+  // Typewriter overlay visible when: full variant AND no value AND not focused AND flag AND dropdown closed AND no static placeholder
+  const showTypewriter = variant !== 'compact' && !placeholder && !value && !isFocused && twVisible && !dropdownOpen;
 
   // Animation engine — driven by state changes
   useEffect(() => {
@@ -300,8 +304,9 @@ export function DiscoveryInput({
         }
         aria-autocomplete="list"
         aria-label="Search districts or ask a question"
-        autoFocus={variant === 'full'}
+        autoFocus={autoFocus ?? variant === 'full'}
         autoComplete="off"
+        placeholder={placeholder}
         disabled={disabled}
         value={value}
         onChange={(e) => setValue(e.target.value)}

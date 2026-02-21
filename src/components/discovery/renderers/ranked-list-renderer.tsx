@@ -1,15 +1,19 @@
 import { TransparencyNote } from './transparency-note';
 import { DiscoveryResultCard } from '@/components/discovery/discovery-result-card';
 import { ProductRelevanceBadge } from '@/components/discovery/product-relevance-badge';
+import { ProductLensSelector } from '@/components/discovery/product-lens-selector';
 import type { RankedListContent, ResponseConfidence, ProductRelevance } from '@/services/types/discovery';
 
 interface RankedListRendererProps {
   content: RankedListContent;
   confidence: ResponseConfidence;
   productRelevanceMap?: Record<string, ProductRelevance>;
+  products: Array<{ productId: string; name: string }>;
+  productLensId: string | undefined;
+  onProductLensChange: (productId: string | undefined) => void;
 }
 
-export function RankedListRenderer({ content, productRelevanceMap }: RankedListRendererProps) {
+export function RankedListRenderer({ content, productRelevanceMap, products, productLensId, onProductLensChange }: RankedListRendererProps) {
   const { title, rankingCriterion, entries, synthesis } = content;
 
   return (
@@ -24,8 +28,20 @@ export function RankedListRenderer({ content, productRelevanceMap }: RankedListR
         Ranked by: {rankingCriterion}
       </p>
 
+      {/* Product lens selector */}
+      {products.length > 0 && (
+        <div className="mt-4 flex justify-end">
+          <ProductLensSelector
+            products={products}
+            selectedProductId={productLensId}
+            onProductChange={onProductLensChange}
+            variant="compact"
+          />
+        </div>
+      )}
+
       {/* Entries list */}
-      <div className="mt-6 space-y-3" role="list" aria-label={title}>
+      <div className="mt-4 space-y-3" role="list" aria-label={title}>
         {entries.map((entry) => (
           <DiscoveryResultCard
             key={entry.districtId}

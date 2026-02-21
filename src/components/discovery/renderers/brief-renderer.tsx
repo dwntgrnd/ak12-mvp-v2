@@ -46,7 +46,7 @@ export function BriefRenderer({ content, confidence, format, productRelevanceMap
         <div className="mb-3">
           <a
             href={`/districts/${content.subjectDistrictId}`}
-            className="text-section-heading font-[600] leading-[1.3] tracking-[-0.01em] text-primary hover:underline hover:decoration-primary/60 underline-offset-2 transition-colors"
+            className="text-section-heading font-[600] leading-[1.3] tracking-[-0.01em] text-district-link hover:underline hover:decoration-district-link/60 underline-offset-2 transition-colors"
             onClick={(e) => {
               e.preventDefault();
               router.push(`/districts/${content.subjectDistrictId}`);
@@ -59,14 +59,15 @@ export function BriefRenderer({ content, confidence, format, productRelevanceMap
 
       {/* Lead insight — emphasis surface, no left border */}
       <div className="bg-[#E0F9FC] rounded-md p-4">
-        <p className="text-body font-[400] leading-[1.6] text-foreground">
+        <p className="text-subsection-heading font-[600] leading-[1.6] text-foreground">
           {content.leadInsight}
         </p>
       </div>
 
       {/* Key signals — 2-col grid */}
       {content.keySignals.length > 0 && (
-        <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+        <div className="mt-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
           {content.keySignals.map((signal, i) => {
             // District-linked signal → render as navigable card
             if (signal.districtId) {
@@ -110,6 +111,7 @@ export function BriefRenderer({ content, confidence, format, productRelevanceMap
               </div>
             );
           })}
+        </div>
         </div>
       )}
 
@@ -190,7 +192,7 @@ export function BriefRenderer({ content, confidence, format, productRelevanceMap
         <div className="mt-6">
           <a
             href={`/districts/${content.subjectDistrictId}`}
-            className="text-caption font-[500] leading-[1.5] tracking-[0.025em] text-primary hover:underline hover:decoration-primary/60 underline-offset-2 transition-colors"
+            className="text-caption font-[500] leading-[1.5] tracking-[0.025em] text-district-link hover:underline hover:decoration-district-link/60 underline-offset-2 transition-colors"
             onClick={(e) => {
               e.preventDefault();
               router.push(`/districts/${content.subjectDistrictId}`);
