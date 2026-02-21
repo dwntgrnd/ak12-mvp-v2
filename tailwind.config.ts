@@ -61,6 +61,9 @@ const config: Config = {
         heading: ['var(--font-manrope)', 'sans-serif'],
         body: ['var(--font-inter)', 'sans-serif'],
       },
+      maxWidth: {
+        content: 'var(--content-width)',
+      },
       borderRadius: {
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',

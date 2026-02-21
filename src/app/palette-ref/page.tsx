@@ -478,7 +478,7 @@ export default function PaletteReferencePage() {
     <>
     <Script src="https://mcp.figma.com/mcp/html-to-design/capture.js" strategy="afterInteractive" />
     <div className="min-h-screen bg-gray-50 p-8">
-      <div className="max-w-5xl mx-auto">
+      <div className="max-w-content mx-auto">
         <div className="mb-10">
           <h1 className="text-2xl font-bold text-gray-900">AK12 Visual Standards — Reference v2</h1>
           <p className="text-sm text-gray-500 mt-1">Extended brand palette · Component anatomy · No decorative borders · Click swatches to copy</p>

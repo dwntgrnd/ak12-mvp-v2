@@ -46,6 +46,9 @@
   --input: 214 32% 91%;
   --ring: 208 60% 38%;
 
+  /* Content width */
+  --content-width: 1024px;
+
   /* Border radius */
   --radius: 0.5rem;
 

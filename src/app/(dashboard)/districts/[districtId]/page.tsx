@@ -127,7 +127,7 @@ export default function DistrictProfilePage({
     return (
       <div className="space-y-6">
         {/* Identity bar skeleton */}
-        <div className="max-w-[1024px] mx-auto space-y-3">
+        <div className="max-w-content mx-auto space-y-3">
           <div className="flex items-center justify-between">
             <Skeleton className="h-7 w-64" />
             <div className="flex gap-2">
@@ -143,7 +143,7 @@ export default function DistrictProfilePage({
         </div>
 
         {/* Content column skeleton */}
-        <div className="max-w-[1024px] mx-auto mt-6 space-y-4">
+        <div className="max-w-content mx-auto mt-6 space-y-4">
           <Skeleton className="h-9 w-full" />
           <Skeleton className="h-64 w-full" />
         </div>
@@ -158,7 +158,7 @@ export default function DistrictProfilePage({
   return (
     <div>
       {/* Zone 1 — Identity Bar (constrained to match content column) */}
-      <div className="max-w-[1024px] mx-auto">
+      <div className="max-w-content mx-auto">
         <DistrictIdentityBar
           district={district}
           yearData={yearData}
@@ -168,7 +168,7 @@ export default function DistrictProfilePage({
       </div>
 
       {/* Zone 2 — Content Column */}
-      <div className="max-w-[1024px] mx-auto mt-8 space-y-4">
+      <div className="max-w-content mx-auto mt-8 space-y-4">
         {/* Fit Assessment (if product context) */}
         {fitAssessment && fitColors && (
           <div className={cn('rounded-lg border p-4', fitColors.bg)}>

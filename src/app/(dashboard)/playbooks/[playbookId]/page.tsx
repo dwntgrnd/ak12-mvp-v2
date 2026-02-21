@@ -392,7 +392,7 @@ export default function PlaybookDetailPage({
   const displayProducts = contextProducts.length > 0 ? contextProducts : contextProductsFallback;
 
   return (
-    <div className="p-6 space-y-6 max-w-5xl">
+    <div className="p-6 space-y-6 max-w-content">
       {/* Back link */}
       <Link
         href="/playbooks"

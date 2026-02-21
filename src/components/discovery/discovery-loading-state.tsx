@@ -49,7 +49,7 @@ export function DiscoveryLoadingState({ query }: DiscoveryLoadingStateProps) {
       />
 
       {/* Skeleton content area — matches results layout container */}
-      <div className="max-w-3xl mx-auto mt-6">
+      <div className="max-w-content mx-auto mt-6">
         {/* Status text with aria-live for screen reader announcements */}
         <p
           aria-live="polite"

@@ -50,7 +50,7 @@ export function DiscoveryResultsLayout({
       />
 
       {/* Content area — constrained to reading width */}
-      <div className="max-w-[1024px] mx-auto mt-6">
+      <div className="max-w-content mx-auto mt-6">
         {error && !response && (
           <div className="space-y-3">
             <Alert variant="destructive">
