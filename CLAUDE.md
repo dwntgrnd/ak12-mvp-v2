@@ -86,6 +86,8 @@ These rules are non-negotiable. Do not deviate, interpret, or "improve" them. Wh
 | Emphasis surface | `bg-[#E0F9FC]` | None | `rounded-md` (6px) | None |
 | Emphasis neutral | `bg-slate-100` | None | `rounded-md` (6px) | None |
 
+**Content width:** All main content areas use `max-w-content` (1024px, set via `--content-width` CSS variable). Do not use `max-w-[1024px]`, `max-w-5xl`, `max-w-3xl`, or other arbitrary widths for content containers.
+
 **No `border-l-4` or colored left borders.** Emphasis is ALWAYS via background color. No exceptions.
 
 ### Colors — Token Usage
