@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { Search, X } from 'lucide-react';
+import { Search, X, ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { getDiscoveryService } from '@/services';
 import type { IDiscoveryService, DirectoryEntry } from '@/services';
@@ -274,20 +274,33 @@ export function DiscoveryInput({
   // Cursor shows during typing, holding, and deleting — not during pausing
   const showCursor = showTypewriter && phase !== 'pausing';
 
-  // Right padding: compact mode needs extra room when clear button is present
-  const inputPrClass = variant === 'compact' && value.length > 0 ? 'pr-9' : 'pr-4';
-
   return (
     <div
       className={cn(
         'relative w-full',
-        variant === 'full' ? 'max-w-[680px] mx-auto' : 'max-w-none',
+        variant === 'full' ? 'max-w-170 mx-auto' : 'max-w-none',
         disabled && 'opacity-60',
       )}
     >
-      {/* Search icon */}
+      {/* Ambient glow — full variant only, blooms on focus */}
+      {variant === 'full' && (
+        <div
+          aria-hidden="true"
+          className={cn(
+            'absolute inset-0 -z-10 rounded-2xl blur-xl transition-opacity duration-500',
+            'bg-primary/10',
+            isFocused ? 'opacity-100' : 'opacity-0',
+          )}
+        />
+      )}
+
+      {/* Search icon — transitions to brand cyan on focus */}
       <Search
-        className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none z-10"
+        className={cn(
+          'absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none z-10 transition-colors duration-200',
+          variant === 'full' ? 'w-4.5 h-4.5' : 'w-4 h-4',
+          isFocused ? 'text-primary' : 'text-slate-400',
+        )}
         aria-hidden="true"
       />
 
@@ -314,16 +327,44 @@ export function DiscoveryInput({
         onBlur={handleBlur}
         onKeyDown={handleKeyDown}
         className={cn(
-          'w-full pl-10',
-          variant === 'full' ? 'h-12' : 'h-10',
-          inputPrClass,
-          'bg-white border border-slate-200 rounded-lg shadow-sm',
-          'text-sm text-foreground',
-          'outline-none transition-shadow duration-200',
-          'focus:ring-2 focus:ring-[#03C4D4]/30 focus:border-[#03C4D4]',
+          'w-full bg-white border text-sm text-foreground outline-none transition-all duration-200',
+          variant === 'full'
+            ? cn('h-14 rounded-xl pl-11', value.length > 0 ? 'pr-14' : 'pr-5')
+            : cn('h-10 rounded-lg pl-10', value.length > 0 ? 'pr-9' : 'pr-4'),
+          isFocused
+            ? cn(
+                'border-primary',
+                variant === 'full'
+                  ? 'shadow-[0_0_0_3px_rgba(3,196,212,0.15),0_4px_16px_rgba(0,0,0,0.06)]'
+                  : 'shadow-[0_0_0_2px_rgba(3,196,212,0.2)]',
+              )
+            : 'border-border shadow-sm',
           disabled && 'cursor-not-allowed',
         )}
       />
+
+      {/* Submit button — full variant, appears when value is present */}
+      {variant === 'full' && value.length > 0 && !disabled && (
+        <button
+          type="button"
+          aria-label="Search"
+          onClick={() => {
+            const trimmed = value.trim();
+            if (trimmed) {
+              setDropdownOpen(false);
+              onSubmit(trimmed);
+            }
+          }}
+          className={cn(
+            'absolute right-3 top-1/2 -translate-y-1/2 z-10',
+            'flex items-center justify-center w-9 h-9 rounded-md',
+            'bg-brand-orange text-white',
+            'transition-all duration-150 hover:brightness-105 active:scale-95',
+          )}
+        >
+          <ArrowRight className="w-4 h-4" />
+        </button>
+      )}
 
       {/* Clear button — compact mode only, when value present and not disabled */}
       {variant === 'compact' && value.length > 0 && !disabled && (
@@ -341,11 +382,11 @@ export function DiscoveryInput({
       {showTypewriter && (
         <div
           aria-hidden="true"
-          className="absolute left-10 top-1/2 -translate-y-1/2 pointer-events-none select-none overflow-hidden whitespace-nowrap max-w-[calc(100%-3.5rem)]"
+          className="absolute left-11 top-1/2 -translate-y-1/2 pointer-events-none select-none overflow-hidden whitespace-nowrap max-w-[calc(100%-3.5rem)]"
         >
           <span className="text-sm text-slate-400 font-normal">{displayText}</span>
           {showCursor && (
-            <span className="text-sm text-slate-400 font-normal animate-blink">|</span>
+            <span className="text-sm text-primary font-normal animate-blink">|</span>
           )}
         </div>
       )}

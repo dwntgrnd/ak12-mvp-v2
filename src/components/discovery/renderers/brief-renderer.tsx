@@ -33,13 +33,11 @@ export function BriefRenderer({ content, confidence, format, productRelevanceMap
   }
 
   return (
-    <div className="bg-white border border-slate-200 rounded-lg shadow-sm p-5">
-      {/* Intelligence brief label */}
-      {format === 'intelligence_brief' && (
-        <p className="text-overline font-[500] leading-[1.4] tracking-[0.05em] uppercase text-slate-400 mb-3">
-          READINESS ASSESSMENT
-        </p>
-      )}
+    <div className="bg-white border border-border rounded-lg shadow-sm p-6">
+      {/* Format label — overline identity for both formats */}
+      <p className="text-overline font-[500] leading-[1.4] tracking-[0.05em] uppercase text-slate-400 mb-3">
+        {format === 'intelligence_brief' ? 'READINESS ASSESSMENT' : 'MARKET INTELLIGENCE'}
+      </p>
 
       {/* Subject district name — linked, single-entity briefs only */}
       {content.subjectDistrictId && content.subjectDistrictName && (
@@ -57,31 +55,49 @@ export function BriefRenderer({ content, confidence, format, productRelevanceMap
         </div>
       )}
 
-      {/* Lead insight — emphasis surface, no left border */}
-      <div className="bg-[#E0F9FC] rounded-md p-4">
-        <p className="text-subsection-heading font-[600] leading-[1.6] text-foreground">
+      {/* Lead insight — headline treatment, emphasis surface */}
+      <div className="bg-emphasis-surface rounded-md p-5">
+        <p className="text-lg font-[700] leading-[1.5] tracking-[-0.01em] text-foreground">
           {content.leadInsight}
         </p>
       </div>
 
       {/* Key signals — 2-col grid */}
       {content.keySignals.length > 0 && (
-        <div className="mt-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
-          {content.keySignals.map((signal, i) => {
-            // District-linked signal → render as navigable card
-            if (signal.districtId) {
+        <div className="border-t border-border mt-6 pt-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+            {content.keySignals.map((signal, i) => {
+              // District-linked signal → render as navigable card
+              if (signal.districtId) {
+                return (
+                  <DiscoveryResultCard
+                    key={signal.districtId}
+                    districtId={signal.districtId}
+                    name={signal.label}
+                    location={signal.location}
+                    enrollment={signal.enrollment}
+                    variant="inset"
+                    productRelevance={productRelevanceMap?.[signal.districtId]}
+                  >
+                    {/* Content slot: activity signal + detail */}
+                    <p className="mt-1 text-body font-[600] leading-[1.6] text-foreground">
+                      {signal.value}
+                    </p>
+                    {signal.detail && (
+                      <p className="mt-0.5 text-caption font-[500] leading-[1.5] text-slate-500">
+                        {signal.detail}
+                      </p>
+                    )}
+                  </DiscoveryResultCard>
+                );
+              }
+
+              // Plain metric tile — inset surface treatment
               return (
-                <DiscoveryResultCard
-                  key={signal.districtId}
-                  districtId={signal.districtId}
-                  name={signal.label}
-                  location={signal.location}
-                  enrollment={signal.enrollment}
-                  variant="inset"
-                  productRelevance={productRelevanceMap?.[signal.districtId]}
-                >
-                  {/* Content slot: activity signal + detail */}
+                <div key={i} className="bg-slate-50 rounded-md p-3">
+                  <p className="text-overline font-[500] leading-[1.4] tracking-[0.05em] uppercase text-slate-400">
+                    {signal.label}
+                  </p>
                   <p className="mt-1 text-body font-[600] leading-[1.6] text-foreground">
                     {signal.value}
                   </p>
@@ -90,34 +106,16 @@ export function BriefRenderer({ content, confidence, format, productRelevanceMap
                       {signal.detail}
                     </p>
                   )}
-                </DiscoveryResultCard>
+                </div>
               );
-            }
-
-            // Plain metric tile (no district context)
-            return (
-              <div key={i}>
-                <p className="text-overline font-[500] leading-[1.4] tracking-[0.05em] uppercase text-slate-400">
-                  {signal.label}
-                </p>
-                <p className="mt-1 text-body font-[600] leading-[1.6] text-foreground">
-                  {signal.value}
-                </p>
-                {signal.detail && (
-                  <p className="mt-0.5 text-caption font-[500] leading-[1.5] text-slate-500">
-                    {signal.detail}
-                  </p>
-                )}
-              </div>
-            );
-          })}
-        </div>
+            })}
+          </div>
         </div>
       )}
 
       {/* Collapsible sections */}
       {content.sections.length > 0 && (
-        <div className="mt-6 space-y-3">
+        <div className="border-t border-border mt-6 pt-6 space-y-3">
           {content.sections.map((section) => {
             const isOpen = openSections.has(section.sectionId);
             // Prefer transparency note from section data; fall back to response.confidence.sections
