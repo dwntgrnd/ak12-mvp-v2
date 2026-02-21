@@ -10,13 +10,14 @@ interface CardSetRendererProps {
   products: Array<{ productId: string; name: string }>;
   productLensId: string | undefined;
   onProductLensChange: (productId: string | undefined) => void;
+  activeSortMetric?: string;
   savedDistricts?: Set<string>;
   onSaveDistrict?: (districtId: string) => void;
   onRemoveSaved?: (districtId: string) => void;
   onGeneratePlaybook?: (districtId: string) => void;
 }
 
-export function CardSetRenderer({ content, productRelevanceMap, products, productLensId, onProductLensChange, savedDistricts, onSaveDistrict, onRemoveSaved, onGeneratePlaybook }: CardSetRendererProps) {
+export function CardSetRenderer({ content, productRelevanceMap, products, productLensId, onProductLensChange, activeSortMetric, savedDistricts, onSaveDistrict, onRemoveSaved, onGeneratePlaybook }: CardSetRendererProps) {
   const { overview, districts } = content;
 
   return (
@@ -53,6 +54,7 @@ export function CardSetRenderer({ content, productRelevanceMap, products, produc
             enrollment={entry.enrollment}
             variant="inset"
             metrics={entry.keyMetric ? [entry.keyMetric] : undefined}
+            activeSortMetric={activeSortMetric}
             productRelevance={productRelevanceMap?.[entry.districtId]}
             isSaved={savedDistricts?.has(entry.districtId)}
             onSave={onSaveDistrict}

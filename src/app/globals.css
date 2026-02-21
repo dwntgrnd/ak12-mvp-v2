@@ -47,7 +47,7 @@
   --ring: 208 60% 38%;
 
   /* Content width */
-  --content-width: 1024px;
+  --content-width: 900px;
 
   /* Border radius */
   --radius: 0.5rem;
@@ -133,13 +133,13 @@
   --text-overline: var(--font-size-overline);
 
   /* Tailwind default overrides — all derived from --font-base (÷14) */
-  --text-xs:   calc(var(--font-base) * 0.857);  /* 12px → caption */
-  --text-sm:   calc(var(--font-base) * 1.0);    /* 14px → body */
-  --text-base: calc(var(--font-base) * 1.143);  /* 16px */
-  --text-lg:   calc(var(--font-base) * 1.286);  /* 18px → section-heading */
-  --text-xl:   calc(var(--font-base) * 1.429);  /* 20px */
-  --text-2xl:  calc(var(--font-base) * 1.714);  /* 24px → page-title */
-  --text-3xl:  calc(var(--font-base) * 2.143);  /* 30px */
+  --text-xs: calc(var(--font-base) * 0.857); /* 12px → caption */
+  --text-sm: calc(var(--font-base) * 1); /* 14px → body */
+  --text-base: calc(var(--font-base) * 1.143); /* 16px */
+  --text-lg: calc(var(--font-base) * 1.286); /* 18px → section-heading */
+  --text-xl: calc(var(--font-base) * 1.429); /* 20px */
+  --text-2xl: calc(var(--font-base) * 1.714); /* 24px → page-title */
+  --text-3xl: calc(var(--font-base) * 2.143); /* 30px */
 }
 
 body {

@@ -12,13 +12,14 @@ interface BriefRendererProps {
   confidence: ResponseConfidence;
   format: 'narrative_brief' | 'intelligence_brief';
   productRelevanceMap?: Record<string, ProductRelevance>;
+  activeSortMetric?: string;
   savedDistricts?: Set<string>;
   onSaveDistrict?: (districtId: string) => void;
   onRemoveSaved?: (districtId: string) => void;
   onGeneratePlaybook?: (districtId: string) => void;
 }
 
-export function BriefRenderer({ content, confidence, format, productRelevanceMap, savedDistricts, onSaveDistrict, onRemoveSaved, onGeneratePlaybook }: BriefRendererProps) {
+export function BriefRenderer({ content, confidence, format, productRelevanceMap, activeSortMetric, savedDistricts, onSaveDistrict, onRemoveSaved, onGeneratePlaybook }: BriefRendererProps) {
   const router = useRouter();
   const [openSections, setOpenSections] = useState<Set<string>>(
     new Set(content.sections.length > 0 ? [content.sections[0].sectionId] : [])
@@ -90,6 +91,7 @@ export function BriefRenderer({ content, confidence, format, productRelevanceMap
                     enrollment={signal.enrollment}
                     variant="inset"
                     metrics={[{ label: signal.detail || '', value: signal.value }]}
+                    activeSortMetric={activeSortMetric}
                     productRelevance={productRelevanceMap?.[signal.districtId]}
                     isSaved={savedDistricts?.has(signal.districtId!)}
                     onSave={onSaveDistrict}

@@ -10,14 +10,18 @@ interface RankedListRendererProps {
   products: Array<{ productId: string; name: string }>;
   productLensId: string | undefined;
   onProductLensChange: (productId: string | undefined) => void;
+  activeSortMetric?: string;
   savedDistricts?: Set<string>;
   onSaveDistrict?: (districtId: string) => void;
   onRemoveSaved?: (districtId: string) => void;
   onGeneratePlaybook?: (districtId: string) => void;
 }
 
-export function RankedListRenderer({ content, productRelevanceMap, products, productLensId, onProductLensChange, savedDistricts, onSaveDistrict, onRemoveSaved, onGeneratePlaybook }: RankedListRendererProps) {
+export function RankedListRenderer({ content, productRelevanceMap, products, productLensId, onProductLensChange, activeSortMetric, savedDistricts, onSaveDistrict, onRemoveSaved, onGeneratePlaybook }: RankedListRendererProps) {
   const { title, rankingCriterion, entries, synthesis } = content;
+
+  // Derive active sort metric from ranking criterion if not explicitly provided
+  const sortMetric = activeSortMetric ?? rankingCriterion;
 
   return (
     <div className="bg-white border border-slate-200 rounded-lg shadow-sm p-5">
@@ -53,6 +57,7 @@ export function RankedListRenderer({ content, productRelevanceMap, products, pro
             variant="inset"
             rank={entry.rank}
             metrics={[entry.primaryMetric, ...(entry.secondaryMetrics || [])]}
+            activeSortMetric={sortMetric}
             productRelevance={productRelevanceMap?.[entry.districtId]}
             isSaved={savedDistricts?.has(entry.districtId)}
             onSave={onSaveDistrict}

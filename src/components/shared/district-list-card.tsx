@@ -22,6 +22,7 @@ interface DistrictListCardProps {
   fitLoading?: boolean;
   productRelevance?: ProductRelevance;
   metrics?: Array<{ label: string; value: string }>;
+  activeSortMetric?: string;
   isSaved?: boolean;
   onSave?: (districtId: string) => void;
   onRemoveSaved?: (districtId: string) => void;
@@ -54,6 +55,7 @@ export function DistrictListCard({
   fitLoading,
   productRelevance,
   metrics,
+  activeSortMetric,
   isSaved,
   onSave,
   onRemoveSaved,
@@ -62,16 +64,26 @@ export function DistrictListCard({
 }: DistrictListCardProps) {
   const router = useRouter();
 
-  const metaParts = [
-    location,
-    enrollment != null ? `${formatNumber(enrollment)} students` : null,
-    gradesServed,
-  ].filter(Boolean);
+  // Build the stats strip metrics — prepend enrollment if provided and not already in metrics
+  const enrollmentAlreadyInMetrics = metrics?.some(
+    (m) => m.label.toLowerCase() === 'enrollment'
+  );
+  const stripMetrics: Array<{ label: string; value: string }> = [];
+  if (enrollment != null && !enrollmentAlreadyInMetrics) {
+    stripMetrics.push({ label: 'Enrollment', value: formatNumber(enrollment) });
+  }
+  if (metrics) {
+    stripMetrics.push(...metrics);
+  }
+
+  // Row 1 meta — location only (enrollment moved to stats strip)
+  const metaParts = [location, gradesServed].filter(Boolean);
 
   const ariaLabel = [
     rank != null ? `Rank ${rank}.` : null,
     name,
     ...metaParts,
+    enrollment != null ? `${formatNumber(enrollment)} students` : null,
     fitAssessment ? fitCategoryColors[getFitCategory(fitAssessment.fitScore)].label : null,
     productRelevance ? `${productRelevance.alignmentLevel} alignment` : null,
   ]
@@ -92,7 +104,7 @@ export function DistrictListCard({
   const fitCategory = fitAssessment ? getFitCategory(fitAssessment.fitScore) : null;
   const fitColors = fitCategory ? fitCategoryColors[fitCategory] : null;
 
-  const hasRow2 = !!(metrics?.length || productRelevance || (fitLoading && !fitAssessment));
+  const hasStatsStrip = stripMetrics.length > 0 || productRelevance || (fitLoading && !fitAssessment);
 
   return (
     <article
@@ -104,7 +116,7 @@ export function DistrictListCard({
       className={cn(
         'cursor-pointer px-4 py-2.5 focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#FF7000]',
         variant === 'inset'
-          ? 'bg-slate-50 rounded-md hover:bg-slate-100 transition-colors duration-150'
+          ? 'bg-slate-50 border border-border/50 rounded-md hover:bg-slate-100 hover:border-slate-300 transition-colors duration-150'
           : 'bg-white border border-border rounded-lg shadow-sm hover:shadow-md hover:border-slate-300 transition-shadow duration-150'
       )}
     >
@@ -171,7 +183,7 @@ export function DistrictListCard({
                 e.stopPropagation();
                 onGeneratePlaybook(districtId);
               }}
-              className="flex items-center gap-0.5 text-xs text-muted-foreground font-medium hover:text-primary transition-colors"
+              className="flex items-center gap-1 bg-brand-orange text-white text-xs font-medium px-2.5 py-1 rounded-md hover:bg-brand-orange/90 transition-colors"
             >
               Playbook
               <ArrowRight className="h-3 w-3" />
@@ -180,35 +192,56 @@ export function DistrictListCard({
         </div>
       </div>
 
-      {/* Row 2 — Metrics + Product Relevance (conditional) */}
-      {hasRow2 && (
-        <div className="mt-0.5 flex items-center justify-between gap-2">
-          {/* Left: inline metrics */}
-          <div className="flex items-baseline gap-1 min-w-0 truncate">
-            {metrics?.map((m, i) => (
-              <span key={i} className="inline-flex items-baseline">
-                {i > 0 && <span className="mx-1.5 text-xs text-muted-foreground select-none">&middot;</span>}
-                <span className="text-xs text-muted-foreground">{m.label}:</span>
-                <span className="text-xs font-semibold text-foreground ml-1">{m.value}</span>
-              </span>
-            ))}
-          </div>
-
-          {/* Right: product relevance */}
-          {productRelevance && (
-            <div className="flex items-center gap-1.5 shrink-0">
-              <span
-                className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${alignmentBadgeClass[productRelevance.alignmentLevel]}`}
-              >
-                {productRelevance.alignmentLevel}
-              </span>
-              {productRelevance.signals[0] && (
-                <span className="text-xs text-muted-foreground truncate max-w-[180px]">
-                  {productRelevance.signals[0]}
-                </span>
-              )}
+      {/* Row 2 — Mini Stats Strip + Product Relevance (conditional) */}
+      {hasStatsStrip && (
+        <div className="mt-2 pt-2 border-t border-border/50">
+          <div className="flex items-center justify-between gap-2">
+            {/* Left: stats strip columns */}
+            <div className="flex items-start min-w-0">
+              {stripMetrics.map((m, i) => {
+                const isActive = activeSortMetric != null &&
+                  m.label.toLowerCase() === activeSortMetric.toLowerCase();
+                return (
+                  <div
+                    key={i}
+                    className={cn(
+                      'flex flex-col',
+                      i > 0 && 'border-l border-border pl-3',
+                      i === 0 ? '' : '',
+                      i < stripMetrics.length - 1 && 'pr-3',
+                      isActive && 'bg-primary/5 rounded-sm px-2 -mx-0.5'
+                    )}
+                  >
+                    <span
+                      className={cn(
+                        'text-overline',
+                        isActive ? 'text-primary' : 'text-muted-foreground/70'
+                      )}
+                    >
+                      {m.label}
+                    </span>
+                    <span className="text-sm font-bold text-foreground">{m.value}</span>
+                  </div>
+                );
+              })}
             </div>
-          )}
+
+            {/* Right: product relevance */}
+            {productRelevance && (
+              <div className="flex items-center gap-1.5 shrink-0">
+                <span
+                  className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${alignmentBadgeClass[productRelevance.alignmentLevel]}`}
+                >
+                  {productRelevance.alignmentLevel}
+                </span>
+                {productRelevance.signals[0] && (
+                  <span className="text-xs text-muted-foreground truncate max-w-[180px]">
+                    {productRelevance.signals[0]}
+                  </span>
+                )}
+              </div>
+            )}
+          </div>
         </div>
       )}
 
