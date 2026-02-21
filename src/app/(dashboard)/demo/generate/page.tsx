@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { GeneratePlaybookSheet } from '@/components/playbook/generate-playbook-sheet';
 
@@ -73,6 +74,25 @@ export default function GenerateDemoPage() {
         >
           Entry 0: Empty Product Catalog (no products)
         </Button>
+      </div>
+
+      {/* District Listing Previews */}
+      <div className="mt-8">
+        <h2 className="text-lg font-semibold">District Listing Previews</h2>
+        <p className="text-muted-foreground mt-1">
+          Preview district card rendering across listing formats.
+        </p>
+        <div className="flex flex-col gap-3 max-w-md mt-3">
+          <Button variant="outline" asChild>
+            <Link href="/demo/listings/ranked">Ranked List</Link>
+          </Button>
+          <Button variant="outline" asChild>
+            <Link href="/demo/listings/card-set">Card Set</Link>
+          </Button>
+          <Button variant="outline" asChild>
+            <Link href="/demo/listings/brief">Narrative Brief</Link>
+          </Button>
+        </div>
       </div>
 
       <GeneratePlaybookSheet
