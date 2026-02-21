@@ -1077,6 +1077,100 @@ export const DISCOVERY_SCENARIOS: { keywords: string[]; response: DiscoveryQuery
       ],
     },
   },
+
+  // ----------------------------------------------------------
+  // Scenario 9 — Card Set (Districts with Math Initiatives)
+  // Query: districts with math initiatives
+  // ----------------------------------------------------------
+  {
+    keywords: ['districts', 'math', 'initiatives'],
+    response: {
+      queryId: 'fixture-s9',
+      originalQuery: 'districts with math initiatives',
+      intent: 'exploratory',
+      generatedAt: '2026-02-19T10:00:00Z',
+      content: {
+        format: 'card_set' as const,
+        data: {
+          overview: 'Four Sacramento-area districts with active math curriculum initiatives, evaluation cycles, or LCAP-documented math improvement priorities.',
+          districts: [
+            {
+              districtId: ID_ELK_GROVE,
+              name: 'Elk Grove USD',
+              location: 'Elk Grove, CA',
+              enrollment: 59800,
+              keyMetric: { label: 'Math Initiative', value: 'Active K-8 curriculum review' },
+              confidence: 1,
+            },
+            {
+              districtId: ID_TWIN_RIVERS,
+              name: 'Twin Rivers USD',
+              location: 'North Highlands, CA',
+              enrollment: 27100,
+              keyMetric: { label: 'Math Initiative', value: '$4.2M materials budget allocated' },
+              confidence: 1,
+            },
+            {
+              districtId: ID_SACRAMENTO_CITY,
+              name: 'Sacramento City USD',
+              location: 'Sacramento, CA',
+              enrollment: 42500,
+              keyMetric: { label: 'Math Initiative', value: 'LCAP Goal 2 math priority' },
+              confidence: 2,
+            },
+            {
+              districtId: ID_FRESNO,
+              name: 'Fresno USD',
+              location: 'Fresno, CA',
+              enrollment: 70000,
+              keyMetric: { label: 'Math Initiative', value: 'District-wide math improvement plan' },
+              confidence: 2,
+            },
+          ],
+        },
+      },
+      confidence: {
+        overall: 2,
+        sections: {},
+      },
+      followUpChips: [
+        {
+          chipId: 's9-chip-1',
+          label: 'Compare math scores across these districts',
+          query: 'Compare math proficiency across Elk Grove, Twin Rivers, Sacramento City, and Fresno',
+          backedBy: ['academic_performance'],
+        },
+        {
+          chipId: 's9-chip-2',
+          label: 'Which district is furthest in evaluation?',
+          query: 'Which of these districts is furthest along in their math curriculum evaluation?',
+          backedBy: ['goals_priorities', 'budget_funding'],
+        },
+        {
+          chipId: 's9-chip-3',
+          label: 'Rank by math score decline',
+          query: 'Which Sacramento County districts have the steepest math score declines?',
+          backedBy: ['academic_performance'],
+        },
+      ],
+      sources: [
+        {
+          sourceId: 'cde-dataquest-2425',
+          label: 'CDE DataQuest 2024-25',
+          url: 'https://dq.cde.ca.gov/dataquest/',
+          academicYear: '2024-25',
+          sourceType: 'state_database',
+        },
+        {
+          sourceId: 'lcap-sac-2425',
+          label: 'Sacramento County LCAP Filings 2024-25',
+          url: 'https://www.cde.ca.gov/fg/aa/lc/',
+          academicYear: '2024-25',
+          sourceType: 'lcap',
+        },
+      ],
+    },
+  },
 ];
 
 // ============================================================
