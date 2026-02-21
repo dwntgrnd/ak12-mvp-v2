@@ -14,7 +14,7 @@
   --popover-foreground: 213 47% 17%;
 
   /* Primary (brand.blue) */
-  --primary: 184 97% 42%;
+  --primary: 208 60% 38%;
   --primary-foreground: 0 0% 100%;
 
   /* Secondary (slate-100) */
@@ -44,7 +44,7 @@
   /* Border & Input */
   --border: 214 32% 91%;
   --input: 214 32% 91%;
-  --ring: 184 97% 42%;
+  --ring: 208 60% 38%;
 
   /* Border radius */
   --radius: 0.5rem;

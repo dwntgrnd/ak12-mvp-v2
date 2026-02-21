@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight, ArrowRight, ExternalLink } from 'lucide-react';
 import type { BriefContent, ResponseConfidence, ProductRelevance } from '@/services/types/discovery';
 import { TransparencyNote } from './transparency-note';
 import { DiscoveryResultCard } from '@/components/discovery/discovery-result-card';
@@ -41,7 +41,7 @@ export function BriefRenderer({ content, confidence, format, productRelevanceMap
 
       {/* Subject district name — linked, single-entity briefs only */}
       {content.subjectDistrictId && content.subjectDistrictName && (
-        <div className="mb-3">
+        <div className="mb-3 flex items-center gap-3">
           <a
             href={`/districts/${content.subjectDistrictId}`}
             className="text-section-heading font-[600] leading-[1.3] tracking-[-0.01em] text-district-link hover:underline hover:decoration-district-link/60 underline-offset-2 transition-colors"
@@ -52,6 +52,14 @@ export function BriefRenderer({ content, confidence, format, productRelevanceMap
           >
             {content.subjectDistrictName}
           </a>
+          <button
+            type="button"
+            onClick={() => router.push(`/districts/${content.subjectDistrictId}`)}
+            className="inline-flex items-center gap-1 px-2.5 py-1 border border-primary/30 rounded-md text-xs font-medium text-primary hover:border-primary/60 transition-colors duration-150"
+          >
+            Open profile
+            <ExternalLink size={11} />
+          </button>
         </div>
       )}
 
@@ -134,15 +142,15 @@ export function BriefRenderer({ content, confidence, format, productRelevanceMap
                   onClick={() => toggleSection(section.sectionId)}
                   aria-expanded={isOpen}
                   aria-controls={contentId}
-                  className="flex items-center gap-2 w-full text-left py-1.5 px-2 -mx-2 rounded-md hover:bg-slate-50 hover:text-cyan-600 transition-colors duration-150 group"
+                  className="flex items-center gap-2 w-full text-left py-1.5 px-2 -mx-2 rounded-md hover:bg-slate-50 hover:text-primary transition-colors duration-150 group"
                 >
                   <ChevronRight
                     size={18}
-                    className={`shrink-0 transition-transform duration-200 ease-out group-hover:text-cyan-600 ${
+                    className={`shrink-0 transition-transform duration-200 ease-out group-hover:text-primary ${
                       isOpen ? 'rotate-90' : 'rotate-0'
                     }`}
                   />
-                  <span className="text-subsection-heading font-[600] leading-[1.4] text-foreground group-hover:text-cyan-600 transition-colors duration-150">
+                  <span className="text-subsection-heading font-[600] leading-[1.4] text-foreground group-hover:text-primary transition-colors duration-150">
                     {section.heading}
                   </span>
                 </button>
@@ -172,9 +180,24 @@ export function BriefRenderer({ content, confidence, format, productRelevanceMap
                           level={section.confidence.level}
                         />
                       ) : (
-                        <p className="text-body font-[400] leading-[1.6] text-foreground">
-                          {section.body}
-                        </p>
+                        <>
+                          <p className="text-body font-[400] leading-[1.6] text-foreground">
+                            {section.body}
+                          </p>
+                          {/* District profile nudge — single-entity briefs only */}
+                          {content.subjectDistrictId && (
+                            <div className="mt-3 pt-3 border-t border-border/60">
+                              <button
+                                type="button"
+                                onClick={() => router.push(`/districts/${content.subjectDistrictId}`)}
+                                className="inline-flex items-center gap-1 text-sm font-medium text-primary underline decoration-primary/30 underline-offset-2 hover:decoration-primary transition-colors duration-150"
+                              >
+                                View full details in {content.subjectDistrictName ?? 'district'} profile
+                                <ArrowRight size={13} />
+                              </button>
+                            </div>
+                          )}
+                        </>
                       )}
                     </div>
                   </div>
@@ -185,21 +208,45 @@ export function BriefRenderer({ content, confidence, format, productRelevanceMap
         </div>
       )}
 
-      {/* View district profile action — single-entity briefs only */}
+      {/* Primary CTA — single-entity briefs: full district profile button */}
       {content.subjectDistrictId && (
-        <div className="mt-6">
-          <a
-            href={`/districts/${content.subjectDistrictId}`}
-            className="text-caption font-[500] leading-[1.5] tracking-[0.025em] text-district-link hover:underline hover:decoration-district-link/60 underline-offset-2 transition-colors"
-            onClick={(e) => {
-              e.preventDefault();
-              router.push(`/districts/${content.subjectDistrictId}`);
-            }}
+        <div className="mt-6 pt-6 border-t border-border">
+          <button
+            type="button"
+            onClick={() => router.push(`/districts/${content.subjectDistrictId}`)}
+            className="inline-flex items-center gap-2 px-4 py-2 bg-white text-primary border border-primary/30 font-medium text-sm rounded-md hover:border-primary/60 hover:shadow-sm transition-all duration-150"
           >
-            View district profile →
-          </a>
+            Open full profile — {content.subjectDistrictName}
+            <ArrowRight size={14} />
+          </button>
         </div>
       )}
+
+      {/* District profile strip — multi-district briefs: chips for each linked district */}
+      {!content.subjectDistrictId && (() => {
+        const linkedDistricts = content.keySignals.filter((s) => s.districtId);
+        if (linkedDistricts.length === 0) return null;
+        return (
+          <div className="border-t border-border mt-6 pt-5">
+            <p className="text-overline font-[500] leading-[1.4] tracking-[0.05em] uppercase text-slate-400 mb-3">
+              Explore District Profiles
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {linkedDistricts.map((s) => (
+                <button
+                  key={s.districtId}
+                  type="button"
+                  onClick={() => router.push(`/districts/${s.districtId}`)}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-primary/30 rounded-md text-sm font-medium text-primary hover:border-primary/60 hover:shadow-sm transition-all duration-150"
+                >
+                  {s.label}
+                  <ArrowRight size={13} />
+                </button>
+              ))}
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 }
