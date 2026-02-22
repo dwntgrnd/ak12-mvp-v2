@@ -68,31 +68,8 @@ function resolveContent(
 
 // Resolve district name from districtId using fixtures
 function resolveDistrictName(districtId: string): string {
-  // Map seed districtIds to fixture district names
-  const SEED_DISTRICT_MAP: Record<string, string> = {
-    'dist-la-001': 'Los Angeles Unified',
-    'dist-sd-001': 'San Diego Unified',
-    'dist-sf-001': 'San Francisco Unified',
-    'dist-sac-001': 'Sacramento City Unified',
-    'dist-fre-001': 'Fresno Unified',
-    'dist-oak-001': 'Oakland Unified',
-    'dist-lb-001': 'Long Beach Unified',
-    'dist-tr-001': 'Twin Rivers Unified',
-    'dist-nat-001': 'Natomas Unified',
-    'dist-plumas-001': 'Plumas County Office of Education',
-  };
-
-  if (SEED_DISTRICT_MAP[districtId]) {
-    return SEED_DISTRICT_MAP[districtId];
-  }
-
-  // Try to find in DISTRICT_FIXTURES by id
   const fixture = DISTRICT_FIXTURES.find((d) => d.district.id === districtId);
-  if (fixture) {
-    return fixture.district.name;
-  }
-
-  return 'California School District';
+  return fixture ? fixture.district.name : 'California School District';
 }
 
 // Simulate progressive generation — sections complete one by one with delays

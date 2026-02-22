@@ -113,10 +113,10 @@ export const DISTRICT_SPECIFIC_CONTENT: Record<string, Record<PlaybookSectionTyp
 }>> = {
 
   // ============================================================
-  // LOS ANGELES UNIFIED (dist-la-001) — Flagship demo, fit score 8
+  // LOS ANGELES UNIFIED — Flagship demo, fit score 8
   // Products: EnvisionMath + myPerspectives
   // ============================================================
-  'dist-la-001': {
+  'b8cd9b23-4f2f-470d-b1e5-126e7ff2a928': {
     district_story: {
       sectionLabel: 'District Story',
       contentSource: 'verbatim',
@@ -212,10 +212,10 @@ This opening works because it (1) demonstrates that you've done your homework wi
   },
 
   // ============================================================
-  // SACRAMENTO CITY UNIFIED (dist-sac-001) — Best-case scenario, fit score 9
+  // SACRAMENTO CITY UNIFIED — Best-case scenario, fit score 9
   // Products: EnvisionMath + myPerspectives
   // ============================================================
-  'dist-sac-001': {
+  '7f4e8dd1-9f32-4d87-92f3-3009800b88b0': {
     district_story: {
       sectionLabel: 'District Story',
       contentSource: 'verbatim',
@@ -310,10 +310,10 @@ This opening signals that you understand the evaluation context, have done your 
   },
 
   // ============================================================
-  // FRESNO UNIFIED (dist-fre-001) — Low fit, fit score 2
+  // FRESNO UNIFIED — Low fit, fit score 2
   // Products: EnvisionMath only
   // ============================================================
-  'dist-fre-001': {
+  '75c04266-c622-4294-aa22-046245c95e51': {
     district_story: {
       sectionLabel: 'District Story',
       contentSource: 'verbatim',
