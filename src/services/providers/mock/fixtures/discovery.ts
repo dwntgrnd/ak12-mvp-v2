@@ -14,10 +14,10 @@ import { buildSnapshot, buildStubSnapshot } from '../snapshot-builder';
 
 const ID_ELK_GROVE = 'a2671310-4656-4e43-a91a-7688536f1764';       // from MOCK_DISTRICTS
 const ID_FRESNO = '75c04266-c622-4294-aa22-046245c95e51';           // from MOCK_DISTRICTS
-const ID_TWIN_RIVERS = 'twin-rivers-usd';
-const ID_SACRAMENTO_CITY = 'sacramento-city-usd';
-const ID_NATOMAS = 'natomas-usd';
-const ID_PLUMAS_COUNTY = 'plumas-county-oe';
+const ID_TWIN_RIVERS = '94f6d871-3b85-4b21-8499-6b7c450cd124';       // from MOCK_DISTRICTS
+const ID_SACRAMENTO_CITY = '7f4e8dd1-9f32-4d87-92f3-3009800b88b0';  // from MOCK_DISTRICTS
+const ID_NATOMAS = 'aa868246-d102-4093-873d-f5d6c2890757';           // from MOCK_DISTRICTS
+const ID_PLUMAS_COUNTY = 'b1f3e349-0cc9-485b-b9df-d96477b2d4a4';    // from MOCK_DISTRICTS
 const ID_PORTLAND = 'non-ca-portland';
 const ID_SEATTLE = 'non-ca-seattle';
 const ID_DENVER = 'non-ca-denver';
@@ -30,15 +30,6 @@ function snapshotFor(districtId: string): DistrictSnapshot {
   const d = MOCK_DISTRICTS.find((m) => m.districtId === districtId);
   if (d) return buildSnapshot(d);
 
-  // Stub snapshots for districts not in MOCK_DISTRICTS
-  const stubs: Record<string, DistrictSnapshot> = {
-    [ID_TWIN_RIVERS]:     { districtId: ID_TWIN_RIVERS,     name: 'Twin Rivers USD',                  city: 'North Highlands', county: 'Sacramento', state: 'CA', docType: 'Unified', lowGrade: 'K', highGrade: '12', totalEnrollment: 27100, frpmPercent: 78, ellPercent: 22, elaProficiency: 36, mathProficiency: 31 },
-    [ID_SACRAMENTO_CITY]: { districtId: ID_SACRAMENTO_CITY, name: 'Sacramento City USD',              city: 'Sacramento',      county: 'Sacramento', state: 'CA', docType: 'Unified', lowGrade: 'K', highGrade: '12', totalEnrollment: 42500, frpmPercent: 71, ellPercent: 20, elaProficiency: 34, mathProficiency: 30 },
-    [ID_NATOMAS]:         { districtId: ID_NATOMAS,         name: 'Natomas USD',                      city: 'Sacramento',      county: 'Sacramento', state: 'CA', docType: 'Unified', lowGrade: 'K', highGrade: '12', totalEnrollment: 14200, frpmPercent: 55, ellPercent: 17, elaProficiency: 42, mathProficiency: 35 },
-    [ID_PLUMAS_COUNTY]:   { districtId: ID_PLUMAS_COUNTY,   name: 'Plumas County Office of Education', city: 'Quincy',          county: 'Plumas',     state: 'CA', docType: 'Unified', lowGrade: 'K', highGrade: '12', totalEnrollment: 1012,  frpmPercent: 61, ellPercent: 8,  elaProficiency: 41, mathProficiency: 23 },
-  };
-  if (stubs[districtId]) return stubs[districtId];
-
   // Fallback — should not happen for known scenarios
   return buildStubSnapshot({ districtId, name: 'Unknown District', city: '', county: '', state: 'CA', enrollment: 0 });
 }
@@ -50,10 +41,7 @@ function snapshotFor(districtId: string): DistrictSnapshot {
 // ============================================================
 
 const EXTRA_DIRECTORY_ENTRIES: DirectoryEntry[] = [
-  { districtId: ID_TWIN_RIVERS,     name: 'Twin Rivers Unified',                  county: 'Sacramento', state: 'CA' },
-  { districtId: ID_SACRAMENTO_CITY, name: 'Sacramento City Unified',              county: 'Sacramento', state: 'CA' },
-  { districtId: ID_NATOMAS,         name: 'Natomas Unified',                      county: 'Sacramento', state: 'CA' },
-  { districtId: ID_PLUMAS_COUNTY,   name: 'Plumas County Office of Education',    county: 'Plumas',     state: 'CA' },
+  // Twin Rivers, Sacramento City, Natomas, Plumas County now in MOCK_DISTRICTS
   { districtId: ID_PORTLAND,        name: 'Portland Public Schools',              county: 'Multnomah',  state: 'OR' },
   { districtId: ID_SEATTLE,         name: 'Seattle Public Schools',               county: 'King',       state: 'WA' },
   { districtId: ID_DENVER,          name: 'Denver Public Schools',                county: 'Denver',     state: 'CO' },

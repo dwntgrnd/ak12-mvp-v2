@@ -32,7 +32,10 @@ const UUID_TO_SEED_ID: Record<string, string> = {
   '75c04266-c622-4294-aa22-046245c95e51': 'dist-fre-001',   // Fresno Unified
   '89e89add-4b95-47b5-a8e1-ae3b92fadf73': 'dist-oak-001',   // Oakland Unified
   '7c2603bd-7cca-414f-8813-320d8ef2020b': 'dist-lb-001',    // Long Beach Unified
-  // Sacramento City Unified (dist-sac-001) is not in the 50-district CDE fixture set
+  '94f6d871-3b85-4b21-8499-6b7c450cd124': 'dist-tr-001',    // Twin Rivers Unified
+  '7f4e8dd1-9f32-4d87-92f3-3009800b88b0': 'dist-sac-001',   // Sacramento City Unified
+  'aa868246-d102-4093-873d-f5d6c2890757': 'dist-nat-001',    // Natomas Unified
+  'b1f3e349-0cc9-485b-b9df-d96477b2d4a4': 'dist-plumas-001', // Plumas County OE
 };
 
 function resolveDistrictId(districtId: string): string {
