@@ -9,7 +9,8 @@ import type {
   CreateProductRequest,
   UpdateProductRequest,
   AssetUploadUrlRequest,
-  AssetUploadUrl
+  AssetUploadUrl,
+  LibraryReadinessResponse,
 } from '../types/product';
 
 export interface IProductService {
@@ -41,4 +42,8 @@ export interface IProductService {
   // Step 2: Confirm upload complete (after client uploads directly to S3)
   // Errors: PRODUCT_NOT_FOUND, ASSET_NOT_FOUND, UPLOAD_NOT_COMPLETE
   confirmProductAssetUpload(productId: string, assetId: string): Promise<ProductAsset>;
+
+  // Authorization: publisher-admin, publisher-rep (read access)
+  // Lightweight check for progressive disclosure (Spec 15 §9)
+  getLibraryReadiness(): Promise<LibraryReadinessResponse>;
 }

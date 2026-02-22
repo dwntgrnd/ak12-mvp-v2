@@ -2,9 +2,11 @@ import type {
   DirectoryEntry,
   DistrictCoverage,
   DiscoveryQueryResponse,
-  ProductRelevance,
+  ProductAlignment,
 } from '../../../types/discovery';
+import type { DistrictSnapshot } from '../../../types/district';
 import { MOCK_DISTRICTS } from './districts';
+import { buildSnapshot, buildStubSnapshot } from '../snapshot-builder';
 
 // ============================================================
 // District ID constants — used across directory, coverage, and scenarios
@@ -19,6 +21,27 @@ const ID_PLUMAS_COUNTY = 'plumas-county-oe';
 const ID_PORTLAND = 'non-ca-portland';
 const ID_SEATTLE = 'non-ca-seattle';
 const ID_DENVER = 'non-ca-denver';
+
+// ============================================================
+// Snapshot helpers — build from MOCK_DISTRICTS when available, stub otherwise
+// ============================================================
+
+function snapshotFor(districtId: string): DistrictSnapshot {
+  const d = MOCK_DISTRICTS.find((m) => m.districtId === districtId);
+  if (d) return buildSnapshot(d);
+
+  // Stub snapshots for districts not in MOCK_DISTRICTS
+  const stubs: Record<string, Parameters<typeof buildStubSnapshot>[0]> = {
+    [ID_TWIN_RIVERS]:     { districtId: ID_TWIN_RIVERS,     name: 'Twin Rivers USD',                  city: 'North Highlands', county: 'Sacramento', state: 'CA', enrollment: 27100 },
+    [ID_SACRAMENTO_CITY]: { districtId: ID_SACRAMENTO_CITY, name: 'Sacramento City USD',              city: 'Sacramento',      county: 'Sacramento', state: 'CA', enrollment: 42500 },
+    [ID_NATOMAS]:         { districtId: ID_NATOMAS,         name: 'Natomas USD',                      city: 'Sacramento',      county: 'Sacramento', state: 'CA', enrollment: 14200 },
+    [ID_PLUMAS_COUNTY]:   { districtId: ID_PLUMAS_COUNTY,   name: 'Plumas County Office of Education', city: 'Quincy',          county: 'Plumas',     state: 'CA', enrollment: 1012 },
+  };
+  if (stubs[districtId]) return buildStubSnapshot(stubs[districtId]);
+
+  // Fallback — should not happen for known scenarios
+  return buildStubSnapshot({ districtId, name: 'Unknown District', city: '', county: '', state: 'CA', enrollment: 0 });
+}
 
 // ============================================================
 // A. District Directory
@@ -688,6 +711,7 @@ export const DISCOVERY_SCENARIOS: { keywords: string[]; response: DiscoveryQuery
               rank: 1,
               districtId: ID_TWIN_RIVERS,
               name: 'Twin Rivers USD',
+              snapshot: snapshotFor(ID_TWIN_RIVERS),
               primaryMetric: { label: 'Math Decline', value: '-5.1pp' },
               secondaryMetrics: [
                 { label: 'Current Proficiency', value: '31.2%' },
@@ -699,6 +723,7 @@ export const DISCOVERY_SCENARIOS: { keywords: string[]; response: DiscoveryQuery
               rank: 2,
               districtId: ID_SACRAMENTO_CITY,
               name: 'Sacramento City USD',
+              snapshot: snapshotFor(ID_SACRAMENTO_CITY),
               primaryMetric: { label: 'Math Decline', value: '-4.6pp' },
               secondaryMetrics: [
                 { label: 'Current Proficiency', value: '29.8%' },
@@ -711,6 +736,7 @@ export const DISCOVERY_SCENARIOS: { keywords: string[]; response: DiscoveryQuery
               rank: 3,
               districtId: ID_ELK_GROVE,
               name: 'Elk Grove USD',
+              snapshot: snapshotFor(ID_ELK_GROVE),
               primaryMetric: { label: 'Math Decline', value: '-3.8pp' },
               secondaryMetrics: [
                 { label: 'Current Proficiency', value: '38.4%' },
@@ -722,6 +748,7 @@ export const DISCOVERY_SCENARIOS: { keywords: string[]; response: DiscoveryQuery
               rank: 4,
               districtId: ID_NATOMAS,
               name: 'Natomas USD',
+              snapshot: snapshotFor(ID_NATOMAS),
               primaryMetric: { label: 'Math Decline', value: '-2.9pp' },
               secondaryMetrics: [
                 { label: 'Current Proficiency', value: '35.1%' },
@@ -812,6 +839,7 @@ export const DISCOVERY_SCENARIOS: { keywords: string[]; response: DiscoveryQuery
             {
               districtId: ID_ELK_GROVE,
               name: 'Elk Grove USD',
+              snapshot: snapshotFor(ID_ELK_GROVE),
               location: 'Elk Grove, CA',
               enrollment: 59800,
               keyMetric: { label: 'EL Population', value: '24.3%' },
@@ -820,6 +848,7 @@ export const DISCOVERY_SCENARIOS: { keywords: string[]; response: DiscoveryQuery
             {
               districtId: ID_SACRAMENTO_CITY,
               name: 'Sacramento City USD',
+              snapshot: snapshotFor(ID_SACRAMENTO_CITY),
               location: 'Sacramento, CA',
               enrollment: 42500,
               keyMetric: { label: 'EL Population', value: '19.7%' },
@@ -828,6 +857,7 @@ export const DISCOVERY_SCENARIOS: { keywords: string[]; response: DiscoveryQuery
             {
               districtId: ID_TWIN_RIVERS,
               name: 'Twin Rivers USD',
+              snapshot: snapshotFor(ID_TWIN_RIVERS),
               location: 'North Highlands, CA',
               enrollment: 27100,
               keyMetric: { label: 'EL Population', value: '21.5%' },
@@ -836,6 +866,7 @@ export const DISCOVERY_SCENARIOS: { keywords: string[]; response: DiscoveryQuery
             {
               districtId: ID_NATOMAS,
               name: 'Natomas USD',
+              snapshot: snapshotFor(ID_NATOMAS),
               location: 'Sacramento, CA',
               enrollment: 14200,
               keyMetric: { label: 'EL Population', value: '16.8%' },
@@ -906,6 +937,7 @@ export const DISCOVERY_SCENARIOS: { keywords: string[]; response: DiscoveryQuery
             {
               districtId: ID_ELK_GROVE,
               name: 'Elk Grove USD',
+              snapshot: snapshotFor(ID_ELK_GROVE),
               location: 'Elk Grove, CA',
               enrollment: 59800,
               keyMetric: { label: 'EL Population', value: '24.3%' },
@@ -914,6 +946,7 @@ export const DISCOVERY_SCENARIOS: { keywords: string[]; response: DiscoveryQuery
             {
               districtId: ID_SACRAMENTO_CITY,
               name: 'Sacramento City USD',
+              snapshot: snapshotFor(ID_SACRAMENTO_CITY),
               location: 'Sacramento, CA',
               enrollment: 42500,
               keyMetric: { label: 'EL Population', value: '19.7%' },
@@ -922,6 +955,7 @@ export const DISCOVERY_SCENARIOS: { keywords: string[]; response: DiscoveryQuery
             {
               districtId: ID_TWIN_RIVERS,
               name: 'Twin Rivers USD',
+              snapshot: snapshotFor(ID_TWIN_RIVERS),
               location: 'North Highlands, CA',
               enrollment: 27100,
               keyMetric: { label: 'EL Population', value: '21.5%' },
@@ -930,6 +964,7 @@ export const DISCOVERY_SCENARIOS: { keywords: string[]; response: DiscoveryQuery
             {
               districtId: ID_NATOMAS,
               name: 'Natomas USD',
+              snapshot: snapshotFor(ID_NATOMAS),
               location: 'Sacramento, CA',
               enrollment: 14200,
               keyMetric: { label: 'EL Population', value: '16.8%' },
@@ -1097,6 +1132,7 @@ export const DISCOVERY_SCENARIOS: { keywords: string[]; response: DiscoveryQuery
             {
               districtId: ID_ELK_GROVE,
               name: 'Elk Grove USD',
+              snapshot: snapshotFor(ID_ELK_GROVE),
               location: 'Elk Grove, CA',
               enrollment: 59800,
               keyMetric: { label: 'Math Initiative', value: 'Active K-8 curriculum review' },
@@ -1105,6 +1141,7 @@ export const DISCOVERY_SCENARIOS: { keywords: string[]; response: DiscoveryQuery
             {
               districtId: ID_TWIN_RIVERS,
               name: 'Twin Rivers USD',
+              snapshot: snapshotFor(ID_TWIN_RIVERS),
               location: 'North Highlands, CA',
               enrollment: 27100,
               keyMetric: { label: 'Math Initiative', value: '$4.2M materials budget allocated' },
@@ -1113,6 +1150,7 @@ export const DISCOVERY_SCENARIOS: { keywords: string[]; response: DiscoveryQuery
             {
               districtId: ID_SACRAMENTO_CITY,
               name: 'Sacramento City USD',
+              snapshot: snapshotFor(ID_SACRAMENTO_CITY),
               location: 'Sacramento, CA',
               enrollment: 42500,
               keyMetric: { label: 'Math Initiative', value: 'LCAP Goal 2 math priority' },
@@ -1121,6 +1159,7 @@ export const DISCOVERY_SCENARIOS: { keywords: string[]; response: DiscoveryQuery
             {
               districtId: ID_FRESNO,
               name: 'Fresno USD',
+              snapshot: snapshotFor(ID_FRESNO),
               location: 'Fresno, CA',
               enrollment: 70000,
               keyMetric: { label: 'Math Initiative', value: 'District-wide math improvement plan' },
@@ -1179,72 +1218,64 @@ export const DISCOVERY_SCENARIOS: { keywords: string[]; response: DiscoveryQuery
 // Used when productLensId is present in the query request.
 // ============================================================
 
-export const PRODUCT_RELEVANCE_MAPS: Record<string, Record<string, ProductRelevance>> = {
+export const PRODUCT_RELEVANCE_MAPS: Record<string, Record<string, ProductAlignment>> = {
   // EnvisionMath (prod-001) — math curriculum, K-8
   'prod-001': {
     [ID_ELK_GROVE]: {
-      alignmentLevel: 'strong',
+      level: 'strong',
       signals: ['Active K-8 math curriculum review matches product grade range', 'LCAP Goal 2 math priority aligns with product focus'],
-      productName: 'EnvisionMath',
+      primaryConnection: 'Active math curriculum review aligns with K-8 grade range',
     },
     [ID_TWIN_RIVERS]: {
-      alignmentLevel: 'strong',
+      level: 'strong',
       signals: ['$4.2M math materials budget allocated', 'Current Go Math! adoption aging — replacement cycle active'],
-      productName: 'EnvisionMath',
+      primaryConnection: 'Math materials budget allocated with aging adoption in replacement cycle',
     },
     [ID_SACRAMENTO_CITY]: {
-      alignmentLevel: 'moderate',
+      level: 'moderate',
       signals: ['LCAP math priority present but no active RFP', 'Math proficiency 29.1% indicates need'],
-      productName: 'EnvisionMath',
+      primaryConnection: 'LCAP math priority present but no active procurement',
     },
     [ID_NATOMAS]: {
-      alignmentLevel: 'limited',
+      level: 'limited',
       signals: ['Math decline noted but no budget allocation or formal evaluation'],
-      productName: 'EnvisionMath',
+      primaryConnection: 'Math decline noted without formal evaluation activity',
     },
     [ID_FRESNO]: {
-      alignmentLevel: 'moderate',
+      level: 'moderate',
       signals: ['Large district with math needs but evaluation status unknown'],
-      productName: 'EnvisionMath',
+      primaryConnection: 'Large district with math needs but evaluation timing unclear',
     },
     [ID_PLUMAS_COUNTY]: {
-      alignmentLevel: 'limited',
+      level: 'limited',
       signals: ['Small rural district — math proficiency below average but limited LCAP data'],
-      productName: 'EnvisionMath',
+      primaryConnection: 'Below-average math proficiency with limited strategic data',
     },
   },
   // myPerspectives (prod-002) — ELA curriculum, 6-12
   'prod-002': {
     [ID_ELK_GROVE]: {
-      alignmentLevel: 'limited',
+      level: 'limited',
       signals: ['No active ELA evaluation signals detected'],
-      productName: 'myPerspectives',
+      primaryConnection: 'No active ELA evaluation signals detected',
     },
-    [ID_TWIN_RIVERS]: {
-      alignmentLevel: 'unknown',
-      signals: ['Insufficient data to assess ELA alignment'],
-      productName: 'myPerspectives',
-    },
+    // Twin Rivers omitted — insufficient data (was 'unknown', which is no longer a valid level)
     [ID_SACRAMENTO_CITY]: {
-      alignmentLevel: 'moderate',
+      level: 'moderate',
       signals: ['ELA proficiency gaps present', 'Diverse student population aligns with product strengths'],
-      productName: 'myPerspectives',
+      primaryConnection: 'ELA gaps and diverse population align with product strengths',
     },
     [ID_NATOMAS]: {
-      alignmentLevel: 'limited',
+      level: 'limited',
       signals: ['No ELA-specific evaluation activity detected'],
-      productName: 'myPerspectives',
+      primaryConnection: 'No ELA-specific evaluation activity detected',
     },
     [ID_FRESNO]: {
-      alignmentLevel: 'strong',
+      level: 'strong',
       signals: ['High EL population benefits from culturally responsive texts', 'District has active ELA initiatives'],
-      productName: 'myPerspectives',
+      primaryConnection: 'Active ELA initiatives with high EL population',
     },
-    [ID_PLUMAS_COUNTY]: {
-      alignmentLevel: 'unknown',
-      signals: ['Insufficient data for ELA assessment'],
-      productName: 'myPerspectives',
-    },
+    // Plumas County omitted — insufficient data (was 'unknown', which is no longer a valid level)
   },
 };
 

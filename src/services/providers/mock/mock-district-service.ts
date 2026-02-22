@@ -10,6 +10,7 @@ import type {
   ExcludedDistrict,
 } from '../../types/district';
 import { MOCK_DISTRICTS, getMockDistrictListItems, getMockCountyFilters } from './fixtures/districts';
+import { buildSnapshot } from './snapshot-builder';
 
 function delay(ms: number = 200): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -116,10 +117,7 @@ export const mockDistrictService: IDistrictService = {
     }
     const saved: SavedDistrict = {
       districtId: district.districtId,
-      name: district.name,
-      state: district.state,
-      location: district.location,
-      enrollment: district.totalEnrollment,
+      snapshot: buildSnapshot(district),
       savedAt: new Date().toISOString(),
     };
     savedDistricts.set(districtId, saved);

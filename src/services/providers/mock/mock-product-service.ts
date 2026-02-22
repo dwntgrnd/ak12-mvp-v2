@@ -9,6 +9,7 @@ import type {
   UpdateProductRequest,
   AssetUploadUrlRequest,
   AssetUploadUrl,
+  LibraryReadinessResponse,
 } from '../../types/product';
 import { MOCK_PRODUCTS } from './fixtures/products';
 
@@ -134,4 +135,27 @@ export const mockProductService: IProductService = {
   async confirmProductAssetUpload(_productId: string, _assetId: string): Promise<ProductAsset> {
     throw { code: 'NOT_IMPLEMENTED', message: 'Asset uploads not available in mock provider', retryable: false };
   },
+
+  async getLibraryReadiness(): Promise<LibraryReadinessResponse> {
+    await delay(100);
+    return {
+      hasProducts: products.length > 0,
+      productCount: products.length,
+      products: products.map((p) => ({
+        productId: p.productId,
+        name: p.name,
+        category: p.subjectArea,
+        targetGradeBands: [deriveGradeBand(p.gradeRange.gradeFrom, p.gradeRange.gradeTo)],
+      })),
+    };
+  },
 };
+
+function deriveGradeBand(from: number, to: number): string {
+  if (from <= 2 && to <= 5) return 'K-5';
+  if (from <= 5 && to <= 8) return 'K-8';
+  if (from >= 6 && to <= 8) return '6-8';
+  if (from >= 6 && to <= 12) return '6-12';
+  if (from >= 9) return '9-12';
+  return `${from}-${to}`;
+}
