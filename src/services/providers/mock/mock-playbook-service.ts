@@ -77,6 +77,9 @@ function resolveDistrictName(districtId: string): string {
     'dist-fre-001': 'Fresno Unified',
     'dist-oak-001': 'Oakland Unified',
     'dist-lb-001': 'Long Beach Unified',
+    'dist-tr-001': 'Twin Rivers Unified',
+    'dist-nat-001': 'Natomas Unified',
+    'dist-plumas-001': 'Plumas County Office of Education',
   };
 
   if (SEED_DISTRICT_MAP[districtId]) {

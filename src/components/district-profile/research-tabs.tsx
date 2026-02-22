@@ -52,7 +52,7 @@ export function ResearchTabs({ districtId, yearData }: ResearchTabsProps) {
     return { intel: data, availableTabs: tabs };
   }, [districtId, yearData]);
 
-  if (availableTabs.length === 0 || !intel) return null;
+  if (availableTabs.length === 0) return null;
 
   return (
     <Tabs defaultValue={availableTabs[0].key}>
@@ -71,9 +71,9 @@ export function ResearchTabs({ districtId, yearData }: ResearchTabsProps) {
 
       {availableTabs.map((tab) => (
         <TabsContent key={tab.key} value={tab.key}>
-          {tab.key === 'goalsFunding' && <GoalsFundingTab intel={intel} />}
-          {tab.key === 'academicPerformance' && <AcademicPerformanceTab intel={intel} />}
-          {tab.key === 'competitiveIntel' && <CompetitiveIntelTab intel={intel} />}
+          {tab.key === 'goalsFunding' && intel && <GoalsFundingTab intel={intel} />}
+          {tab.key === 'academicPerformance' && intel && <AcademicPerformanceTab intel={intel} />}
+          {tab.key === 'competitiveIntel' && intel && <CompetitiveIntelTab intel={intel} />}
           {tab.key === 'districtTrends' && yearData && (
             <div className="pt-4">
               <DistrictChart yearData={yearData} />
