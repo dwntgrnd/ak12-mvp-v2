@@ -49,11 +49,6 @@ export function CardSetRenderer({
   const [activeSort, setActiveSort] = useState<ActiveSort | null>(null);
   const [filterValues, setFilterValues] = useState<Record<string, string[]>>({});
 
-  const activeFilterCount = useMemo(
-    () => Object.values(filterValues).reduce((sum, v) => sum + v.length, 0),
-    [filterValues],
-  );
-
   const handleFilterChange = useCallback((filterId: string, values: string[]) => {
     setFilterValues((prev) => ({ ...prev, [filterId]: values }));
   }, []);
@@ -95,31 +90,26 @@ export function CardSetRenderer({
   const derivedSortMetric =
     activeSortMetric ?? (activeSort ? mapSortKeyToLabel(activeSort.key) : undefined);
 
-  // Header slot
-  const header = (
-    <>
-      {overview && (
-        <p className="text-sm leading-[1.6] text-foreground">{overview}</p>
-      )}
-      {products.length > 0 && (
-        <div className={`flex justify-end ${overview ? 'mt-4' : ''}`}>
-          <ProductLensSelector
-            products={products}
-            selectedProductId={productLensId}
-            onProductChange={onProductLensChange}
-            variant="compact"
-          />
-        </div>
-      )}
-    </>
-  );
+  // Product lens slot — rendered in FilterPopoverBar utility bar
+  const productLensSlot = products.length > 0 ? (
+    <ProductLensSelector
+      products={products}
+      selectedProductId={productLensId}
+      onProductChange={onProductLensChange}
+      variant="compact"
+    />
+  ) : undefined;
 
-  const showHeader = overview || products.length > 0;
+  // Header slot — overview text only
+  const header = overview ? (
+    <p className="text-sm leading-[1.6] text-foreground">{overview}</p>
+  ) : undefined;
 
   return (
     <DistrictListingsContainer
       config={listConfig}
-      header={showHeader ? header : undefined}
+      header={header}
+      productLensSlot={productLensSlot}
       resultCount={processed.length}
       totalCount={districts.length}
       searchQuery={searchQuery}
@@ -129,7 +119,6 @@ export function CardSetRenderer({
       filterValues={filterValues}
       onFilterChange={handleFilterChange}
       onClearAllFilters={handleClearAllFilters}
-      activeFilterCount={activeFilterCount}
     >
       {processed.map((entry) => (
         <DistrictListCard

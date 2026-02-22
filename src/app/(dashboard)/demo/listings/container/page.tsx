@@ -206,11 +206,6 @@ export default function ContainerPreviewPage() {
   const [filterValues, setFilterValues] = useState<Record<string, string[]>>({});
   const [savedDistricts, setSavedDistricts] = useState<Set<string>>(new Set());
 
-  const activeFilterCount = useMemo(
-    () => Object.values(filterValues).reduce((sum, v) => sum + v.length, 0),
-    [filterValues],
-  );
-
   const handleFilterChange = useCallback((filterId: string, values: string[]) => {
     setFilterValues((prev) => ({ ...prev, [filterId]: values }));
   }, []);
@@ -279,7 +274,6 @@ export default function ContainerPreviewPage() {
         filterValues={filterValues}
         onFilterChange={handleFilterChange}
         onClearAllFilters={handleClearAllFilters}
-        activeFilterCount={activeFilterCount}
       >
         {filtered.map((d) => (
           <DistrictListCard

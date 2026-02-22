@@ -33,43 +33,68 @@ export function ColumnHeaderBar({
   activeSort,
   onSortChange,
 }: ColumnHeaderBarProps) {
+  // Separate identity columns (rank, name) from metric columns
+  const identityCols = columns.filter(
+    (col) => col.key === 'rank' || col.key === 'name',
+  );
+  const metricCols = columns.filter(
+    (col) => col.key !== 'rank' && col.key !== 'name',
+  );
+
   return (
     <div
-      className="flex items-center bg-slate-50 border-b border-border py-1.5 px-4"
+      className="flex items-center bg-slate-50 border-y border-border py-1.5 px-4"
       role="row"
       aria-label="Column headers"
     >
-      {columns.map((col, i) => {
-        const isActive = activeSort?.key === col.key;
-        const isIdentity = col.key === 'rank' || col.key === 'name';
+      {/* Identity columns — flex-1 to fill remaining space */}
+      <div className="flex items-center flex-1 min-w-0">
+        {identityCols.map((col) => {
+          const isActive = activeSort?.key === col.key;
 
-        // Map metric columns to fixed widths
-        const metricIndex = isIdentity
-          ? -1
-          : columns.filter((c, j) => j < i && c.key !== 'rank' && c.key !== 'name').length;
-        const widthClass = isIdentity
-          ? 'flex-1 min-w-0'
-          : (metricIndex < METRIC_COL_WIDTHS.length ? METRIC_COL_WIDTHS[metricIndex] : col.minWidth);
+          if (!col.sortable) {
+            return (
+              <div
+                key={col.key}
+                className="text-overline text-muted-foreground shrink-0 w-8"
+                role="columnheader"
+                aria-sort="none"
+              >
+                {col.label}
+              </div>
+            );
+          }
 
-        // Metric columns get left padding to match card border-l spacing
-        const paddingClass = !isIdentity ? 'pl-3' : '';
-
-        if (!col.sortable) {
           return (
-            <div
+            <button
               key={col.key}
+              type="button"
+              onClick={() => onSortChange(getNextSort(col.key, activeSort))}
               className={cn(
-                'text-overline text-muted-foreground shrink-0',
-                widthClass,
-                paddingClass,
+                'text-overline flex items-center gap-0.5 transition-colors duration-150',
+                'hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring rounded-sm',
+                'flex-1 min-w-0',
+                isActive ? 'text-foreground' : 'text-muted-foreground',
               )}
               role="columnheader"
-              aria-sort="none"
+              aria-sort={getAriaSortValue(col.key, activeSort)}
             >
-              {col.label}
-            </div>
+              <span className="truncate">{col.label}</span>
+              {isActive && activeSort && (
+                activeSort.direction === 'asc'
+                  ? <ArrowUp className="h-3 w-3 shrink-0" />
+                  : <ArrowDown className="h-3 w-3 shrink-0" />
+              )}
+            </button>
           );
-        }
+        })}
+      </div>
+
+      {/* Metric columns — shrink-0 fixed widths */}
+      {metricCols.map((col, i) => {
+        const isActive = activeSort?.key === col.key;
+        const widthClass =
+          i < METRIC_COL_WIDTHS.length ? METRIC_COL_WIDTHS[i] : col.minWidth;
 
         return (
           <button
@@ -79,9 +104,8 @@ export function ColumnHeaderBar({
             className={cn(
               'text-overline flex items-center gap-0.5 transition-colors duration-150 shrink-0',
               'hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring rounded-sm',
-              isActive ? 'text-foreground' : 'text-muted-foreground',
               widthClass,
-              paddingClass,
+              isActive ? 'text-foreground' : 'text-muted-foreground',
             )}
             role="columnheader"
             aria-sort={getAriaSortValue(col.key, activeSort)}

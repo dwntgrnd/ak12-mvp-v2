@@ -49,11 +49,6 @@ export function RankedListRenderer({
   const [activeSort, setActiveSort] = useState<ActiveSort | null>(null);
   const [filterValues, setFilterValues] = useState<Record<string, string[]>>({});
 
-  const activeFilterCount = useMemo(
-    () => Object.values(filterValues).reduce((sum, v) => sum + v.length, 0),
-    [filterValues],
-  );
-
   const handleFilterChange = useCallback((filterId: string, values: string[]) => {
     setFilterValues((prev) => ({ ...prev, [filterId]: values }));
   }, []);
@@ -92,7 +87,17 @@ export function RankedListRenderer({
     activeSortMetric ??
     (activeSort ? mapSortKeyToLabel(activeSort.key) : rankingCriterion);
 
-  // Header slot
+  // Product lens slot — rendered in FilterPopoverBar utility bar
+  const productLensSlot = products.length > 0 ? (
+    <ProductLensSelector
+      products={products}
+      selectedProductId={productLensId}
+      onProductChange={onProductLensChange}
+      variant="compact"
+    />
+  ) : undefined;
+
+  // Header slot — title + ranking criterion only
   const header = (
     <>
       <h2 className="text-lg font-semibold leading-[1.3] tracking-[-0.01em] text-foreground">
@@ -101,16 +106,6 @@ export function RankedListRenderer({
       <p className="mt-1 text-xs font-medium leading-[1.5] tracking-[0.025em] text-muted-foreground">
         Ranked by: {rankingCriterion}
       </p>
-      {products.length > 0 && (
-        <div className="mt-4 flex justify-end">
-          <ProductLensSelector
-            products={products}
-            selectedProductId={productLensId}
-            onProductChange={onProductLensChange}
-            variant="compact"
-          />
-        </div>
-      )}
     </>
   );
 
@@ -129,6 +124,7 @@ export function RankedListRenderer({
       config={listConfig}
       header={header}
       footer={footer}
+      productLensSlot={productLensSlot}
       resultCount={processed.length}
       totalCount={entries.length}
       searchQuery={searchQuery}
@@ -138,7 +134,6 @@ export function RankedListRenderer({
       filterValues={filterValues}
       onFilterChange={handleFilterChange}
       onClearAllFilters={handleClearAllFilters}
-      activeFilterCount={activeFilterCount}
     >
       {processed.map((entry) => (
         <DistrictListCard
