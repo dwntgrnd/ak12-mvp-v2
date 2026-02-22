@@ -1,12 +1,13 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { DistrictListCard } from '@/components/shared/district-list-card';
 import { TransparencyNote } from './transparency-note';
+import { DistrictListingsContainer } from '@/components/shared/district-listings-container';
 import { ProductLensSelector } from '@/components/discovery/product-lens-selector';
-import { ListingsToolbar } from '@/components/shared/listings-toolbar';
-import type { CardSetContent, ResponseConfidence, ProductAlignment, CardSetEntry } from '@/services/types/discovery';
-import { formatNumber } from '@/lib/utils/format';
+import { CARD_SET_CONFIG, type ActiveSort } from '@/components/shared/list-context-config';
+import { sortBySnapshotField, filterBySnapshot, mapSortKeyToLabel } from '@/lib/utils/sort-utils';
+import type { CardSetContent, ResponseConfidence, ProductAlignment } from '@/services/types/discovery';
 
 interface CardSetRendererProps {
   content: CardSetContent;
@@ -22,36 +23,43 @@ interface CardSetRendererProps {
   onGeneratePlaybook?: (districtId: string) => void;
 }
 
-const SORT_OPTIONS = [
-  { value: 'original', label: 'Default Order' },
-  { value: 'name-asc', label: 'Name: A \u2192 Z' },
-  { value: 'enrollment-desc', label: 'Enrollment: High \u2192 Low' },
-  { value: 'enrollment-asc', label: 'Enrollment: Low \u2192 High' },
-];
-
-function sortEntries(entries: CardSetEntry[], sort: string): CardSetEntry[] {
-  if (sort === 'original') return entries;
-  const sorted = [...entries];
-  switch (sort) {
-    case 'name-asc':
-      return sorted.sort((a, b) => a.name.localeCompare(b.name));
-    case 'enrollment-desc':
-      return sorted.sort((a, b) => b.snapshot.totalEnrollment - a.snapshot.totalEnrollment);
-    case 'enrollment-asc':
-      return sorted.sort((a, b) => a.snapshot.totalEnrollment - b.snapshot.totalEnrollment);
-    default:
-      return sorted;
-  }
-}
-
-export function CardSetRenderer({ content, productRelevanceMap, products, productLensId, onProductLensChange, activeSortMetric, savedDistricts, onSaveDistrict, onRemoveSaved, onGeneratePlaybook }: CardSetRendererProps) {
+export function CardSetRenderer({
+  content,
+  productRelevanceMap,
+  products,
+  productLensId,
+  onProductLensChange,
+  activeSortMetric,
+  savedDistricts,
+  onSaveDistrict,
+  onRemoveSaved,
+  onGeneratePlaybook,
+}: CardSetRendererProps) {
   const { overview, districts } = content;
 
+  // State: search, sort, filters
   const [searchQuery, setSearchQuery] = useState('');
-  const [sortValue, setSortValue] = useState('original');
+  const [activeSort, setActiveSort] = useState<ActiveSort | null>(null);
+  const [filterValues, setFilterValues] = useState<Record<string, string[]>>({});
 
-  const filtered = useMemo(() => {
+  const activeFilterCount = useMemo(
+    () => Object.values(filterValues).reduce((sum, v) => sum + v.length, 0),
+    [filterValues],
+  );
+
+  const handleFilterChange = useCallback((filterId: string, values: string[]) => {
+    setFilterValues((prev) => ({ ...prev, [filterId]: values }));
+  }, []);
+
+  const handleClearAllFilters = useCallback(() => {
+    setFilterValues({});
+  }, []);
+
+  // Data transformation pipeline
+  const processed = useMemo(() => {
     let result = districts;
+
+    // Text search
     if (searchQuery) {
       const q = searchQuery.toLowerCase();
       result = result.filter(
@@ -61,84 +69,73 @@ export function CardSetRenderer({ content, productRelevanceMap, products, produc
           d.snapshot.county.toLowerCase().includes(q),
       );
     }
-    return sortEntries(result, sortValue);
-  }, [districts, searchQuery, sortValue]);
+
+    // Filters
+    result = filterBySnapshot(result, filterValues);
+
+    // Sort (null = original API order)
+    result = sortBySnapshotField(result, activeSort);
+
+    return result;
+  }, [districts, searchQuery, filterValues, activeSort]);
 
   const derivedSortMetric =
-    activeSortMetric ?? (sortValue.startsWith('enrollment') ? 'Enrollment' : undefined);
+    activeSortMetric ?? (activeSort ? mapSortKeyToLabel(activeSort.key) : undefined);
 
-  return (
-    <div className="bg-white border border-border rounded-lg shadow-sm">
-      {/* Overview text + product lens */}
-      {(overview || products.length > 0) && (
-        <div className="p-5 pb-0">
-          {overview && (
-            <p className="text-sm leading-[1.6] text-foreground">{overview}</p>
-          )}
-          {products.length > 0 && (
-            <div className={`flex justify-end ${overview ? 'mt-4' : ''}`}>
-              <ProductLensSelector
-                products={products}
-                selectedProductId={productLensId}
-                onProductChange={onProductLensChange}
-                variant="compact"
-              />
-            </div>
-          )}
+  // Header slot
+  const header = (
+    <>
+      {overview && (
+        <p className="text-sm leading-[1.6] text-foreground">{overview}</p>
+      )}
+      {products.length > 0 && (
+        <div className={`flex justify-end ${overview ? 'mt-4' : ''}`}>
+          <ProductLensSelector
+            products={products}
+            selectedProductId={productLensId}
+            onProductChange={onProductLensChange}
+            variant="compact"
+          />
         </div>
       )}
+    </>
+  );
 
-      {/* Toolbar */}
-      <div className="px-5 pt-4 pb-3 border-b border-border/50">
-        <ListingsToolbar
-          searchQuery={searchQuery}
-          onSearchChange={setSearchQuery}
-          searchPlaceholder="Filter districts..."
-          filters={[]}
-          filterValues={{}}
-          onFilterChange={() => {}}
-          sortOptions={SORT_OPTIONS}
-          sortValue={sortValue}
-          onSortChange={setSortValue}
-        />
-      </div>
+  const showHeader = overview || products.length > 0;
 
-      {/* Count strip */}
-      <div className="px-5 py-2 text-xs font-medium text-muted-foreground border-b border-border/50 bg-slate-50/50">
-        <span className="text-foreground font-semibold">{formatNumber(filtered.length)}</span>
-        {filtered.length !== districts.length && <> of {formatNumber(districts.length)}</>}
-        {' '}{filtered.length === 1 ? 'district' : 'districts'}
-      </div>
-
-      {/* District list */}
-      <div className="p-5">
-        {filtered.length === 0 ? (
-          <p className="py-8 text-center text-sm text-muted-foreground">
-            No districts match your filter.
-          </p>
-        ) : (
-          <div className="flex flex-col gap-2" role="list" aria-label="Districts matching your query">
-            {filtered.map((entry) => (
-              <DistrictListCard
-                key={entry.districtId}
-                snapshot={entry.snapshot}
-                variant="inset"
-                additionalMetrics={entry.keyMetric ? [entry.keyMetric] : undefined}
-                activeSortMetric={derivedSortMetric}
-                productAlignment={productRelevanceMap?.[entry.districtId]}
-                isSaved={savedDistricts?.has(entry.districtId)}
-                onSave={onSaveDistrict}
-                onRemoveSaved={onRemoveSaved}
-                onGeneratePlaybook={onGeneratePlaybook}
-              >
-                {entry.confidence >= 3 && (
-                  <TransparencyNote note="Limited data coverage" level={entry.confidence} />
-                )}
-              </DistrictListCard>
-            ))}
-          </div>
-        )}
-      </div>
-    </div>
+  return (
+    <DistrictListingsContainer
+      config={CARD_SET_CONFIG}
+      header={showHeader ? header : undefined}
+      resultCount={processed.length}
+      totalCount={districts.length}
+      searchQuery={searchQuery}
+      onSearchChange={setSearchQuery}
+      activeSort={activeSort}
+      onSortChange={setActiveSort}
+      filterValues={filterValues}
+      onFilterChange={handleFilterChange}
+      onClearAllFilters={handleClearAllFilters}
+      activeFilterCount={activeFilterCount}
+    >
+      {processed.map((entry) => (
+        <DistrictListCard
+          key={entry.districtId}
+          snapshot={entry.snapshot}
+          variant="inset"
+          additionalMetrics={entry.keyMetric ? [entry.keyMetric] : undefined}
+          activeSortMetric={derivedSortMetric}
+          productAlignment={productRelevanceMap?.[entry.districtId]}
+          isSaved={savedDistricts?.has(entry.districtId)}
+          onSave={onSaveDistrict}
+          onRemoveSaved={onRemoveSaved}
+          onGeneratePlaybook={onGeneratePlaybook}
+        >
+          {entry.confidence >= 3 && (
+            <TransparencyNote note="Limited data coverage" level={entry.confidence} />
+          )}
+        </DistrictListCard>
+      ))}
+    </DistrictListingsContainer>
   );
 }

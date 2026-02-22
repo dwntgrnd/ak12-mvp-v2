@@ -3,7 +3,8 @@
 import { useState, useMemo, useCallback } from 'react';
 import { DistrictListingsContainer } from '@/components/shared/district-listings-container';
 import { DistrictListCard } from '@/components/shared/district-list-card';
-import type { ListingsToolbarProps, FilterDefinition, SortOption } from '@/components/shared/listings-toolbar';
+import { CARD_SET_CONFIG, type ActiveSort } from '@/components/shared/list-context-config';
+import { sortBySnapshotField, filterBySnapshot, mapSortKeyToLabel } from '@/lib/utils/sort-utils';
 import type { DistrictSnapshot } from '@/services/types/district';
 
 /* ------------------------------------------------------------------ */
@@ -11,14 +12,14 @@ import type { DistrictSnapshot } from '@/services/types/district';
 /* ------------------------------------------------------------------ */
 
 interface MockDistrict {
+  name: string;
   snapshot: DistrictSnapshot;
-  county: string;
-  enrollmentBand: 'small' | 'medium' | 'large' | 'very-large';
   additionalMetrics: Array<{ label: string; value: string }>;
 }
 
 const DISTRICTS: MockDistrict[] = [
   {
+    name: 'Sacramento City USD',
     snapshot: {
       districtId: 'sacramento-city-usd',
       name: 'Sacramento City USD',
@@ -34,14 +35,13 @@ const DISTRICTS: MockDistrict[] = [
       elaProficiency: 38.1,
       mathProficiency: 29.8,
     },
-    county: 'Sacramento',
-    enrollmentBand: 'large',
     additionalMetrics: [
       { label: 'Math Proficiency', value: '29.8%' },
       { label: 'ELA Proficiency', value: '38.1%' },
     ],
   },
   {
+    name: 'Elk Grove USD',
     snapshot: {
       districtId: 'a2671310-4656-4e43-a91a-7688536f1764',
       name: 'Elk Grove USD',
@@ -57,14 +57,13 @@ const DISTRICTS: MockDistrict[] = [
       elaProficiency: 47.2,
       mathProficiency: 38.4,
     },
-    county: 'Sacramento',
-    enrollmentBand: 'large',
     additionalMetrics: [
       { label: 'Math Proficiency', value: '38.4%' },
       { label: 'ELA Proficiency', value: '47.2%' },
     ],
   },
   {
+    name: 'Twin Rivers USD',
     snapshot: {
       districtId: 'twin-rivers-usd',
       name: 'Twin Rivers USD',
@@ -80,14 +79,13 @@ const DISTRICTS: MockDistrict[] = [
       elaProficiency: 35.8,
       mathProficiency: 31.2,
     },
-    county: 'Sacramento',
-    enrollmentBand: 'large',
     additionalMetrics: [
       { label: 'Math Proficiency', value: '31.2%' },
       { label: 'ELA Proficiency', value: '35.8%' },
     ],
   },
   {
+    name: 'Natomas USD',
     snapshot: {
       districtId: 'natomas-usd',
       name: 'Natomas USD',
@@ -103,14 +101,13 @@ const DISTRICTS: MockDistrict[] = [
       elaProficiency: 42.6,
       mathProficiency: 35.1,
     },
-    county: 'Sacramento',
-    enrollmentBand: 'medium',
     additionalMetrics: [
       { label: 'Math Proficiency', value: '35.1%' },
       { label: 'ELA Proficiency', value: '42.6%' },
     ],
   },
   {
+    name: 'San Juan USD',
     snapshot: {
       districtId: 'san-juan-usd',
       name: 'San Juan USD',
@@ -126,14 +123,13 @@ const DISTRICTS: MockDistrict[] = [
       elaProficiency: 40.9,
       mathProficiency: 33.5,
     },
-    county: 'Sacramento',
-    enrollmentBand: 'large',
     additionalMetrics: [
       { label: 'Math Proficiency', value: '33.5%' },
       { label: 'ELA Proficiency', value: '40.9%' },
     ],
   },
   {
+    name: 'Folsom Cordova USD',
     snapshot: {
       districtId: 'folsom-cordova-usd',
       name: 'Folsom Cordova USD',
@@ -149,14 +145,13 @@ const DISTRICTS: MockDistrict[] = [
       elaProficiency: 55.2,
       mathProficiency: 48.7,
     },
-    county: 'Sacramento',
-    enrollmentBand: 'medium',
     additionalMetrics: [
       { label: 'Math Proficiency', value: '48.7%' },
       { label: 'ELA Proficiency', value: '55.2%' },
     ],
   },
   {
+    name: 'Davis Joint USD',
     snapshot: {
       districtId: 'davis-jusd',
       name: 'Davis Joint USD',
@@ -172,14 +167,13 @@ const DISTRICTS: MockDistrict[] = [
       elaProficiency: 63.1,
       mathProficiency: 56.3,
     },
-    county: 'Yolo',
-    enrollmentBand: 'medium',
     additionalMetrics: [
       { label: 'Math Proficiency', value: '56.3%' },
       { label: 'ELA Proficiency', value: '63.1%' },
     ],
   },
   {
+    name: 'Woodland Joint USD',
     snapshot: {
       districtId: 'woodland-jusd',
       name: 'Woodland Joint USD',
@@ -195,8 +189,6 @@ const DISTRICTS: MockDistrict[] = [
       elaProficiency: 34.7,
       mathProficiency: 28.4,
     },
-    county: 'Yolo',
-    enrollmentBand: 'medium',
     additionalMetrics: [
       { label: 'Math Proficiency', value: '28.4%' },
       { label: 'ELA Proficiency', value: '34.7%' },
@@ -205,81 +197,27 @@ const DISTRICTS: MockDistrict[] = [
 ];
 
 /* ------------------------------------------------------------------ */
-/*  Filter / sort config                                               */
-/* ------------------------------------------------------------------ */
-
-const COUNTY_OPTIONS = [
-  { value: 'Sacramento', label: 'Sacramento' },
-  { value: 'Yolo', label: 'Yolo' },
-];
-
-const ENROLLMENT_OPTIONS = [
-  { value: 'small', label: 'Small (under 5,000)' },
-  { value: 'medium', label: 'Medium (5,000 \u2013 25,000)' },
-  { value: 'large', label: 'Large (25,000 \u2013 100,000)' },
-  { value: 'very-large', label: 'Very Large (over 100,000)' },
-];
-
-const FILTER_DEFINITIONS: FilterDefinition[] = [
-  {
-    id: 'county',
-    label: 'Filter by county',
-    placeholder: 'All Counties',
-    options: COUNTY_OPTIONS,
-    width: 'md:w-44',
-  },
-  {
-    id: 'enrollment',
-    label: 'Filter by enrollment size',
-    placeholder: 'All Sizes',
-    options: ENROLLMENT_OPTIONS,
-    width: 'md:w-52',
-  },
-];
-
-const SORT_OPTIONS: SortOption[] = [
-  { value: 'enrollment-desc', label: 'Enrollment: High \u2192 Low' },
-  { value: 'enrollment-asc', label: 'Enrollment: Low \u2192 High' },
-  { value: 'name-asc', label: 'Name: A \u2192 Z' },
-  { value: 'county-asc', label: 'County: A \u2192 Z' },
-];
-
-/* ------------------------------------------------------------------ */
-/*  Sorting helper                                                     */
-/* ------------------------------------------------------------------ */
-
-function sortDistricts(districts: MockDistrict[], sort: string): MockDistrict[] {
-  const sorted = [...districts];
-  switch (sort) {
-    case 'enrollment-desc':
-      return sorted.sort((a, b) => b.snapshot.totalEnrollment - a.snapshot.totalEnrollment);
-    case 'enrollment-asc':
-      return sorted.sort((a, b) => a.snapshot.totalEnrollment - b.snapshot.totalEnrollment);
-    case 'name-asc':
-      return sorted.sort((a, b) => a.snapshot.name.localeCompare(b.snapshot.name));
-    case 'county-asc':
-      return sorted.sort((a, b) => a.county.localeCompare(b.county) || a.snapshot.name.localeCompare(b.snapshot.name));
-    default:
-      return sorted;
-  }
-}
-
-/* ------------------------------------------------------------------ */
 /*  Demo page                                                          */
 /* ------------------------------------------------------------------ */
 
 export default function ContainerPreviewPage() {
   const [searchQuery, setSearchQuery] = useState('');
-  const [filterValues, setFilterValues] = useState<Record<string, string | undefined>>({});
-  const [sortValue, setSortValue] = useState('enrollment-desc');
+  const [activeSort, setActiveSort] = useState<ActiveSort | null>(null);
+  const [filterValues, setFilterValues] = useState<Record<string, string[]>>({});
   const [savedDistricts, setSavedDistricts] = useState<Set<string>>(new Set());
 
-  const handleFilterChange = useCallback(
-    (filterId: string, value: string | undefined) => {
-      setFilterValues((prev) => ({ ...prev, [filterId]: value }));
-    },
-    [],
+  const activeFilterCount = useMemo(
+    () => Object.values(filterValues).reduce((sum, v) => sum + v.length, 0),
+    [filterValues],
   );
+
+  const handleFilterChange = useCallback((filterId: string, values: string[]) => {
+    setFilterValues((prev) => ({ ...prev, [filterId]: values }));
+  }, []);
+
+  const handleClearAllFilters = useCallback(() => {
+    setFilterValues({});
+  }, []);
 
   const handleSave = useCallback((districtId: string) => {
     setSavedDistricts((prev) => new Set(prev).add(districtId));
@@ -305,30 +243,14 @@ export default function ContainerPreviewPage() {
           d.snapshot.city.toLowerCase().includes(q),
       );
     }
-    if (filterValues.county) {
-      result = result.filter((d) => d.county === filterValues.county);
-    }
-    if (filterValues.enrollment) {
-      result = result.filter((d) => d.enrollmentBand === filterValues.enrollment);
-    }
 
-    return sortDistricts(result, sortValue);
-  }, [searchQuery, filterValues, sortValue]);
+    result = filterBySnapshot(result, filterValues);
+    result = sortBySnapshotField(result, activeSort);
 
-  // Derive active sort metric label for highlight
-  const activeSortMetric = sortValue.startsWith('enrollment') ? 'Enrollment' : undefined;
+    return result;
+  }, [searchQuery, filterValues, activeSort]);
 
-  const toolbarProps: ListingsToolbarProps = {
-    searchQuery,
-    onSearchChange: setSearchQuery,
-    searchPlaceholder: 'Search districts by name or city...',
-    filters: FILTER_DEFINITIONS,
-    filterValues,
-    onFilterChange: handleFilterChange,
-    sortOptions: SORT_OPTIONS,
-    sortValue,
-    onSortChange: setSortValue,
-  };
+  const activeSortMetric = activeSort ? mapSortKeyToLabel(activeSort.key) : undefined;
 
   if (process.env.NODE_ENV !== 'development') {
     return (
@@ -340,12 +262,24 @@ export default function ContainerPreviewPage() {
 
   return (
     <div className="p-6 max-w-content">
+      <h1 className="text-2xl font-bold tracking-[-0.01em] text-foreground mb-6">
+        District Browser
+      </h1>
+      <p className="mb-6 text-sm text-muted-foreground">
+        Browse and filter districts across the Sacramento region
+      </p>
       <DistrictListingsContainer
-        title="District Browser"
-        subtitle="Browse and filter districts across the Sacramento region"
-        toolbar={toolbarProps}
+        config={CARD_SET_CONFIG}
         resultCount={filtered.length}
         totalCount={DISTRICTS.length}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        activeSort={activeSort}
+        onSortChange={setActiveSort}
+        filterValues={filterValues}
+        onFilterChange={handleFilterChange}
+        onClearAllFilters={handleClearAllFilters}
+        activeFilterCount={activeFilterCount}
       >
         {filtered.map((d) => (
           <DistrictListCard
