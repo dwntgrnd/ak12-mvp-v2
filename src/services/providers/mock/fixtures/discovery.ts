@@ -31,13 +31,13 @@ function snapshotFor(districtId: string): DistrictSnapshot {
   if (d) return buildSnapshot(d);
 
   // Stub snapshots for districts not in MOCK_DISTRICTS
-  const stubs: Record<string, Parameters<typeof buildStubSnapshot>[0]> = {
-    [ID_TWIN_RIVERS]:     { districtId: ID_TWIN_RIVERS,     name: 'Twin Rivers USD',                  city: 'North Highlands', county: 'Sacramento', state: 'CA', enrollment: 27100 },
-    [ID_SACRAMENTO_CITY]: { districtId: ID_SACRAMENTO_CITY, name: 'Sacramento City USD',              city: 'Sacramento',      county: 'Sacramento', state: 'CA', enrollment: 42500 },
-    [ID_NATOMAS]:         { districtId: ID_NATOMAS,         name: 'Natomas USD',                      city: 'Sacramento',      county: 'Sacramento', state: 'CA', enrollment: 14200 },
-    [ID_PLUMAS_COUNTY]:   { districtId: ID_PLUMAS_COUNTY,   name: 'Plumas County Office of Education', city: 'Quincy',          county: 'Plumas',     state: 'CA', enrollment: 1012 },
+  const stubs: Record<string, DistrictSnapshot> = {
+    [ID_TWIN_RIVERS]:     { districtId: ID_TWIN_RIVERS,     name: 'Twin Rivers USD',                  city: 'North Highlands', county: 'Sacramento', state: 'CA', docType: 'Unified', lowGrade: 'K', highGrade: '12', totalEnrollment: 27100, frpmPercent: 78, ellPercent: 22, elaProficiency: 36, mathProficiency: 31 },
+    [ID_SACRAMENTO_CITY]: { districtId: ID_SACRAMENTO_CITY, name: 'Sacramento City USD',              city: 'Sacramento',      county: 'Sacramento', state: 'CA', docType: 'Unified', lowGrade: 'K', highGrade: '12', totalEnrollment: 42500, frpmPercent: 71, ellPercent: 20, elaProficiency: 34, mathProficiency: 30 },
+    [ID_NATOMAS]:         { districtId: ID_NATOMAS,         name: 'Natomas USD',                      city: 'Sacramento',      county: 'Sacramento', state: 'CA', docType: 'Unified', lowGrade: 'K', highGrade: '12', totalEnrollment: 14200, frpmPercent: 55, ellPercent: 17, elaProficiency: 42, mathProficiency: 35 },
+    [ID_PLUMAS_COUNTY]:   { districtId: ID_PLUMAS_COUNTY,   name: 'Plumas County Office of Education', city: 'Quincy',          county: 'Plumas',     state: 'CA', docType: 'Unified', lowGrade: 'K', highGrade: '12', totalEnrollment: 1012,  frpmPercent: 61, ellPercent: 8,  elaProficiency: 41, mathProficiency: 23 },
   };
-  if (stubs[districtId]) return buildStubSnapshot(stubs[districtId]);
+  if (stubs[districtId]) return stubs[districtId];
 
   // Fallback — should not happen for known scenarios
   return buildStubSnapshot({ districtId, name: 'Unknown District', city: '', county: '', state: 'CA', enrollment: 0 });
