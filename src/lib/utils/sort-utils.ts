@@ -1,6 +1,7 @@
 // Pure sort + filter utilities for district listings (no React)
 
 import type { DistrictSnapshot } from '@/services/types/district';
+import type { ProductAlignment } from '@/services/types/discovery';
 import type { ActiveSort } from '@/components/shared/list-context-config';
 
 /* ------------------------------------------------------------------ */
@@ -38,9 +39,27 @@ export function sortBySnapshotField<T extends HasSnapshot>(
     case 'academic':
       // Default to ELA; caller can use academicOverride for math
       return sorted.sort((a, b) => dir * (a.snapshot.elaProficiency - b.snapshot.elaProficiency));
+    case 'alignment':
+      return sortByAlignment(sorted, dir);
     default:
       return sorted;
   }
+}
+
+/* ------------------------------------------------------------------ */
+/*  Alignment sort helper                                              */
+/* ------------------------------------------------------------------ */
+
+const ALIGNMENT_RANK: Record<string, number> = { strong: 3, moderate: 2, limited: 1 };
+
+function sortByAlignment<T extends HasSnapshot>(entries: T[], dir: number): T[] {
+  return [...entries].sort((a, b) => {
+    const aLevel = (a as T & { productAlignment?: ProductAlignment }).productAlignment?.level;
+    const bLevel = (b as T & { productAlignment?: ProductAlignment }).productAlignment?.level;
+    const aRank = aLevel ? (ALIGNMENT_RANK[aLevel] ?? 0) : 0;
+    const bRank = bLevel ? (ALIGNMENT_RANK[bLevel] ?? 0) : 0;
+    return dir * (aRank - bRank);
+  });
 }
 
 /* ------------------------------------------------------------------ */
@@ -116,6 +135,14 @@ export function filterBySnapshot<T extends HasSnapshot>(
     );
   }
 
+  const alignmentLevels = filterValues['alignmentLevel'];
+  if (alignmentLevels?.length) {
+    result = result.filter((e) => {
+      const level = (e as T & { productAlignment?: ProductAlignment }).productAlignment?.level;
+      return level ? alignmentLevels.includes(level) : false;
+    });
+  }
+
   return result;
 }
 
@@ -138,6 +165,8 @@ export function mapSortKeyToLabel(
       return 'ELL';
     case 'academic':
       return academicOverride === 'math' ? 'Math Prof.' : 'ELA Prof.';
+    case 'alignment':
+      return 'Alignment';
     default:
       return key;
   }

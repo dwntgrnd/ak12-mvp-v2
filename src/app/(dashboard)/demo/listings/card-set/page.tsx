@@ -128,6 +128,7 @@ export default function CardSetPreviewPage() {
         products={[]}
         productLensId={undefined}
         onProductLensChange={noop}
+        hasProducts={false}
       />
     </div>
   );

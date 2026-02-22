@@ -12,13 +12,14 @@ interface DiscoveryFormatRouterProps {
   products: Array<{ productId: string; name: string }>;
   productLensId: string | undefined;
   onProductLensChange: (productId: string | undefined) => void;
+  hasProducts: boolean;
   savedDistricts?: Set<string>;
   onSaveDistrict?: (districtId: string) => void;
   onRemoveSaved?: (districtId: string) => void;
   onGeneratePlaybook?: (districtId: string) => void;
 }
 
-export function DiscoveryFormatRouter({ response, onNewQuery, products, productLensId, onProductLensChange, savedDistricts, onSaveDistrict, onRemoveSaved, onGeneratePlaybook }: DiscoveryFormatRouterProps) {
+export function DiscoveryFormatRouter({ response, onNewQuery, products, productLensId, onProductLensChange, hasProducts, savedDistricts, onSaveDistrict, onRemoveSaved, onGeneratePlaybook }: DiscoveryFormatRouterProps) {
   const { content, confidence } = response;
   const relevanceMap: Record<string, ProductAlignment> | undefined = response.productRelevanceMap;
 
@@ -37,9 +38,9 @@ export function DiscoveryFormatRouter({ response, onNewQuery, products, productL
     case 'comparison_table':
       return <ComparisonTableRenderer content={content.data} confidence={confidence} productRelevanceMap={relevanceMap} />;
     case 'ranked_list':
-      return <RankedListRenderer content={content.data} confidence={confidence} productRelevanceMap={relevanceMap} {...lensProps} {...actionProps} />;
+      return <RankedListRenderer content={content.data} confidence={confidence} productRelevanceMap={relevanceMap} hasProducts={hasProducts} {...lensProps} {...actionProps} />;
     case 'card_set':
-      return <CardSetRenderer content={content.data} confidence={confidence} productRelevanceMap={relevanceMap} {...lensProps} {...actionProps} />;
+      return <CardSetRenderer content={content.data} confidence={confidence} productRelevanceMap={relevanceMap} hasProducts={hasProducts} {...lensProps} {...actionProps} />;
     default:
       return null;
   }

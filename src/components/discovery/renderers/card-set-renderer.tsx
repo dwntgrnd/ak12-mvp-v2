@@ -5,7 +5,7 @@ import { DistrictListCard } from '@/components/shared/district-list-card';
 import { TransparencyNote } from './transparency-note';
 import { DistrictListingsContainer } from '@/components/shared/district-listings-container';
 import { ProductLensSelector } from '@/components/discovery/product-lens-selector';
-import { CARD_SET_CONFIG, type ActiveSort } from '@/components/shared/list-context-config';
+import { CARD_SET_CONFIG, buildListContextConfig, type ActiveSort } from '@/components/shared/list-context-config';
 import { sortBySnapshotField, filterBySnapshot, mapSortKeyToLabel } from '@/lib/utils/sort-utils';
 import type { CardSetContent, ResponseConfidence, ProductAlignment } from '@/services/types/discovery';
 
@@ -16,6 +16,7 @@ interface CardSetRendererProps {
   products: Array<{ productId: string; name: string }>;
   productLensId: string | undefined;
   onProductLensChange: (productId: string | undefined) => void;
+  hasProducts: boolean;
   activeSortMetric?: string;
   savedDistricts?: Set<string>;
   onSaveDistrict?: (districtId: string) => void;
@@ -29,6 +30,7 @@ export function CardSetRenderer({
   products,
   productLensId,
   onProductLensChange,
+  hasProducts,
   activeSortMetric,
   savedDistricts,
   onSaveDistrict,
@@ -36,6 +38,11 @@ export function CardSetRenderer({
   onGeneratePlaybook,
 }: CardSetRendererProps) {
   const { overview, districts } = content;
+
+  const listConfig = useMemo(
+    () => buildListContextConfig(CARD_SET_CONFIG, { hasProducts, productLensActive: !!productLensId }),
+    [hasProducts, productLensId],
+  );
 
   // State: search, sort, filters
   const [searchQuery, setSearchQuery] = useState('');
@@ -55,9 +62,15 @@ export function CardSetRenderer({
     setFilterValues({});
   }, []);
 
+  // Enrich entries with productAlignment for sort/filter utilities
+  const enrichedDistricts = useMemo(
+    () => districts.map((d) => ({ ...d, productAlignment: productRelevanceMap?.[d.districtId] })),
+    [districts, productRelevanceMap],
+  );
+
   // Data transformation pipeline
   const processed = useMemo(() => {
-    let result = districts;
+    let result = enrichedDistricts;
 
     // Text search
     if (searchQuery) {
@@ -77,7 +90,7 @@ export function CardSetRenderer({
     result = sortBySnapshotField(result, activeSort);
 
     return result;
-  }, [districts, searchQuery, filterValues, activeSort]);
+  }, [enrichedDistricts, searchQuery, filterValues, activeSort]);
 
   const derivedSortMetric =
     activeSortMetric ?? (activeSort ? mapSortKeyToLabel(activeSort.key) : undefined);
@@ -105,7 +118,7 @@ export function CardSetRenderer({
 
   return (
     <DistrictListingsContainer
-      config={CARD_SET_CONFIG}
+      config={listConfig}
       header={showHeader ? header : undefined}
       resultCount={processed.length}
       totalCount={districts.length}

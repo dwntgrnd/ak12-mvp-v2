@@ -5,7 +5,7 @@ import { TransparencyNote } from './transparency-note';
 import { DistrictListCard } from '@/components/shared/district-list-card';
 import { DistrictListingsContainer } from '@/components/shared/district-listings-container';
 import { ProductLensSelector } from '@/components/discovery/product-lens-selector';
-import { RANKED_LIST_CONFIG, type ActiveSort } from '@/components/shared/list-context-config';
+import { RANKED_LIST_CONFIG, buildListContextConfig, type ActiveSort } from '@/components/shared/list-context-config';
 import { sortBySnapshotField, filterBySnapshot, mapSortKeyToLabel } from '@/lib/utils/sort-utils';
 import type { RankedListContent, ResponseConfidence, ProductAlignment } from '@/services/types/discovery';
 
@@ -16,6 +16,7 @@ interface RankedListRendererProps {
   products: Array<{ productId: string; name: string }>;
   productLensId: string | undefined;
   onProductLensChange: (productId: string | undefined) => void;
+  hasProducts: boolean;
   activeSortMetric?: string;
   savedDistricts?: Set<string>;
   onSaveDistrict?: (districtId: string) => void;
@@ -29,6 +30,7 @@ export function RankedListRenderer({
   products,
   productLensId,
   onProductLensChange,
+  hasProducts,
   activeSortMetric,
   savedDistricts,
   onSaveDistrict,
@@ -36,6 +38,11 @@ export function RankedListRenderer({
   onGeneratePlaybook,
 }: RankedListRendererProps) {
   const { title, rankingCriterion, entries, synthesis } = content;
+
+  const listConfig = useMemo(
+    () => buildListContextConfig(RANKED_LIST_CONFIG, { hasProducts, productLensActive: !!productLensId }),
+    [hasProducts, productLensId],
+  );
 
   // State: search, sort, filters
   const [searchQuery, setSearchQuery] = useState('');
@@ -55,9 +62,15 @@ export function RankedListRenderer({
     setFilterValues({});
   }, []);
 
+  // Enrich entries with productAlignment for sort/filter utilities
+  const enrichedEntries = useMemo(
+    () => entries.map((e) => ({ ...e, productAlignment: productRelevanceMap?.[e.districtId] })),
+    [entries, productRelevanceMap],
+  );
+
   // Data transformation pipeline
   const processed = useMemo(() => {
-    let result = entries;
+    let result = enrichedEntries;
 
     // Text search
     if (searchQuery) {
@@ -72,7 +85,7 @@ export function RankedListRenderer({
     result = sortBySnapshotField(result, activeSort);
 
     return result;
-  }, [entries, searchQuery, filterValues, activeSort]);
+  }, [enrichedEntries, searchQuery, filterValues, activeSort]);
 
   // Derive active sort metric for card highlighting
   const derivedSortMetric =
@@ -113,7 +126,7 @@ export function RankedListRenderer({
 
   return (
     <DistrictListingsContainer
-      config={RANKED_LIST_CONFIG}
+      config={listConfig}
       header={header}
       footer={footer}
       resultCount={processed.length}

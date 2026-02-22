@@ -125,3 +125,42 @@ export const CARD_SET_CONFIG: ListContextConfig = {
   showColumnHeaders: true,
   searchPlaceholder: 'Filter districts...',
 };
+
+/* ------------------------------------------------------------------ */
+/*  Alignment filter / column (product lens active)                    */
+/* ------------------------------------------------------------------ */
+
+const ALIGNMENT_LEVEL_FILTER: SheetFilterDefinition = {
+  id: 'alignmentLevel',
+  label: 'Alignment Level',
+  type: 'multi-checkbox',
+  options: [
+    { value: 'strong', label: 'Strong' },
+    { value: 'moderate', label: 'Moderate' },
+    { value: 'limited', label: 'Limited' },
+  ],
+};
+
+const ALIGNMENT_COLUMN: ColumnDefinition = {
+  key: 'alignment',
+  label: 'Alignment',
+  minWidth: 'min-w-[72px]',
+  sortable: true,
+};
+
+/* ------------------------------------------------------------------ */
+/*  Dynamic config builder                                             */
+/* ------------------------------------------------------------------ */
+
+export function buildListContextConfig(
+  base: ListContextConfig,
+  options: { hasProducts: boolean; productLensActive: boolean },
+): ListContextConfig {
+  if (!options.hasProducts || !options.productLensActive) return base;
+
+  return {
+    ...base,
+    columns: [...base.columns, ALIGNMENT_COLUMN],
+    availableFilters: [...base.availableFilters, ALIGNMENT_LEVEL_FILTER],
+  };
+}

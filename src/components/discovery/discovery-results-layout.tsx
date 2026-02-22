@@ -15,6 +15,7 @@ interface DiscoveryResultsLayoutProps {
   products: Array<{ productId: string; name: string }>;
   productLensId: string | undefined;
   onProductLensChange: (productId: string | undefined) => void;
+  hasProducts: boolean;
   savedDistricts?: Set<string>;
   onSaveDistrict?: (districtId: string) => void;
   onRemoveSaved?: (districtId: string) => void;
@@ -31,6 +32,7 @@ export function DiscoveryResultsLayout({
   products,
   productLensId,
   onProductLensChange,
+  hasProducts,
   savedDistricts,
   onSaveDistrict,
   onRemoveSaved,
@@ -75,6 +77,7 @@ export function DiscoveryResultsLayout({
               products={products}
               productLensId={productLensId}
               onProductLensChange={onProductLensChange}
+              hasProducts={hasProducts}
               savedDistricts={savedDistricts}
               onSaveDistrict={onSaveDistrict}
               onRemoveSaved={onRemoveSaved}

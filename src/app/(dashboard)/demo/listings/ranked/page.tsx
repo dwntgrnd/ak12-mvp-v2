@@ -149,6 +149,7 @@ export default function RankedListPreviewPage() {
         products={[]}
         productLensId={undefined}
         onProductLensChange={noop}
+        hasProducts={false}
       />
     </div>
   );

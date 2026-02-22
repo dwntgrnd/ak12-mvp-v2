@@ -1,13 +1,15 @@
 'use client';
 
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { DiscoveryEntryState } from '@/components/discovery/discovery-entry-state';
 import { DiscoveryLoadingState } from '@/components/discovery/discovery-loading-state';
 import { DiscoveryResultsLayout } from '@/components/discovery/discovery-results-layout';
 import { GeneratePlaybookSheet } from '@/components/playbook/generate-playbook-sheet';
-import { getDiscoveryService, getProductService } from '@/services';
-import type { IDiscoveryService, IProductService } from '@/services';
+import { LibraryRequiredDialog } from '@/components/shared/library-required-dialog';
+import { useLibraryReadiness } from '@/hooks/use-library-readiness';
+import { getDiscoveryService } from '@/services';
+import type { IDiscoveryService } from '@/services';
 import type { DiscoveryQueryResponse } from '@/services/types/discovery';
 
 type DiscoveryPageState = 'entry' | 'loading' | 'results';
@@ -19,7 +21,10 @@ export default function DiscoveryPage() {
   const [response, setResponse] = useState<DiscoveryQueryResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [productLensId, setProductLensId] = useState<string | undefined>(undefined);
-  const [products, setProducts] = useState<Array<{ productId: string; name: string }>>([]);
+
+  // Library readiness — session-cached
+  const readiness = useLibraryReadiness();
+  const products = readiness.products.map((p) => ({ productId: p.productId, name: p.name }));
 
   // Saved districts — optimistic local state
   const [savedDistricts, setSavedDistricts] = useState<Set<string>>(new Set());
@@ -28,8 +33,10 @@ export default function DiscoveryPage() {
   const [playbookOpen, setPlaybookOpen] = useState(false);
   const [playbookDistrictId, setPlaybookDistrictId] = useState<string | null>(null);
 
+  // Library required dialog state
+  const [showLibraryDialog, setShowLibraryDialog] = useState(false);
+
   const serviceRef = useRef<IDiscoveryService | null>(null);
-  const productServiceRef = useRef<IProductService | null>(null);
 
   async function getService(): Promise<IDiscoveryService> {
     if (!serviceRef.current) {
@@ -37,21 +44,6 @@ export default function DiscoveryPage() {
     }
     return serviceRef.current;
   }
-
-  useEffect(() => {
-    async function loadProducts() {
-      try {
-        if (!productServiceRef.current) {
-          productServiceRef.current = await getProductService();
-        }
-        const result = await productServiceRef.current.getProducts();
-        setProducts(result.items.map((p) => ({ productId: p.productId, name: p.name })));
-      } catch {
-        setProducts([]);
-      }
-    }
-    loadProducts();
-  }, []);
 
   async function handleQuerySubmit(query: string) {
     setActiveQuery(query);
@@ -107,9 +99,13 @@ export default function DiscoveryPage() {
   }, []);
 
   const handleGeneratePlaybook = useCallback((districtId: string) => {
+    if (!readiness.hasProducts) {
+      setShowLibraryDialog(true);
+      return;
+    }
     setPlaybookDistrictId(districtId);
     setPlaybookOpen(true);
-  }, []);
+  }, [readiness.hasProducts]);
 
   // Resolve playbook district name from response data
   const playbookDistrictName = playbookDistrictId
@@ -140,6 +136,7 @@ export default function DiscoveryPage() {
           products={products}
           productLensId={productLensId}
           onProductLensChange={setProductLensId}
+          hasProducts={readiness.hasProducts}
           savedDistricts={savedDistricts}
           onSaveDistrict={handleSaveDistrict}
           onRemoveSaved={handleRemoveSaved}
@@ -162,6 +159,12 @@ export default function DiscoveryPage() {
             : undefined
         }
         initialProductIds={productLensId ? [productLensId] : undefined}
+      />
+
+      {/* Library required dialog — shown when playbook CTA clicked without products */}
+      <LibraryRequiredDialog
+        open={showLibraryDialog}
+        onOpenChange={setShowLibraryDialog}
       />
     </>
   );
