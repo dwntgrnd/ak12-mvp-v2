@@ -1,13 +1,12 @@
 'use client';
 
-import { useState } from 'react';
-import { Search, X, SearchX } from 'lucide-react';
+import { Search, X, SearchX, ArrowUpDown } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
-import { formatNumber } from '@/lib/utils/format';
 import { ColumnHeaderBar } from './column-header-bar';
-import { FilterTriggerButton, FilterSheet } from './filter-sheet';
+import { FilterPopoverBar } from './filter-popover-bar';
 import type { ListContextConfig, ActiveSort } from './list-context-config';
 
 /* ------------------------------------------------------------------ */
@@ -18,10 +17,15 @@ interface DistrictListingsContainerProps {
   /** List context configuration (columns, filters, display flags) */
   config: ListContextConfig;
 
-  /** Header slot — renderer-specific content (title, criterion, product lens) */
+  /** Header slot — renderer-specific content (title, criterion) */
   header?: React.ReactNode;
   /** Footer slot — synthesis block */
   footer?: React.ReactNode;
+
+  /** Slot for product lens selector — rendered in FilterPopoverBar */
+  productLensSlot?: React.ReactNode;
+  /** Slot for local search input — rendered in FilterPopoverBar when config.showLocalFilter */
+  searchSlot?: React.ReactNode;
 
   /** Number of districts currently displayed after filtering */
   resultCount: number;
@@ -40,7 +44,6 @@ interface DistrictListingsContainerProps {
   filterValues: Record<string, string[]>;
   onFilterChange: (filterId: string, values: string[]) => void;
   onClearAllFilters: () => void;
-  activeFilterCount: number;
 
   /** List content — DistrictListCards */
   children: React.ReactNode;
@@ -120,127 +123,6 @@ function EmptyState({
 }
 
 /* ------------------------------------------------------------------ */
-/*  Result count strip                                                 */
-/* ------------------------------------------------------------------ */
-
-function ResultCount({
-  count,
-  total,
-}: {
-  count: number;
-  total?: number;
-}) {
-  const isFiltered = total != null && count !== total;
-
-  return (
-    <div className="flex items-center gap-2">
-      <span className="text-xs font-medium text-muted-foreground tracking-wide">
-        {isFiltered ? (
-          <>
-            <span className="text-foreground font-semibold">
-              {formatNumber(count)}
-            </span>{' '}
-            of {formatNumber(total)} districts
-          </>
-        ) : (
-          <>
-            <span className="text-foreground font-semibold">
-              {formatNumber(count)}
-            </span>{' '}
-            {count === 1 ? 'district' : 'districts'}
-          </>
-        )}
-      </span>
-    </div>
-  );
-}
-
-/* ------------------------------------------------------------------ */
-/*  Active filter pills                                                */
-/* ------------------------------------------------------------------ */
-
-function FilterPills({
-  config,
-  filterValues,
-  searchQuery,
-  onFilterChange,
-  onSearchChange,
-  onClearAll,
-}: {
-  config: ListContextConfig;
-  filterValues: Record<string, string[]>;
-  searchQuery: string;
-  onFilterChange: (filterId: string, values: string[]) => void;
-  onSearchChange: (q: string) => void;
-  onClearAll: () => void;
-}) {
-  const pills: Array<{ filterId: string; value: string; label: string }> = [];
-  for (const f of config.availableFilters) {
-    const vals = filterValues[f.id] ?? [];
-    for (const v of vals) {
-      const opt = f.options.find((o) => o.value === v);
-      if (opt) {
-        pills.push({ filterId: f.id, value: v, label: opt.label });
-      }
-    }
-  }
-
-  const hasAny = pills.length > 0 || searchQuery.length > 0;
-  if (!hasAny) return null;
-
-  return (
-    <div className="flex flex-wrap items-center gap-2 px-4 pb-3">
-      {searchQuery && (
-        <span className="inline-flex items-center gap-1 rounded-md bg-primary/8 px-2 py-0.5 text-xs font-medium text-primary">
-          &ldquo;{searchQuery}&rdquo;
-          <button
-            type="button"
-            onClick={() => onSearchChange('')}
-            className="ml-0.5 rounded-sm hover:bg-primary/15 p-0.5 transition-colors"
-            aria-label="Clear search filter"
-          >
-            <X className="h-3 w-3" />
-          </button>
-        </span>
-      )}
-
-      {pills.map((pill) => (
-        <span
-          key={`${pill.filterId}-${pill.value}`}
-          className="inline-flex items-center gap-1 rounded-md bg-slate-100 px-2 py-0.5 text-xs font-medium text-foreground"
-        >
-          {pill.label}
-          <button
-            type="button"
-            onClick={() => {
-              const current = filterValues[pill.filterId] ?? [];
-              onFilterChange(
-                pill.filterId,
-                current.filter((v) => v !== pill.value),
-              );
-            }}
-            className="ml-0.5 rounded-sm hover:bg-slate-200 p-0.5 transition-colors"
-            aria-label={`Remove ${pill.label} filter`}
-          >
-            <X className="h-3 w-3" />
-          </button>
-        </span>
-      ))}
-
-      {(pills.length > 1 || (pills.length >= 1 && searchQuery)) && (
-        <button
-          type="button"
-          onClick={onClearAll}
-          className="text-xs font-medium text-muted-foreground hover:text-foreground transition-colors underline underline-offset-2 decoration-muted-foreground/30 hover:decoration-foreground ml-1"
-        >
-          Clear all
-        </button>
-      )}
-    </div>
-  );
-}
-
-/* ------------------------------------------------------------------ */
 /*  Main component                                                     */
 /* ------------------------------------------------------------------ */
 
@@ -248,6 +130,8 @@ export function DistrictListingsContainer({
   config,
   header,
   footer,
+  productLensSlot,
+  searchSlot,
   resultCount,
   totalCount,
   searchQuery,
@@ -257,7 +141,6 @@ export function DistrictListingsContainer({
   filterValues,
   onFilterChange,
   onClearAllFilters,
-  activeFilterCount,
   children,
   loading = false,
   skeletonRows = 5,
@@ -265,7 +148,6 @@ export function DistrictListingsContainer({
   emptyDescription = 'Try adjusting your filters or search terms.',
   className,
 }: DistrictListingsContainerProps) {
-  const [filterSheetOpen, setFilterSheetOpen] = useState(false);
   const showEmpty = !loading && resultCount === 0;
 
   function handleClearAll() {
@@ -273,61 +155,93 @@ export function DistrictListingsContainer({
     onClearAllFilters();
   }
 
+  // Build search slot from config when showLocalFilter is true and no external searchSlot provided
+  const resolvedSearchSlot = searchSlot ?? (config.showLocalFilter ? (
+    <div className="relative flex-1 max-w-xs" role="search" aria-label="District search">
+      <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+      <Input
+        value={searchQuery}
+        onChange={(e) => onSearchChange(e.target.value)}
+        placeholder={config.searchPlaceholder}
+        aria-label={config.searchPlaceholder}
+        className="pl-8 pr-8 h-8"
+      />
+      {searchQuery && (
+        <button
+          type="button"
+          onClick={() => onSearchChange('')}
+          className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+          aria-label="Clear search"
+        >
+          <X className="h-4 w-4" />
+        </button>
+      )}
+    </div>
+  ) : undefined);
+
+  // Build sort dropdown from config
+  const sortDropdown = config.sortOptions.length > 0 ? (
+    <div className="flex items-center gap-1.5">
+      <ArrowUpDown className="h-3.5 w-3.5 text-muted-foreground" />
+      <Select
+        value={activeSort?.key ?? ''}
+        onValueChange={(value) => {
+          if (!value) {
+            onSortChange(null);
+          } else {
+            // If already sorting by this key, toggle direction
+            if (activeSort?.key === value) {
+              onSortChange(
+                activeSort.direction === 'asc'
+                  ? { key: value, direction: 'desc' }
+                  : null
+              );
+            } else {
+              onSortChange({ key: value, direction: 'asc' });
+            }
+          }
+        }}
+      >
+        <SelectTrigger className="h-8 text-xs font-medium border-border w-auto min-w-[140px]">
+          <SelectValue placeholder="Sort by..." />
+        </SelectTrigger>
+        <SelectContent>
+          {config.sortOptions.map((opt) => (
+            <SelectItem key={opt.key} value={opt.key} className="text-xs">
+              {opt.label}
+              {activeSort?.key === opt.key && (
+                <span className="ml-1 text-muted-foreground">
+                  {activeSort.direction === 'asc' ? '\u2191' : '\u2193'}
+                </span>
+              )}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
+  ) : null;
+
   return (
     <div className={cn('w-full', className)}>
       {/* ---- Card surface ---- */}
       <div className="bg-white border border-border rounded-lg shadow-sm">
-        {/* Header slot (title, criterion, product lens) */}
+        {/* Header slot (title, criterion) */}
         {header && <div className="p-5 pb-0">{header}</div>}
 
-        {/* Toolbar: search input + filter trigger */}
-        {config.showLocalFilter && (
-          <div className="px-5 pt-4 pb-3">
-            <div
-              role="search"
-              aria-label="District filters"
-              className="flex items-center gap-3"
-            >
-              <div className="relative flex-1 max-w-xs">
-                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
-                <Input
-                  value={searchQuery}
-                  onChange={(e) => onSearchChange(e.target.value)}
-                  placeholder={config.searchPlaceholder}
-                  aria-label={config.searchPlaceholder}
-                  className="pl-8 pr-8"
-                />
-                {searchQuery && (
-                  <button
-                    type="button"
-                    onClick={() => onSearchChange('')}
-                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                    aria-label="Clear search"
-                  >
-                    <X className="h-4 w-4" />
-                  </button>
-                )}
-              </div>
-
-              {config.availableFilters.length > 0 && (
-                <FilterTriggerButton
-                  activeCount={activeFilterCount}
-                  onClick={() => setFilterSheetOpen(true)}
-                />
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* Active filter pills */}
-        <FilterPills
-          config={config}
-          filterValues={filterValues}
-          searchQuery={searchQuery}
-          onFilterChange={onFilterChange}
-          onSearchChange={onSearchChange}
-          onClearAll={handleClearAll}
-        />
+        {/* Utility bar: product lens + filters + count */}
+        <div className="px-5 pt-4 pb-3">
+          <FilterPopoverBar
+            filters={config.availableFilters}
+            filterValues={filterValues}
+            onFilterChange={onFilterChange}
+            onClearAll={handleClearAll}
+            resultCount={resultCount}
+            totalCount={totalCount}
+            productLensSlot={productLensSlot}
+            searchSlot={resolvedSearchSlot}
+            sortSlot={sortDropdown}
+          />
+        </div>
 
         {/* Column header bar */}
         {config.showColumnHeaders && (
@@ -337,11 +251,6 @@ export function DistrictListingsContainer({
             onSortChange={onSortChange}
           />
         )}
-
-        {/* Count strip */}
-        <div className="px-4 py-2.5 flex items-center justify-between border-b border-border/50 bg-slate-50/50">
-          <ResultCount count={resultCount} total={totalCount} />
-        </div>
 
         {/* List content */}
         <div className="p-4">
@@ -361,18 +270,6 @@ export function DistrictListingsContainer({
         {/* Footer slot (synthesis) */}
         {footer && <div className="px-5 pb-5">{footer}</div>}
       </div>
-
-      {/* Filter sheet */}
-      {config.availableFilters.length > 0 && (
-        <FilterSheet
-          open={filterSheetOpen}
-          onOpenChange={setFilterSheetOpen}
-          filters={config.availableFilters}
-          filterValues={filterValues}
-          onFilterChange={onFilterChange}
-          onClearAll={onClearAllFilters}
-        />
-      )}
     </div>
   );
 }

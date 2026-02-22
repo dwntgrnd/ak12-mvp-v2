@@ -10,35 +10,21 @@ import { cn } from '@/lib/utils';
 import type { FitAssessment } from '@/services/types/common';
 import type { ProductAlignment } from '@/services/types/discovery';
 import type { DistrictSnapshot } from '@/services/types/district';
-import { METRIC_COL_WIDTHS } from './list-context-config';
 
 interface DistrictListCardProps {
-  // Core data — single source of truth
   snapshot: DistrictSnapshot;
-
-  // Display configuration
   variant?: 'surface' | 'inset';
   rank?: number;
-
-  // Contextual data layers (on top of snapshot)
   productAlignment?: ProductAlignment;
   fitAssessment?: FitAssessment;
   fitLoading?: boolean;
-
-  // AI-generated metrics (override/supplement snapshot metrics)
   additionalMetrics?: Array<{ label: string; value: string }>;
   activeSortMetric?: string;
-
-  // Query context — determines which academic metric to show
   academicMetricOverride?: 'math' | 'ela';
-
-  // Actions
   isSaved?: boolean;
   onSave?: (districtId: string) => void;
   onRemoveSaved?: (districtId: string) => void;
   onGeneratePlaybook?: (districtId: string) => void;
-
-  // Escape hatch
   children?: React.ReactNode;
 }
 
@@ -54,7 +40,6 @@ function getFitCategory(fitScore: number): FitCategoryKey {
   return 'low';
 }
 
-/** Derive a human-readable grade band string from lowGrade + highGrade */
 function formatGradeBand(low: string, high: string): string {
   return `${low}\u2013${high}`;
 }
@@ -78,12 +63,11 @@ export function DistrictListCard({
   const router = useRouter();
   const { districtId, name } = snapshot;
 
-  // Tier 1 — Identity zone
   const location = `${snapshot.city}, ${snapshot.county}`;
   const gradeBand = formatGradeBand(snapshot.lowGrade, snapshot.highGrade);
   const showDocType = snapshot.docType !== 'Unified';
 
-  // Tier 2 — Metrics strip (fixed order from snapshot)
+  // Metrics strip — fixed order from snapshot
   const stripMetrics: Array<{ label: string; value: string }> = [
     { label: 'Enrollment', value: formatNumber(snapshot.totalEnrollment) },
     { label: 'FRPM', value: `${snapshot.frpmPercent}%` },
@@ -94,12 +78,11 @@ export function DistrictListCard({
     },
   ];
 
-  // Append AI-generated additional metrics after snapshot metrics
+  // Append AI-generated additional metrics
   if (additionalMetrics) {
     stripMetrics.push(...additionalMetrics);
   }
 
-  // Row 1 meta parts
   const metaParts = [location, gradeBand].filter(Boolean);
 
   const ariaLabel = [
@@ -107,7 +90,9 @@ export function DistrictListCard({
     name,
     ...metaParts,
     `${formatNumber(snapshot.totalEnrollment)} students`,
-    fitAssessment ? fitCategoryColors[getFitCategory(fitAssessment.fitScore)].label : null,
+    fitAssessment
+      ? fitCategoryColors[getFitCategory(fitAssessment.fitScore)].label
+      : null,
     productAlignment ? `${productAlignment.level} alignment` : null,
   ]
     .filter(Boolean)
@@ -124,7 +109,9 @@ export function DistrictListCard({
     }
   }
 
-  const fitCategory = fitAssessment ? getFitCategory(fitAssessment.fitScore) : null;
+  const fitCategory = fitAssessment
+    ? getFitCategory(fitAssessment.fitScore)
+    : null;
   const fitColors = fitCategory ? fitCategoryColors[fitCategory] : null;
 
   return (
@@ -138,16 +125,17 @@ export function DistrictListCard({
         'cursor-pointer px-4 py-2.5 focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#FF7000]',
         variant === 'inset'
           ? 'bg-slate-50 border border-border/50 rounded-md hover:bg-slate-100 hover:border-slate-300 transition-colors duration-150'
-          : 'bg-white border border-border rounded-lg shadow-sm hover:shadow-md hover:border-slate-300 transition-shadow duration-150'
+          : 'bg-white border border-border rounded-lg shadow-sm hover:shadow-md hover:border-slate-300 transition-shadow duration-150',
       )}
     >
-      {/* Row 1 — Identity + Fit + Actions */}
+      {/* Row 1 — Identity + Actions */}
       <div className="flex items-center justify-between gap-2">
-        {/* Left zone: rank + name + meta */}
         <div className="flex items-center gap-2 min-w-0 flex-1">
           {rank != null && (
             <div className="w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center shrink-0">
-              <span className="text-xs font-semibold text-foreground">{rank}</span>
+              <span className="text-xs font-semibold text-foreground">
+                {rank}
+              </span>
             </div>
           )}
           <div className="flex items-baseline gap-1.5 min-w-0 flex-1">
@@ -171,7 +159,6 @@ export function DistrictListCard({
           </div>
         </div>
 
-        {/* Right zone: fit badge + save + playbook */}
         <div className="flex items-center gap-2 shrink-0">
           {fitLoading && !fitAssessment && (
             <Skeleton className="h-5 w-20" />
@@ -190,17 +177,23 @@ export function DistrictListCard({
               type="button"
               onClick={(e) => {
                 e.stopPropagation();
-                isSaved ? onRemoveSaved?.(districtId) : onSave?.(districtId);
+                isSaved
+                  ? onRemoveSaved?.(districtId)
+                  : onSave?.(districtId);
               }}
               aria-pressed={isSaved}
-              aria-label={isSaved ? 'Remove saved district' : 'Save district'}
+              aria-label={
+                isSaved ? 'Remove saved district' : 'Save district'
+              }
               className={cn(
                 'flex items-center gap-1 rounded-md px-1.5 py-1 text-xs font-medium transition-colors',
                 'hover:bg-muted/50',
-                isSaved ? 'text-foreground' : 'text-muted-foreground'
+                isSaved ? 'text-foreground' : 'text-muted-foreground',
               )}
             >
-              <Bookmark className={cn('h-4 w-4', isSaved && 'fill-current')} />
+              <Bookmark
+                className={cn('h-4 w-4', isSaved && 'fill-current')}
+              />
               <span>{isSaved ? 'Saved' : 'Save'}</span>
             </button>
           )}
@@ -221,45 +214,50 @@ export function DistrictListCard({
         </div>
       </div>
 
-      {/* Row 2 — Mini Stats Strip + Product Alignment (always shown — snapshot guarantees data) */}
+      {/* Row 2 — Self-contained metrics strip */}
       <div className="mt-2 pt-2 border-t border-border/50">
         <div className="flex items-center justify-between gap-2">
-          {/* Left: stats strip columns */}
-          <div className="flex items-start min-w-0">
+          <div className="flex items-start">
             {stripMetrics.map((m, i) => {
-              const isActive = activeSortMetric != null &&
+              const isActive =
+                activeSortMetric != null &&
                 m.label.toLowerCase() === activeSortMetric.toLowerCase();
-              const colW = i < METRIC_COL_WIDTHS.length ? METRIC_COL_WIDTHS[i] : undefined;
               return (
                 <div
                   key={i}
                   className={cn(
                     'flex flex-col',
-                    colW,
-                    i > 0 && 'border-l border-border pl-3',
-                    i < stripMetrics.length - 1 && 'pr-3',
-                    isActive && 'bg-primary/5 rounded-sm px-2 -mx-0.5'
+                    i > 0 && 'border-l border-border/40 pl-4',
+                    i < stripMetrics.length - 1 && 'pr-4',
+                    isActive && 'bg-primary/5 rounded-sm px-3 -mx-1',
                   )}
                 >
                   <span
                     className={cn(
-                      'text-overline',
-                      isActive ? 'text-primary' : 'text-muted-foreground/70'
+                      'text-[10px] font-medium uppercase tracking-wider leading-tight',
+                      isActive
+                        ? 'text-primary'
+                        : 'text-muted-foreground/70',
                     )}
                   >
                     {m.label}
                   </span>
-                  <span className="text-sm font-bold text-foreground">{m.value}</span>
+                  <span className="text-sm font-bold text-foreground">
+                    {m.value}
+                  </span>
                 </div>
               );
             })}
           </div>
 
-          {/* Right: product alignment */}
+          {/* Product alignment — right side of metrics row */}
           {productAlignment && (
             <div className="flex items-center gap-1.5 shrink-0">
               <span
-                className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${alignmentBadgeClass[productAlignment.level]}`}
+                className={cn(
+                  'inline-flex items-center px-2 py-0.5 rounded text-xs font-medium',
+                  alignmentBadgeClass[productAlignment.level],
+                )}
               >
                 {productAlignment.level}
               </span>
@@ -273,7 +271,6 @@ export function DistrictListCard({
         </div>
       </div>
 
-      {/* Children slot — escape hatch (TransparencyNote only) */}
       {children && <div className="mt-1">{children}</div>}
     </article>
   );

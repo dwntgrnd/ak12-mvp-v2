@@ -29,6 +29,8 @@ export interface ListContextConfig {
   showLocalFilter: boolean;
   showColumnHeaders: boolean;
   searchPlaceholder: string;
+  /** Sort options for dropdown when column headers are hidden */
+  sortOptions: Array<{ key: string; label: string }>;
 }
 
 /* ------------------------------------------------------------------ */
@@ -44,8 +46,8 @@ export const METRIC_MIN_WIDTHS = [
 
 /** Fixed metric column widths — used by both ColumnHeaderBar and DistrictListCard */
 export const METRIC_COL_WIDTHS = [
-  'w-[88px]',   // Enrollment (needs room for "63,518")
-  'w-[64px]',   // FRPM
+  'w-[100px]',  // Enrollment (needs room for "63,518" + header label)
+  'w-[72px]',   // FRPM
   'w-[56px]',   // ELL
   'w-[80px]',   // Academic (ELA/Math Prof.)
 ] as const;
@@ -108,6 +110,18 @@ const SHARED_METRIC_COLUMNS: ColumnDefinition[] = [
 ];
 
 /* ------------------------------------------------------------------ */
+/*  Sort option presets                                                */
+/* ------------------------------------------------------------------ */
+
+const SHARED_SORT_OPTIONS = [
+  { key: 'name', label: 'District Name' },
+  { key: 'enrollment', label: 'Enrollment' },
+  { key: 'frpm', label: 'FRPM %' },
+  { key: 'ell', label: 'ELL %' },
+  { key: 'academic', label: 'Academic Proficiency' },
+];
+
+/* ------------------------------------------------------------------ */
 /*  Preset configs                                                     */
 /* ------------------------------------------------------------------ */
 
@@ -119,8 +133,9 @@ export const RANKED_LIST_CONFIG: ListContextConfig = {
   ],
   availableFilters: SHARED_FILTERS,
   showLocalFilter: false,
-  showColumnHeaders: true,
+  showColumnHeaders: false,
   searchPlaceholder: '',
+  sortOptions: SHARED_SORT_OPTIONS,
 };
 
 export const CARD_SET_CONFIG: ListContextConfig = {
@@ -130,8 +145,9 @@ export const CARD_SET_CONFIG: ListContextConfig = {
   ],
   availableFilters: SHARED_FILTERS,
   showLocalFilter: false,
-  showColumnHeaders: true,
+  showColumnHeaders: false,
   searchPlaceholder: '',
+  sortOptions: SHARED_SORT_OPTIONS,
 };
 
 /* ------------------------------------------------------------------ */
@@ -165,21 +181,28 @@ export function buildListContextConfig(
   options: { hasProducts: boolean; productLensActive: boolean; academicLabel?: string },
 ): ListContextConfig {
   let columns = base.columns;
+  let sortOptions = base.sortOptions;
 
   // Override academic label if provided
   if (options.academicLabel) {
     columns = columns.map((col) =>
       col.key === 'academic' ? { ...col, label: options.academicLabel! } : col,
     );
+    sortOptions = sortOptions.map((opt) =>
+      opt.key === 'academic' ? { ...opt, label: options.academicLabel! } : opt,
+    );
   }
 
   if (!options.hasProducts || !options.productLensActive) {
-    return columns !== base.columns ? { ...base, columns } : base;
+    return (columns !== base.columns || sortOptions !== base.sortOptions)
+      ? { ...base, columns, sortOptions }
+      : base;
   }
 
   return {
     ...base,
     columns: [...columns, ALIGNMENT_COLUMN],
     availableFilters: [...base.availableFilters, ALIGNMENT_LEVEL_FILTER],
+    sortOptions: [...sortOptions, { key: 'alignment', label: 'Alignment' }],
   };
 }
