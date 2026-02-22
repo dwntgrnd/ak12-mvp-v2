@@ -33,7 +33,31 @@
       "Bash(nvm use:*)",
       "Bash(lsof:*)",
       "Bash(python3:*)",
-      "Bash(npx shadcn@latest add:*)"
+      "Bash(npx shadcn@latest add:*)",
+      "Bash(npx ts-node:*)",
+      "Bash(npm uninstall:*)",
+      "Bash(ps:*)",
+      "Bash(npm run dev:*)",
+      "Bash(git rm:*)",
+      "Bash(xxd:*)",
+      "Bash(git -C /Users/dorenberge/WorkInProgress/VIBE/AK12-MVP-v2 status)",
+      "Bash(git -C /Users/dorenberge/WorkInProgress/VIBE/AK12-MVP-v2 diff)",
+      "Bash(git -C /Users/dorenberge/WorkInProgress/VIBE/AK12-MVP-v2 log --oneline -5)",
+      "Bash(claude mcp add:*)",
+      "WebSearch",
+      "Bash(claude mcp list:*)",
+      "mcp__figma-remote__generate_figma_design",
+      "Bash(open:*)",
+      "Bash(git -C /Users/dorenberge/WorkInProgress/VIBE/AK12-MVP-v2 diff --stat)",
+      "Bash(git -C /Users/dorenberge/WorkInProgress/VIBE/AK12-MVP-v2 add src/services/providers/mock/mock-discovery-service.ts src/services/providers/mock/index.ts src/services/factory.ts src/services/index.ts src/services/interfaces/discovery-service.ts src/services/providers/mock/fixtures/discovery.ts src/services/types/discovery.ts)",
+      "Bash(git -C /Users/dorenberge/WorkInProgress/VIBE/AK12-MVP-v2 log --oneline -3)",
+      "Bash(git -C /Users/dorenberge/WorkInProgress/VIBE/AK12-MVP-v2 diff --cached --stat)",
+      "Bash(git -C:*)",
+      "mcp__figma-dev-mode-mcp-server__get_variable_defs",
+      "Bash(claude:*)",
+      "Bash(find /Users/dorenberge/WorkInProgress/VIBE/AK12-MVP-v2/src -name \"index.ts\" -path \"*/shared/*\" -exec cat {} \\\\;)",
+      "Bash(wc -l /Users/dorenberge/WorkInProgress/VIBE/AK12-MVP-v2/src/components/discovery/renderers/*.tsx | tail -1)",
+      "Bash(find /Users/dorenberge/WorkInProgress/VIBE/AK12-MVP-v2/src -name \"*hook*\" -o -name \"use*\" 2>/dev/null | head -2022)"
     ]
   }
 }
