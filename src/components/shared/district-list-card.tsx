@@ -10,7 +10,7 @@ import { cn } from '@/lib/utils';
 import type { FitAssessment } from '@/services/types/common';
 import type { ProductAlignment } from '@/services/types/discovery';
 import type { DistrictSnapshot } from '@/services/types/district';
-import { METRIC_MIN_WIDTHS } from './list-context-config';
+import { METRIC_COL_WIDTHS } from './list-context-config';
 
 interface DistrictListCardProps {
   // Core data — single source of truth
@@ -229,13 +229,13 @@ export function DistrictListCard({
             {stripMetrics.map((m, i) => {
               const isActive = activeSortMetric != null &&
                 m.label.toLowerCase() === activeSortMetric.toLowerCase();
-              const minW = i < METRIC_MIN_WIDTHS.length ? METRIC_MIN_WIDTHS[i] : undefined;
+              const colW = i < METRIC_COL_WIDTHS.length ? METRIC_COL_WIDTHS[i] : undefined;
               return (
                 <div
                   key={i}
                   className={cn(
                     'flex flex-col',
-                    minW,
+                    colW,
                     i > 0 && 'border-l border-border pl-3',
                     i < stripMetrics.length - 1 && 'pr-3',
                     isActive && 'bg-primary/5 rounded-sm px-2 -mx-0.5'

@@ -36,10 +36,18 @@ export interface ListContextConfig {
 /* ------------------------------------------------------------------ */
 
 export const METRIC_MIN_WIDTHS = [
-  'min-w-[72px]', // Enrollment
+  'min-w-[80px]', // Enrollment
   'min-w-[56px]', // FRPM
   'min-w-[56px]', // ELL
   'min-w-[64px]', // Academic (ELA/Math)
+] as const;
+
+/** Fixed metric column widths — used by both ColumnHeaderBar and DistrictListCard */
+export const METRIC_COL_WIDTHS = [
+  'w-[88px]',   // Enrollment (needs room for "63,518")
+  'w-[64px]',   // FRPM
+  'w-[56px]',   // ELL
+  'w-[80px]',   // Academic (ELA/Math Prof.)
 ] as const;
 
 /* ------------------------------------------------------------------ */
@@ -96,7 +104,7 @@ const SHARED_METRIC_COLUMNS: ColumnDefinition[] = [
   { key: 'enrollment', label: 'Enrollment', minWidth: METRIC_MIN_WIDTHS[0], sortable: true },
   { key: 'frpm', label: 'FRPM', minWidth: METRIC_MIN_WIDTHS[1], sortable: true },
   { key: 'ell', label: 'ELL', minWidth: METRIC_MIN_WIDTHS[2], sortable: true },
-  { key: 'academic', label: 'Academic', minWidth: METRIC_MIN_WIDTHS[3], sortable: true },
+  { key: 'academic', label: 'ELA Prof.', minWidth: METRIC_MIN_WIDTHS[3], sortable: true },
 ];
 
 /* ------------------------------------------------------------------ */
@@ -110,9 +118,9 @@ export const RANKED_LIST_CONFIG: ListContextConfig = {
     ...SHARED_METRIC_COLUMNS,
   ],
   availableFilters: SHARED_FILTERS,
-  showLocalFilter: true,
+  showLocalFilter: false,
   showColumnHeaders: true,
-  searchPlaceholder: 'Filter districts...',
+  searchPlaceholder: '',
 };
 
 export const CARD_SET_CONFIG: ListContextConfig = {
@@ -121,9 +129,9 @@ export const CARD_SET_CONFIG: ListContextConfig = {
     ...SHARED_METRIC_COLUMNS,
   ],
   availableFilters: SHARED_FILTERS,
-  showLocalFilter: true,
+  showLocalFilter: false,
   showColumnHeaders: true,
-  searchPlaceholder: 'Filter districts...',
+  searchPlaceholder: '',
 };
 
 /* ------------------------------------------------------------------ */
@@ -154,13 +162,24 @@ const ALIGNMENT_COLUMN: ColumnDefinition = {
 
 export function buildListContextConfig(
   base: ListContextConfig,
-  options: { hasProducts: boolean; productLensActive: boolean },
+  options: { hasProducts: boolean; productLensActive: boolean; academicLabel?: string },
 ): ListContextConfig {
-  if (!options.hasProducts || !options.productLensActive) return base;
+  let columns = base.columns;
+
+  // Override academic label if provided
+  if (options.academicLabel) {
+    columns = columns.map((col) =>
+      col.key === 'academic' ? { ...col, label: options.academicLabel! } : col,
+    );
+  }
+
+  if (!options.hasProducts || !options.productLensActive) {
+    return columns !== base.columns ? { ...base, columns } : base;
+  }
 
   return {
     ...base,
-    columns: [...base.columns, ALIGNMENT_COLUMN],
+    columns: [...columns, ALIGNMENT_COLUMN],
     availableFilters: [...base.availableFilters, ALIGNMENT_LEVEL_FILTER],
   };
 }
