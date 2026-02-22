@@ -3,14 +3,14 @@
 import { useRouter } from 'next/navigation';
 import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
 import { TransparencyNote } from './transparency-note';
-import { ProductRelevanceBadge } from '@/components/discovery/product-relevance-badge';
+import { ProductAlignmentBadge } from '@/components/discovery/product-alignment-badge';
 import { cn } from '@/lib/utils';
-import type { ComparisonContent, ResponseConfidence, ComparisonCell, ProductRelevance } from '@/services/types/discovery';
+import type { ComparisonContent, ResponseConfidence, ComparisonCell, ProductAlignment } from '@/services/types/discovery';
 
 interface ComparisonTableRendererProps {
   content: ComparisonContent;
   confidence: ResponseConfidence;
-  productRelevanceMap?: Record<string, ProductRelevance>;
+  productRelevanceMap?: Record<string, ProductAlignment>;
 }
 
 function getCell(
@@ -183,7 +183,7 @@ export function ComparisonTableRenderer({
                       )}
                     >
                       {relevance ? (
-                        <ProductRelevanceBadge relevance={relevance} />
+                        <ProductAlignmentBadge alignment={relevance} />
                       ) : (
                         <span className="text-slate-300">—</span>
                       )}
@@ -261,7 +261,7 @@ export function ComparisonTableRenderer({
                   <p className="text-overline font-[500] leading-[1.4] tracking-[0.05em] uppercase text-slate-400 mb-1.5">
                     Product Alignment
                   </p>
-                  <ProductRelevanceBadge relevance={relevance} />
+                  <ProductAlignmentBadge alignment={relevance} />
                 </div>
               )}
             </div>

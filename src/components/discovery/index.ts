@@ -14,5 +14,5 @@ export { RankedListRenderer } from './renderers/ranked-list-renderer';
 export { CardSetRenderer } from './renderers/card-set-renderer';
 export { DiscoveryFormatRouter } from './discovery-format-router';
 export { ProductLensSelector } from './product-lens-selector';
-export { ProductRelevanceBadge } from './product-relevance-badge';
+export { ProductAlignmentBadge } from './product-alignment-badge';
 // DiscoveryAutocompleteDropdown not exported — internal to DiscoveryInput

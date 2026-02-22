@@ -1,4 +1,4 @@
-import type { DiscoveryQueryResponse, ProductRelevance } from '@/services/types/discovery';
+import type { DiscoveryQueryResponse, ProductAlignment } from '@/services/types/discovery';
 import { BriefRenderer } from './renderers/brief-renderer';
 import { DirectAnswerCard } from './renderers/direct-answer-card';
 import { RecoveryRenderer } from './renderers/recovery-renderer';
@@ -20,16 +20,16 @@ interface DiscoveryFormatRouterProps {
 
 export function DiscoveryFormatRouter({ response, onNewQuery, products, productLensId, onProductLensChange, savedDistricts, onSaveDistrict, onRemoveSaved, onGeneratePlaybook }: DiscoveryFormatRouterProps) {
   const { content, confidence } = response;
-  const relevanceMap: Record<string, ProductRelevance> | undefined = response.productRelevanceMap;
+  const relevanceMap: Record<string, ProductAlignment> | undefined = response.productRelevanceMap;
 
   const lensProps = { products, productLensId, onProductLensChange };
   const actionProps = { savedDistricts, onSaveDistrict, onRemoveSaved, onGeneratePlaybook };
 
   switch (content.format) {
     case 'narrative_brief':
-      return <BriefRenderer content={content.data} confidence={confidence} format="narrative_brief" productRelevanceMap={relevanceMap} {...actionProps} />;
+      return <BriefRenderer content={content.data} confidence={confidence} format="narrative_brief" productAlignmentMap={relevanceMap} {...actionProps} />;
     case 'intelligence_brief':
-      return <BriefRenderer content={content.data} confidence={confidence} format="intelligence_brief" productRelevanceMap={relevanceMap} {...actionProps} />;
+      return <BriefRenderer content={content.data} confidence={confidence} format="intelligence_brief" productAlignmentMap={relevanceMap} {...actionProps} />;
     case 'direct_answer_card':
       return <DirectAnswerCard content={content.data} confidence={confidence} productRelevanceMap={relevanceMap} />;
     case 'recovery':

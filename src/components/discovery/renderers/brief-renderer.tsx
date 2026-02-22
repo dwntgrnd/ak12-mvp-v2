@@ -3,7 +3,8 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ChevronRight, ArrowRight, ExternalLink } from 'lucide-react';
-import type { BriefContent, ResponseConfidence, ProductRelevance } from '@/services/types/discovery';
+import type { BriefContent, ResponseConfidence, ProductAlignment } from '@/services/types/discovery';
+import type { DistrictSnapshot } from '@/services/types/district';
 import { TransparencyNote } from './transparency-note';
 import { DistrictListCard } from '@/components/shared/district-list-card';
 
@@ -11,7 +12,7 @@ interface BriefRendererProps {
   content: BriefContent;
   confidence: ResponseConfidence;
   format: 'narrative_brief' | 'intelligence_brief';
-  productRelevanceMap?: Record<string, ProductRelevance>;
+  productAlignmentMap?: Record<string, ProductAlignment>;
   activeSortMetric?: string;
   savedDistricts?: Set<string>;
   onSaveDistrict?: (districtId: string) => void;
@@ -19,7 +20,7 @@ interface BriefRendererProps {
   onGeneratePlaybook?: (districtId: string) => void;
 }
 
-export function BriefRenderer({ content, confidence, format, productRelevanceMap, activeSortMetric, savedDistricts, onSaveDistrict, onRemoveSaved, onGeneratePlaybook }: BriefRendererProps) {
+export function BriefRenderer({ content, confidence, format, productAlignmentMap, activeSortMetric, savedDistricts, onSaveDistrict, onRemoveSaved, onGeneratePlaybook }: BriefRendererProps) {
   const router = useRouter();
   const [openSections, setOpenSections] = useState<Set<string>>(
     new Set(content.sections.length > 0 ? [content.sections[0].sectionId] : [])
@@ -82,17 +83,33 @@ export function BriefRenderer({ content, confidence, format, productRelevanceMap
             {content.keySignals.map((signal, i) => {
               // District-linked signal → render as navigable card
               if (signal.districtId) {
+                // Construct a minimal snapshot from key signal data.
+                // Brief key signals have limited data — fill defaults for missing fields.
+                const locationParts = signal.location?.split(', ') ?? [];
+                const signalSnapshot: DistrictSnapshot = {
+                  districtId: signal.districtId,
+                  name: signal.label,
+                  city: locationParts[0] ?? '',
+                  county: locationParts[1] ?? '',
+                  state: 'CA',
+                  docType: 'Unified',
+                  lowGrade: 'K',
+                  highGrade: '12',
+                  totalEnrollment: signal.enrollment ?? 0,
+                  frpmPercent: 0,
+                  ellPercent: 0,
+                  elaProficiency: 0,
+                  mathProficiency: 0,
+                };
+
                 return (
                   <DistrictListCard
                     key={signal.districtId}
-                    districtId={signal.districtId}
-                    name={signal.label}
-                    location={signal.location}
-                    enrollment={signal.enrollment}
+                    snapshot={signalSnapshot}
                     variant="inset"
-                    metrics={[{ label: signal.detail || '', value: signal.value }]}
+                    additionalMetrics={signal.detail ? [{ label: signal.detail, value: signal.value }] : undefined}
                     activeSortMetric={activeSortMetric}
-                    productRelevance={productRelevanceMap?.[signal.districtId]}
+                    productAlignment={productAlignmentMap?.[signal.districtId]}
                     isSaved={savedDistricts?.has(signal.districtId!)}
                     onSave={onSaveDistrict}
                     onRemoveSaved={onRemoveSaved}

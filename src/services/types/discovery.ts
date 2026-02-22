@@ -227,6 +227,9 @@ export interface ProductAlignment {
   primaryConnection: string;
 }
 
+/** @deprecated Use ProductAlignment instead */
+export type ProductRelevance = ProductAlignment;
+
 // ============================================================
 // Response Envelope — Discriminated Union
 // ============================================================
