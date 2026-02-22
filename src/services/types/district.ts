@@ -11,6 +11,27 @@ export interface DistrictSummary {
   enrollment: number;
 }
 
+/**
+ * Lightweight district shape for list contexts.
+ * Guaranteed baseline data for district cards — AI-generated content layers on top.
+ * See Spec 15 §3 for design rationale.
+ */
+export interface DistrictSnapshot {
+  districtId: string;
+  name: string;
+  city: string;
+  county: string;
+  state: string;
+  docType: string;         // "Unified", "Elementary", "High School"
+  lowGrade: string;        // e.g., "K", "7", "9"
+  highGrade: string;       // e.g., "6", "8", "12"
+  totalEnrollment: number;
+  frpmPercent: number;     // 0–100
+  ellPercent: number;      // 0–100
+  elaProficiency: number;  // 0–100
+  mathProficiency: number; // 0–100
+}
+
 export interface DistrictProfile {
   districtId: string;
   name: string;
@@ -91,10 +112,7 @@ export interface FilterOption {
 
 export interface SavedDistrict {
   districtId: string;
-  name: string;
-  state: string;             // two-letter abbreviation
-  location: string;
-  enrollment: number;
+  snapshot: DistrictSnapshot;
   savedAt: string;           // ISO 8601
 }
 

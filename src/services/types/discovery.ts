@@ -1,3 +1,5 @@
+import type { DistrictSnapshot } from './district';
+
 // Discovery domain types
 //
 // Complete response schema for the discovery experience — query intent,
@@ -173,8 +175,9 @@ export interface ComparisonContent {
 export interface CardSetEntry {
   districtId: string;
   name: string;
-  location: string;
-  enrollment?: number;
+  snapshot: DistrictSnapshot;       // lightweight district data for card rendering
+  location: string;                 // kept for backward compat
+  enrollment?: number;              // kept for backward compat
   keyMetric?: { label: string; value: string };
   confidence: ConfidenceLevel;
 }
@@ -190,6 +193,7 @@ export interface RankedListEntry {
   rank: number;
   districtId: string;
   name: string;
+  snapshot: DistrictSnapshot;       // lightweight district data for card rendering
   primaryMetric: { label: string; value: string };
   secondaryMetrics?: { label: string; value: string }[];
   confidence: ConfidenceLevel;
@@ -212,10 +216,15 @@ export interface RecoveryContent {
   redirectQuery?: string;
 }
 
-export interface ProductRelevance {
-  alignmentLevel: 'strong' | 'moderate' | 'limited' | 'unknown';
-  signals: string[];      // e.g., ["LCAP math priority matches product focus"]
-  productName: string;
+/**
+ * Qualitative product-district alignment. NOT a numeric score.
+ * Expressed as level + evidence signals.
+ * See Spec 15 §8 — Guiding Principle alignment.
+ */
+export interface ProductAlignment {
+  level: 'strong' | 'moderate' | 'limited';
+  signals: string[];
+  primaryConnection: string;
 }
 
 // ============================================================
@@ -240,7 +249,7 @@ export interface DiscoveryQueryResponse {
   followUpChips: FollowUpChip[];
   sources: DiscoverySource[];
   generatedAt: string;  // ISO 8601
-  productRelevanceMap?: Record<string, ProductRelevance>;  // keyed by districtId
+  productRelevanceMap?: Record<string, ProductAlignment>;  // keyed by districtId
 }
 
 // ============================================================

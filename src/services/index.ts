@@ -70,12 +70,15 @@ export type {
   CreateProductRequest,
   UpdateProductRequest,
   AssetUploadUrlRequest,
-  AssetUploadUrl
+  AssetUploadUrl,
+  ProductLensSummary,
+  LibraryReadinessResponse
 } from './types/product';
 
 // District types
 export type {
   DistrictSummary,
+  DistrictSnapshot,
   DistrictProfile,
   DistrictSearchRequest,
   ExclusionStatus,
@@ -121,7 +124,7 @@ export type {
   RankedListEntry,
   RankedListContent,
   RecoveryContent,
-  ProductRelevance,
+  ProductAlignment,
   DiscoveryResponseContent,
   DiscoveryQueryResponse,
   DiscoveryQueryRequest,

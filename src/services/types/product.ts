@@ -74,3 +74,24 @@ export interface AssetUploadUrl {
   assetId: string;           // provisional asset ID
   expiresAt: string;         // ISO 8601, URL expiry
 }
+
+/**
+ * Minimal product shape for lens selector UI.
+ * Lighter than ProductSummary — no description, asset count, etc.
+ */
+export interface ProductLensSummary {
+  productId: string;
+  name: string;
+  category: string;         // "Math Intervention", "ELL Platform", etc.
+  targetGradeBands: string[];
+}
+
+/**
+ * Lightweight check: does the user's org have products?
+ * Used for progressive disclosure (Spec 15 §9), not full library fetch.
+ */
+export interface LibraryReadinessResponse {
+  hasProducts: boolean;
+  productCount: number;
+  products: ProductLensSummary[];
+}
