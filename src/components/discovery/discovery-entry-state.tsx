@@ -17,12 +17,12 @@ export function DiscoveryEntryState({
           className="text-2xl font-bold text-foreground tracking-[-0.01em]"
           style={{ lineHeight: 1.2 }}
         >
-          Discovery
+          Discover your best-fit districts
         </h1>
 
         {/* Subtitle */}
         <p className="mt-2 text-sm font-normal text-foreground-secondary">
-          Find districts, explore market intelligence, or ask a question.
+          Build winning playbooks with district insights and product alignment
         </p>
 
         {/* Input */}
