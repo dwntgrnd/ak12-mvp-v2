@@ -1,11 +1,11 @@
 'use client';
 
-import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Bookmark } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useDistrictPlaybookStatus } from '@/hooks/use-district-playbook-status';
+import { useSavedDistricts } from '@/hooks/use-saved-districts';
 import type { DistrictProfile } from '@/services/types/district';
 import type { DistrictYearData } from '@/services/providers/mock/fixtures/districts';
 import { formatNumber } from '@/lib/utils/format';
@@ -31,28 +31,9 @@ export function DistrictIdentityBar({
   onGeneratePlaybook,
 }: DistrictIdentityBarProps) {
   const router = useRouter();
-  const [isSaved, setIsSaved] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
+  const { isSaved: checkIsSaved, saveDistrict, removeSavedDistrict } = useSavedDistricts();
+  const isSaved = checkIsSaved(district.districtId);
   const { loading: playbookLoading, existingPlaybookId } = useDistrictPlaybookStatus(district.districtId);
-
-  async function handleToggleSave() {
-    if (isSaving) return;
-    setIsSaving(true);
-
-    const wasSaved = isSaved;
-    setIsSaved(!wasSaved);
-
-    try {
-      const res = await fetch(`/api/districts/${district.districtId}/save`, {
-        method: wasSaved ? 'DELETE' : 'POST',
-      });
-      if (!res.ok) setIsSaved(wasSaved);
-    } catch {
-      setIsSaved(wasSaved);
-    } finally {
-      setIsSaving(false);
-    }
-  }
 
   // --- Derived metric computations (moved from key-metrics-grid.tsx) ---
   const enrollmentTrend = calculateTrend(yearData.map((y) => y.totalEnrollment));
@@ -186,13 +167,12 @@ export function DistrictIdentityBar({
             {district.name}
           </h1>
           <button
-            onClick={handleToggleSave}
-            disabled={isSaving}
+            onClick={() => isSaved ? removeSavedDistrict(district.districtId) : saveDistrict(district.districtId)}
             aria-pressed={isSaved}
             aria-label={isSaved ? 'Remove saved district' : 'Save district'}
             className={cn(
               'flex shrink-0 items-center gap-1.5 rounded-md px-2 py-1 text-sm font-medium transition-colors',
-              'hover:bg-muted/50 disabled:opacity-50',
+              'hover:bg-muted/50',
               isSaved ? 'text-foreground' : 'text-foreground-secondary'
             )}
           >
