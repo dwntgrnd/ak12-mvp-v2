@@ -176,7 +176,7 @@ export function DistrictIdentityBar({
               isSaved ? 'text-foreground' : 'text-foreground-secondary'
             )}
           >
-            <Bookmark className={cn('h-5 w-5', isSaved && 'fill-current')} />
+            <Bookmark className={cn('h-5 w-5', isSaved && 'fill-current text-brand-orange')} />
             <span>{isSaved ? 'Saved' : 'Save'}</span>
           </button>
         </div>
@@ -202,7 +202,7 @@ export function DistrictIdentityBar({
             <Button
               onClick={onGeneratePlaybook}
             >
-              Create Playbook
+              Generate Playbook
             </Button>
           )}
         </div>

@@ -195,7 +195,7 @@ export function DistrictListCard({
               )}
             >
               <Bookmark
-                className={cn('h-4 w-4', isSaved && 'fill-current')}
+                className={cn('h-4 w-4', isSaved && 'fill-current text-brand-orange')}
               />
               <span>{isSaved ? 'Saved' : 'Save'}</span>
             </button>
@@ -225,7 +225,7 @@ export function DistrictListCard({
                 onGeneratePlaybook(districtId);
               }}
             >
-              Create Playbook
+              Generate Playbook
               <ArrowRight className="h-3 w-3" />
             </Button>
           ) : null}
