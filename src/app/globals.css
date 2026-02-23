@@ -61,6 +61,8 @@
 
   /* Brand tokens */
   --brand-orange: 27 87% 57%;
+  --brand-blue: 184 97% 42%;
+  --brand-green: 163 100% 43%;
   --district-link: 198 58% 43%;
 
   /* Emphasis surface tokens */
@@ -134,6 +136,8 @@
   --color-sidebar-hover: #1B5070;
   --color-sidebar-active: hsl(var(--sidebar-active));
   --color-brand-orange: hsl(var(--brand-orange));
+  --color-brand-blue: hsl(var(--brand-blue));
+  --color-brand-green: hsl(var(--brand-green));
   --color-district-link: hsl(var(--district-link));
   --color-emphasis-surface: hsl(var(--emphasis-surface));
   --color-emphasis-surface-neutral: hsl(var(--emphasis-surface-neutral));
