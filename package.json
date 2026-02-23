@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "export-tokens": "tsx scripts/export-tokens.ts"
   },
   "dependencies": {
     "@prisma/client": "^5.20.0",
