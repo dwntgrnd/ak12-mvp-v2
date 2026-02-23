@@ -1,603 +1,244 @@
 {
-  "metadata": {
-    "source": "AK12-MVP-v2",
-    "generated": "2026-02-23T15:39:38.543Z",
-    "sourceFiles": [
-      "src/app/globals.css",
-      "src/lib/design-tokens.ts"
-    ]
-  },
-  "collections": [
-    {
-      "name": "AK12 Semantic Tokens",
-      "modes": [
-        "Light"
-      ],
-      "variables": [
-        {
-          "name": "color/background",
-          "type": "COLOR",
-          "description": "Page background",
-          "values": {
-            "Light": {
-              "hex": "#F8FAFC",
-              "hsl": "210 40% 98%"
-            }
-          }
-        },
-        {
-          "name": "color/foreground",
-          "type": "COLOR",
-          "description": "Primary text",
-          "values": {
-            "Light": {
-              "hex": "#172940",
-              "hsl": "213 47% 17%"
-            }
-          }
-        },
-        {
-          "name": "color/card",
-          "type": "COLOR",
-          "description": "Card background",
-          "values": {
-            "Light": {
-              "hex": "#FFFFFF",
-              "hsl": "0 0% 100%"
-            }
-          }
-        },
-        {
-          "name": "color/card-foreground",
-          "type": "COLOR",
-          "description": "Card text",
-          "values": {
-            "Light": {
-              "hex": "#172940",
-              "hsl": "213 47% 17%"
-            }
-          }
-        },
-        {
-          "name": "color/primary",
-          "type": "COLOR",
-          "description": "Primary brand color (cyan-blue)",
-          "values": {
-            "Light": {
-              "hex": "#27659B",
-              "hsl": "208 60% 38%"
-            }
-          }
-        },
-        {
-          "name": "color/primary-foreground",
-          "type": "COLOR",
-          "description": "Text on primary",
-          "values": {
-            "Light": {
-              "hex": "#FFFFFF",
-              "hsl": "0 0% 100%"
-            }
-          }
-        },
-        {
-          "name": "color/secondary",
-          "type": "COLOR",
-          "description": "Secondary background",
-          "values": {
-            "Light": {
-              "hex": "#F1F5F9",
-              "hsl": "210 40% 96%"
-            }
-          }
-        },
-        {
-          "name": "color/secondary-foreground",
-          "type": "COLOR",
-          "description": "Text on secondary",
-          "values": {
-            "Light": {
-              "hex": "#172940",
-              "hsl": "213 47% 17%"
-            }
-          }
-        },
-        {
-          "name": "color/muted",
-          "type": "COLOR",
-          "description": "Muted background",
-          "values": {
-            "Light": {
-              "hex": "#F1F5F9",
-              "hsl": "210 40% 96%"
-            }
-          }
-        },
-        {
-          "name": "color/muted-foreground",
-          "type": "COLOR",
-          "description": "Muted text",
-          "values": {
-            "Light": {
-              "hex": "#65758B",
-              "hsl": "215 16% 47%"
-            }
-          }
-        },
-        {
-          "name": "color/accent",
-          "type": "COLOR",
-          "description": "Accent background",
-          "values": {
-            "Light": {
-              "hex": "#F1F5F9",
-              "hsl": "210 40% 96%"
-            }
-          }
-        },
-        {
-          "name": "color/accent-foreground",
-          "type": "COLOR",
-          "description": "Text on accent",
-          "values": {
-            "Light": {
-              "hex": "#172940",
-              "hsl": "213 47% 17%"
-            }
-          }
-        },
-        {
-          "name": "color/destructive",
-          "type": "COLOR",
-          "description": "Destructive/error color",
-          "values": {
-            "Light": {
-              "hex": "#F91F4E",
-              "hsl": "347 95% 55%"
-            }
-          }
-        },
-        {
-          "name": "color/destructive-foreground",
-          "type": "COLOR",
-          "description": "Text on destructive",
-          "values": {
-            "Light": {
-              "hex": "#FFFFFF",
-              "hsl": "0 0% 100%"
-            }
-          }
-        },
-        {
-          "name": "color/success",
-          "type": "COLOR",
-          "description": "Success color",
-          "values": {
-            "Light": {
-              "hex": "#00E096",
-              "hsl": "160 100% 44%"
-            }
-          }
-        },
-        {
-          "name": "color/success-foreground",
-          "type": "COLOR",
-          "description": "Text on success",
-          "values": {
-            "Light": {
-              "hex": "#FFFFFF",
-              "hsl": "0 0% 100%"
-            }
-          }
-        },
-        {
-          "name": "color/warning",
-          "type": "COLOR",
-          "description": "Warning color",
-          "values": {
-            "Light": {
-              "hex": "#FFC105",
-              "hsl": "45 100% 51%"
-            }
-          }
-        },
-        {
-          "name": "color/warning-foreground",
-          "type": "COLOR",
-          "description": "Text on warning",
-          "values": {
-            "Light": {
-              "hex": "#172940",
-              "hsl": "213 47% 17%"
-            }
-          }
-        },
-        {
-          "name": "color/border",
-          "type": "COLOR",
-          "description": "Default border",
-          "values": {
-            "Light": {
-              "hex": "#E1E7EF",
-              "hsl": "214 32% 91%"
-            }
-          }
-        },
-        {
-          "name": "color/input",
-          "type": "COLOR",
-          "description": "Input border",
-          "values": {
-            "Light": {
-              "hex": "#E1E7EF",
-              "hsl": "214 32% 91%"
-            }
-          }
-        },
-        {
-          "name": "color/ring",
-          "type": "COLOR",
-          "description": "Focus ring",
-          "values": {
-            "Light": {
-              "hex": "#27659B",
-              "hsl": "208 60% 38%"
-            }
-          }
-        },
-        {
-          "name": "color/sidebar-bg",
-          "type": "COLOR",
-          "description": "Sidebar background",
-          "values": {
-            "Light": {
-              "hex": "#4C6085",
-              "hsl": "219 27% 41%"
-            }
-          }
-        },
-        {
-          "name": "color/topbar-bg",
-          "type": "COLOR",
-          "description": "Top bar background",
-          "values": {
-            "Light": {
-              "hex": "#172940",
-              "hsl": "213 47% 17%"
-            }
-          }
-        },
-        {
-          "name": "color/sidebar-fg",
-          "type": "COLOR",
-          "description": "Sidebar text",
-          "values": {
-            "Light": {
-              "hex": "#F2F3F3",
-              "hsl": "180 3% 95%"
-            }
-          }
-        },
-        {
-          "name": "color/sidebar-hover",
-          "type": "COLOR",
-          "description": "Sidebar hover state",
-          "values": {
-            "Light": {
-              "hex": "#2E405C",
-              "hsl": "217 33% 27%"
-            }
-          }
-        },
-        {
-          "name": "color/sidebar-active",
-          "type": "COLOR",
-          "description": "Sidebar active state",
-          "values": {
-            "Light": {
-              "hex": "#03C5D3",
-              "hsl": "184 97% 42%"
-            }
-          }
-        },
-        {
-          "name": "color/brand-orange",
-          "type": "COLOR",
-          "description": "Brand orange (CTA)",
-          "values": {
-            "Light": {
-              "hex": "#F18832",
-              "hsl": "27 87% 57%"
-            }
-          }
-        },
-        {
-          "name": "color/district-link",
-          "type": "COLOR",
-          "description": "District link color",
-          "values": {
-            "Light": {
-              "hex": "#2E87AD",
-              "hsl": "198 58% 43%"
-            }
-          }
-        },
-        {
-          "name": "color/emphasis-surface",
-          "type": "COLOR",
-          "description": "Emphasis surface (cyan tint)",
-          "values": {
-            "Light": {
-              "hex": "#DEF9FC",
-              "hsl": "186 85% 93%"
-            }
-          }
-        },
-        {
-          "name": "color/emphasis-surface-neutral",
-          "type": "COLOR",
-          "description": "Emphasis surface (neutral)",
-          "values": {
-            "Light": {
-              "hex": "#F1F5F9",
-              "hsl": "210 40% 96%"
-            }
-          }
-        },
-        {
-          "name": "color/foreground-secondary",
-          "type": "COLOR",
-          "description": "Secondary text tier",
-          "values": {
-            "Light": {
-              "hex": "#65758B",
-              "hsl": "215 16% 47%"
-            }
-          }
-        },
-        {
-          "name": "color/foreground-tertiary",
-          "type": "COLOR",
-          "description": "Tertiary text tier",
-          "values": {
-            "Light": {
-              "hex": "#94A3B8",
-              "hsl": "215 20% 65%"
-            }
-          }
-        },
-        {
-          "name": "color/surface-page",
-          "type": "COLOR",
-          "description": "Page-level surface",
-          "values": {
-            "Light": {
-              "hex": "#F8FAFC",
-              "hsl": "210 40% 98%"
-            }
-          }
-        },
-        {
-          "name": "color/surface-raised",
-          "type": "COLOR",
-          "description": "Raised surface (cards)",
-          "values": {
-            "Light": {
-              "hex": "#FFFFFF",
-              "hsl": "0 0% 100%"
-            }
-          }
-        },
-        {
-          "name": "color/surface-inset",
-          "type": "COLOR",
-          "description": "Inset/recessed surface",
-          "values": {
-            "Light": {
-              "hex": "#F8FAFC",
-              "hsl": "210 40% 98%"
-            }
-          }
-        },
-        {
-          "name": "color/surface-emphasis",
-          "type": "COLOR",
-          "description": "Emphasis surface (brand)",
-          "values": {
-            "Light": {
-              "hex": "#DEF9FC",
-              "hsl": "186 85% 93%"
-            }
-          }
-        },
-        {
-          "name": "color/surface-emphasis-neutral",
-          "type": "COLOR",
-          "description": "Emphasis surface (neutral)",
-          "values": {
-            "Light": {
-              "hex": "#F1F5F9",
-              "hsl": "210 40% 96%"
-            }
-          }
-        },
-        {
-          "name": "color/border-default",
-          "type": "COLOR",
-          "description": "Default border tier",
-          "values": {
-            "Light": {
-              "hex": "#E1E7EF",
-              "hsl": "214 32% 91%"
-            }
-          }
-        },
-        {
-          "name": "color/border-subtle",
-          "type": "COLOR",
-          "description": "Subtle border tier",
-          "values": {
-            "Light": {
-              "hex": "#EEF2F6",
-              "hsl": "214 32% 95%"
-            }
-          }
-        },
-        {
-          "name": "spacing/content-width",
-          "type": "FLOAT",
-          "description": "Max content area width",
-          "values": {
-            "Light": {
-              "value": 900,
-              "unit": "px"
-            }
-          }
-        },
-        {
-          "name": "spacing/radius",
-          "type": "FLOAT",
-          "description": "Default border radius",
-          "values": {
-            "Light": {
-              "value": 8,
-              "unit": "px"
-            }
-          }
-        },
-        {
-          "name": "spacing/topbar-height",
-          "type": "FLOAT",
-          "description": "Top bar height",
-          "values": {
-            "Light": {
-              "value": 56,
-              "unit": "px"
-            }
-          }
-        },
-        {
-          "name": "spacing/utility-bar-height",
-          "type": "FLOAT",
-          "description": "Utility bar height",
-          "values": {
-            "Light": {
-              "value": 40,
-              "unit": "px"
-            }
-          }
-        },
-        {
-          "name": "spacing/sidebar-width",
-          "type": "FLOAT",
-          "description": "Sidebar expanded width",
-          "values": {
-            "Light": {
-              "value": 256,
-              "unit": "px"
-            }
-          }
-        },
-        {
-          "name": "spacing/sidebar-width-collapsed",
-          "type": "FLOAT",
-          "description": "Sidebar collapsed width",
-          "values": {
-            "Light": {
-              "value": 64,
-              "unit": "px"
-            }
-          }
-        },
-        {
-          "name": "typography/font-base",
-          "type": "FLOAT",
-          "description": "Base font size",
-          "values": {
-            "Light": {
-              "value": 16,
-              "unit": "px"
-            }
-          }
-        },
-        {
-          "name": "typography/size-overline",
-          "type": "FLOAT",
-          "description": "Overline label size",
-          "values": {
-            "Light": {
-              "value": 12.58,
-              "unit": "px"
-            }
-          }
-        },
-        {
-          "name": "typography/size-caption",
-          "type": "FLOAT",
-          "description": "Caption size",
-          "values": {
-            "Light": {
-              "value": 13.71,
-              "unit": "px"
-            }
-          }
-        },
-        {
-          "name": "typography/size-subsection-sm",
-          "type": "FLOAT",
-          "description": "Small subsection size",
-          "values": {
-            "Light": {
-              "value": 14.86,
-              "unit": "px"
-            }
-          }
-        },
-        {
-          "name": "typography/size-body",
-          "type": "FLOAT",
-          "description": "Body text size",
-          "values": {
-            "Light": {
-              "value": 16,
-              "unit": "px"
-            }
-          }
-        },
-        {
-          "name": "typography/size-subsection-heading",
-          "type": "FLOAT",
-          "description": "Subsection heading size",
-          "values": {
-            "Light": {
-              "value": 17.14,
-              "unit": "px"
-            }
-          }
-        },
-        {
-          "name": "typography/size-section-heading",
-          "type": "FLOAT",
-          "description": "Section heading size",
-          "values": {
-            "Light": {
-              "value": 20.58,
-              "unit": "px"
-            }
-          }
-        },
-        {
-          "name": "typography/size-page-title",
-          "type": "FLOAT",
-          "description": "Page title size",
-          "values": {
-            "Light": {
-              "value": 27.42,
-              "unit": "px"
-            }
-          }
-        }
-      ]
+  "semantic": {
+    "background": {
+      "$type": "color",
+      "$value": "#F8FAFC"
+    },
+    "foreground": {
+      "$type": "color",
+      "$value": "#172940"
+    },
+    "card": {
+      "$type": "color",
+      "$value": "#FFFFFF"
+    },
+    "cardForeground": {
+      "$type": "color",
+      "$value": "#172940"
+    },
+    "popover": {
+      "$type": "color",
+      "$value": "#FFFFFF"
+    },
+    "popoverForeground": {
+      "$type": "color",
+      "$value": "#172940"
+    },
+    "primary": {
+      "$type": "color",
+      "$value": "#27659B"
+    },
+    "primaryForeground": {
+      "$type": "color",
+      "$value": "#FFFFFF"
+    },
+    "secondary": {
+      "$type": "color",
+      "$value": "#F1F5F9"
+    },
+    "secondaryForeground": {
+      "$type": "color",
+      "$value": "#172940"
+    },
+    "muted": {
+      "$type": "color",
+      "$value": "#F1F5F9"
+    },
+    "mutedForeground": {
+      "$type": "color",
+      "$value": "#65758B"
+    },
+    "accent": {
+      "$type": "color",
+      "$value": "#F1F5F9"
+    },
+    "accentForeground": {
+      "$type": "color",
+      "$value": "#172940"
+    },
+    "destructive": {
+      "$type": "color",
+      "$value": "#F91F4E"
+    },
+    "destructiveForeground": {
+      "$type": "color",
+      "$value": "#FFFFFF"
+    },
+    "success": {
+      "$type": "color",
+      "$value": "#00E096"
+    },
+    "successForeground": {
+      "$type": "color",
+      "$value": "#FFFFFF"
+    },
+    "warning": {
+      "$type": "color",
+      "$value": "#FFC105"
+    },
+    "warningForeground": {
+      "$type": "color",
+      "$value": "#172940"
+    },
+    "border": {
+      "$type": "color",
+      "$value": "#E1E7EF"
+    },
+    "input": {
+      "$type": "color",
+      "$value": "#E1E7EF"
+    },
+    "ring": {
+      "$type": "color",
+      "$value": "#27659B"
     }
-  ]
+  },
+  "spacing": {
+    "contentWidth": {
+      "$type": "number",
+      "$value": 900
+    },
+    "radius": {
+      "$type": "number",
+      "$value": 8
+    },
+    "topbarHeight": {
+      "$type": "number",
+      "$value": 56
+    },
+    "utilityBarHeight": {
+      "$type": "number",
+      "$value": 40
+    },
+    "sidebarWidth": {
+      "$type": "number",
+      "$value": 256
+    },
+    "sidebarWidthCollapsed": {
+      "$type": "number",
+      "$value": 64
+    }
+  },
+  "sidebar": {
+    "bg": {
+      "$type": "color",
+      "$value": "#4C6085"
+    },
+    "topbarBg": {
+      "$type": "color",
+      "$value": "#172940"
+    },
+    "fg": {
+      "$type": "color",
+      "$value": "#F2F3F3"
+    },
+    "hover": {
+      "$type": "color",
+      "$value": "#2E405C"
+    },
+    "active": {
+      "$type": "color",
+      "$value": "#03C5D3"
+    }
+  },
+  "brand": {
+    "orange": {
+      "$type": "color",
+      "$value": "#F18832"
+    },
+    "districtLink": {
+      "$type": "color",
+      "$value": "#2E87AD"
+    }
+  },
+  "emphasis": {
+    "surface": {
+      "$type": "color",
+      "$value": "#DEF9FC"
+    },
+    "surfaceNeutral": {
+      "$type": "color",
+      "$value": "#F1F5F9"
+    }
+  },
+  "text": {
+    "secondary": {
+      "$type": "color",
+      "$value": "#65758B"
+    },
+    "tertiary": {
+      "$type": "color",
+      "$value": "#94A3B8"
+    },
+    "primary": {
+      "$type": "color",
+      "$value": "#172940"
+    }
+  },
+  "surface": {
+    "page": {
+      "$type": "color",
+      "$value": "#F8FAFC"
+    },
+    "raised": {
+      "$type": "color",
+      "$value": "#FFFFFF"
+    },
+    "inset": {
+      "$type": "color",
+      "$value": "#F8FAFC"
+    },
+    "emphasis": {
+      "$type": "color",
+      "$value": "#DEF9FC"
+    },
+    "emphasisNeutral": {
+      "$type": "color",
+      "$value": "#F1F5F9"
+    }
+  },
+  "borderTier": {
+    "default": {
+      "$type": "color",
+      "$value": "#E1E7EF"
+    },
+    "subtle": {
+      "$type": "color",
+      "$value": "#EEF2F6"
+    }
+  },
+  "typography": {
+    "fontBase": {
+      "$type": "number",
+      "$value": 16
+    },
+    "sizeOverline": {
+      "$type": "number",
+      "$value": 13
+    },
+    "sizeCaption": {
+      "$type": "number",
+      "$value": 14
+    },
+    "sizeSubsectionSm": {
+      "$type": "number",
+      "$value": 15
+    },
+    "sizeBody": {
+      "$type": "number",
+      "$value": 16
+    },
+    "sizeSubsectionHeading": {
+      "$type": "number",
+      "$value": 17
+    },
+    "sizeSectionHeading": {
+      "$type": "number",
+      "$value": 21
+    },
+    "sizePageTitle": {
+      "$type": "number",
+      "$value": 27
+    }
+  }
 }

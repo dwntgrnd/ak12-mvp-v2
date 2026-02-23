@@ -2,6 +2,68 @@ import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 
 // ---------------------------------------------------------------------------
+// CSS Variable → Figma Group/Name Mapping (DTCG nested objects)
+//
+// | CSS Variable                    | Figma Group/Name              |
+// |---------------------------------|-------------------------------|
+// | --background                    | semantic/background           |
+// | --foreground                    | semantic/foreground           |
+// | --card                          | semantic/card                 |
+// | --card-foreground               | semantic/cardForeground       |
+// | --popover                       | semantic/popover              |
+// | --popover-foreground            | semantic/popoverForeground    |
+// | --primary                       | semantic/primary              |
+// | --primary-foreground            | semantic/primaryForeground    |
+// | --secondary                     | semantic/secondary            |
+// | --secondary-foreground          | semantic/secondaryForeground  |
+// | --muted                         | semantic/muted                |
+// | --muted-foreground              | semantic/mutedForeground      |
+// | --accent                        | semantic/accent               |
+// | --accent-foreground             | semantic/accentForeground     |
+// | --destructive                   | semantic/destructive          |
+// | --destructive-foreground        | semantic/destructiveForeground|
+// | --success                       | semantic/success              |
+// | --success-foreground            | semantic/successForeground    |
+// | --warning                       | semantic/warning              |
+// | --warning-foreground            | semantic/warningForeground    |
+// | --border                        | semantic/border               |
+// | --input                         | semantic/input                |
+// | --ring                          | semantic/ring                 |
+// | --brand-orange                  | brand/orange                  |
+// | --district-link                 | brand/districtLink            |
+// | --sidebar-bg                    | sidebar/bg                    |
+// | --topbar-bg                     | sidebar/topbarBg              |
+// | --sidebar-fg                    | sidebar/fg                    |
+// | --sidebar-hover                 | sidebar/hover                 |
+// | --sidebar-active                | sidebar/active                |
+// | --surface-page                  | surface/page                  |
+// | --surface-raised                | surface/raised                |
+// | --surface-inset                 | surface/inset                 |
+// | --surface-emphasis              | surface/emphasis              |
+// | --surface-emphasis-neutral      | surface/emphasisNeutral       |
+// | --foreground-secondary          | text/secondary                |
+// | --foreground-tertiary           | text/tertiary                 |
+// | --emphasis-surface              | emphasis/surface              |
+// | --emphasis-surface-neutral      | emphasis/surfaceNeutral       |
+// | --border-default                | borderTier/default            |
+// | --border-subtle                 | borderTier/subtle             |
+// | --topbar-height                 | spacing/topbarHeight          |
+// | --utility-bar-height            | spacing/utilityBarHeight      |
+// | --sidebar-width                 | spacing/sidebarWidth          |
+// | --sidebar-width-collapsed       | spacing/sidebarWidthCollapsed |
+// | --content-width                 | spacing/contentWidth          |
+// | --radius                        | spacing/radius                |
+// | --font-base                     | typography/fontBase           |
+// | --font-size-page-title          | typography/sizePageTitle      |
+// | --font-size-section-heading     | typography/sizeSectionHeading |
+// | --font-size-subsection-heading  | typography/sizeSubsectionHeading |
+// | --font-size-body                | typography/sizeBody           |
+// | --font-size-subsection-sm       | typography/sizeSubsectionSm   |
+// | --font-size-caption             | typography/sizeCaption        |
+// | --font-size-overline            | typography/sizeOverline       |
+// ---------------------------------------------------------------------------
+
+// ---------------------------------------------------------------------------
 // HSL → Hex conversion
 // ---------------------------------------------------------------------------
 
@@ -22,7 +84,6 @@ function hslToHex(h: number, s: number, l: number): string {
 }
 
 function parseHsl(value: string): { h: number; s: number; l: number } | null {
-  // Matches "210 40% 98%" pattern
   const match = value.trim().match(/^([\d.]+)\s+([\d.]+)%\s+([\d.]+)%$/);
   if (!match) return null;
   return { h: parseFloat(match[1]), s: parseFloat(match[2]), l: parseFloat(match[3]) };
@@ -34,168 +95,120 @@ function parseHsl(value: string): { h: number; s: number; l: number } | null {
 
 function parseRootVariables(css: string): Map<string, string> {
   const vars = new Map<string, string>();
-
-  // Extract the :root { ... } block
   const rootMatch = css.match(/:root\s*\{([\s\S]*?)\n\}/);
-  if (!rootMatch) {
-    throw new Error('Could not find :root block in globals.css');
-  }
+  if (!rootMatch) throw new Error('Could not find :root block in globals.css');
 
   const rootBlock = rootMatch[1];
   const lineRegex = /--([a-z0-9-]+)\s*:\s*(.+?)\s*;/g;
   let match: RegExpExecArray | null;
-
   while ((match = lineRegex.exec(rootBlock)) !== null) {
     vars.set(match[1], match[2]);
   }
-
   return vars;
 }
 
 // ---------------------------------------------------------------------------
-// Classify and convert variables
+// Value conversion
 // ---------------------------------------------------------------------------
 
-interface FigmaVariable {
-  name: string;
-  type: 'COLOR' | 'FLOAT';
-  description: string;
-  values: {
-    Light: { hex: string; hsl: string } | { value: number; unit: string };
-  };
-}
-
-// Color token names from the spec
-const COLOR_TOKENS = new Set([
-  'background', 'foreground',
-  'card', 'card-foreground',
-  'primary', 'primary-foreground',
-  'secondary', 'secondary-foreground',
-  'muted', 'muted-foreground',
-  'accent', 'accent-foreground',
-  'destructive', 'destructive-foreground',
-  'success', 'success-foreground',
-  'warning', 'warning-foreground',
-  'border', 'input', 'ring',
-  'brand-orange', 'district-link',
-  'sidebar-bg', 'topbar-bg', 'sidebar-fg', 'sidebar-hover', 'sidebar-active',
-  'emphasis-surface', 'emphasis-surface-neutral',
-  'foreground-secondary', 'foreground-tertiary',
-  'surface-page', 'surface-raised', 'surface-inset', 'surface-emphasis', 'surface-emphasis-neutral',
-  'border-default', 'border-subtle',
-]);
-
-// Spacing token names from the spec
-const SPACING_TOKENS = new Set([
-  'topbar-height', 'utility-bar-height',
-  'sidebar-width', 'sidebar-width-collapsed',
-  'content-width', 'radius',
-]);
-
-// Typography token names from the spec
-const TYPOGRAPHY_TOKENS = new Set([
-  'font-base',
-  'font-size-page-title', 'font-size-section-heading', 'font-size-subsection-heading',
-  'font-size-body', 'font-size-subsection-sm', 'font-size-caption', 'font-size-overline',
-]);
-
-// Figma variable name mapping
-const FIGMA_NAME_MAP: Record<string, string> = {
-  'font-size-page-title': 'typography/size-page-title',
-  'font-size-section-heading': 'typography/size-section-heading',
-  'font-size-subsection-heading': 'typography/size-subsection-heading',
-  'font-size-body': 'typography/size-body',
-  'font-size-subsection-sm': 'typography/size-subsection-sm',
-  'font-size-caption': 'typography/size-caption',
-  'font-size-overline': 'typography/size-overline',
-};
-
-function getFigmaName(cssName: string): string {
-  if (FIGMA_NAME_MAP[cssName]) return FIGMA_NAME_MAP[cssName];
-  if (COLOR_TOKENS.has(cssName)) return `color/${cssName}`;
-  if (SPACING_TOKENS.has(cssName)) return `spacing/${cssName}`;
-  if (TYPOGRAPHY_TOKENS.has(cssName)) return `typography/${cssName}`;
-  return cssName;
-}
-
-function getDescription(cssName: string): string {
-  const descriptions: Record<string, string> = {
-    'background': 'Page background',
-    'foreground': 'Primary text',
-    'card': 'Card background',
-    'card-foreground': 'Card text',
-    'primary': 'Primary brand color (cyan-blue)',
-    'primary-foreground': 'Text on primary',
-    'secondary': 'Secondary background',
-    'secondary-foreground': 'Text on secondary',
-    'muted': 'Muted background',
-    'muted-foreground': 'Muted text',
-    'accent': 'Accent background',
-    'accent-foreground': 'Text on accent',
-    'destructive': 'Destructive/error color',
-    'destructive-foreground': 'Text on destructive',
-    'success': 'Success color',
-    'success-foreground': 'Text on success',
-    'warning': 'Warning color',
-    'warning-foreground': 'Text on warning',
-    'border': 'Default border',
-    'input': 'Input border',
-    'ring': 'Focus ring',
-    'brand-orange': 'Brand orange (CTA)',
-    'district-link': 'District link color',
-    'sidebar-bg': 'Sidebar background',
-    'topbar-bg': 'Top bar background',
-    'sidebar-fg': 'Sidebar text',
-    'sidebar-hover': 'Sidebar hover state',
-    'sidebar-active': 'Sidebar active state',
-    'emphasis-surface': 'Emphasis surface (cyan tint)',
-    'emphasis-surface-neutral': 'Emphasis surface (neutral)',
-    'foreground-secondary': 'Secondary text tier',
-    'foreground-tertiary': 'Tertiary text tier',
-    'surface-page': 'Page-level surface',
-    'surface-raised': 'Raised surface (cards)',
-    'surface-inset': 'Inset/recessed surface',
-    'surface-emphasis': 'Emphasis surface (brand)',
-    'surface-emphasis-neutral': 'Emphasis surface (neutral)',
-    'border-default': 'Default border tier',
-    'border-subtle': 'Subtle border tier',
-    'topbar-height': 'Top bar height',
-    'utility-bar-height': 'Utility bar height',
-    'sidebar-width': 'Sidebar expanded width',
-    'sidebar-width-collapsed': 'Sidebar collapsed width',
-    'content-width': 'Max content area width',
-    'radius': 'Default border radius',
-    'font-base': 'Base font size',
-    'font-size-page-title': 'Page title size',
-    'font-size-section-heading': 'Section heading size',
-    'font-size-subsection-heading': 'Subsection heading size',
-    'font-size-body': 'Body text size',
-    'font-size-subsection-sm': 'Small subsection size',
-    'font-size-caption': 'Caption size',
-    'font-size-overline': 'Overline label size',
-  };
-  return descriptions[cssName] ?? '';
-}
-
-/** Convert a CSS length value to pixels. */
 function toPx(value: string, fontBase: number): number {
-  // Direct px value
   const pxMatch = value.match(/^([\d.]+)px$/);
   if (pxMatch) return parseFloat(pxMatch[1]);
 
-  // rem value
   const remMatch = value.match(/^([\d.]+)rem$/);
-  if (remMatch) return parseFloat(remMatch[1]) * 16; // 1rem = 16px browser default
+  if (remMatch) return parseFloat(remMatch[1]) * 16;
 
-  // calc(var(--font-base) * N) pattern
   const calcMatch = value.match(/calc\(\s*var\(--font-base\)\s*\*\s*([\d.]+)\s*\)/);
-  if (calcMatch) return Math.round(fontBase * parseFloat(calcMatch[1]) * 100) / 100;
+  if (calcMatch) return Math.round(fontBase * parseFloat(calcMatch[1]));
 
-  // var(--font-base) direct reference
   if (value.trim() === 'var(--font-base)') return fontBase;
 
   return 0;
 }
+
+// ---------------------------------------------------------------------------
+// CSS variable → DTCG group/key mapping
+// ---------------------------------------------------------------------------
+
+type TokenMapping = { group: string; key: string; type: 'color' | 'number' };
+
+const TOKEN_MAP: Record<string, TokenMapping> = {
+  // semantic group — core shadcn tokens
+  'background':              { group: 'semantic', key: 'background',            type: 'color' },
+  'foreground':              { group: 'semantic', key: 'foreground',            type: 'color' },
+  'card':                    { group: 'semantic', key: 'card',                  type: 'color' },
+  'card-foreground':         { group: 'semantic', key: 'cardForeground',        type: 'color' },
+  'popover':                 { group: 'semantic', key: 'popover',               type: 'color' },
+  'popover-foreground':      { group: 'semantic', key: 'popoverForeground',     type: 'color' },
+  'primary':                 { group: 'semantic', key: 'primary',               type: 'color' },
+  'primary-foreground':      { group: 'semantic', key: 'primaryForeground',     type: 'color' },
+  'secondary':               { group: 'semantic', key: 'secondary',             type: 'color' },
+  'secondary-foreground':    { group: 'semantic', key: 'secondaryForeground',   type: 'color' },
+  'muted':                   { group: 'semantic', key: 'muted',                 type: 'color' },
+  'muted-foreground':        { group: 'semantic', key: 'mutedForeground',       type: 'color' },
+  'accent':                  { group: 'semantic', key: 'accent',                type: 'color' },
+  'accent-foreground':       { group: 'semantic', key: 'accentForeground',      type: 'color' },
+  'destructive':             { group: 'semantic', key: 'destructive',           type: 'color' },
+  'destructive-foreground':  { group: 'semantic', key: 'destructiveForeground', type: 'color' },
+  'success':                 { group: 'semantic', key: 'success',               type: 'color' },
+  'success-foreground':      { group: 'semantic', key: 'successForeground',     type: 'color' },
+  'warning':                 { group: 'semantic', key: 'warning',               type: 'color' },
+  'warning-foreground':      { group: 'semantic', key: 'warningForeground',     type: 'color' },
+  'border':                  { group: 'semantic', key: 'border',                type: 'color' },
+  'input':                   { group: 'semantic', key: 'input',                 type: 'color' },
+  'ring':                    { group: 'semantic', key: 'ring',                  type: 'color' },
+
+  // brand group
+  'brand-orange':            { group: 'brand', key: 'orange',       type: 'color' },
+  'district-link':           { group: 'brand', key: 'districtLink', type: 'color' },
+
+  // sidebar group
+  'sidebar-bg':              { group: 'sidebar', key: 'bg',       type: 'color' },
+  'topbar-bg':               { group: 'sidebar', key: 'topbarBg', type: 'color' },
+  'sidebar-fg':              { group: 'sidebar', key: 'fg',       type: 'color' },
+  'sidebar-hover':           { group: 'sidebar', key: 'hover',    type: 'color' },
+  'sidebar-active':          { group: 'sidebar', key: 'active',   type: 'color' },
+
+  // surface group
+  'surface-page':              { group: 'surface', key: 'page',            type: 'color' },
+  'surface-raised':            { group: 'surface', key: 'raised',          type: 'color' },
+  'surface-inset':             { group: 'surface', key: 'inset',           type: 'color' },
+  'surface-emphasis':          { group: 'surface', key: 'emphasis',        type: 'color' },
+  'surface-emphasis-neutral':  { group: 'surface', key: 'emphasisNeutral', type: 'color' },
+
+  // text group
+  'foreground-secondary':    { group: 'text', key: 'secondary', type: 'color' },
+  'foreground-tertiary':     { group: 'text', key: 'tertiary',  type: 'color' },
+
+  // emphasis group
+  'emphasis-surface':         { group: 'emphasis', key: 'surface',        type: 'color' },
+  'emphasis-surface-neutral': { group: 'emphasis', key: 'surfaceNeutral', type: 'color' },
+
+  // borderTier group
+  'border-default':          { group: 'borderTier', key: 'default', type: 'color' },
+  'border-subtle':           { group: 'borderTier', key: 'subtle',  type: 'color' },
+
+  // spacing group
+  'topbar-height':             { group: 'spacing', key: 'topbarHeight',          type: 'number' },
+  'utility-bar-height':        { group: 'spacing', key: 'utilityBarHeight',      type: 'number' },
+  'sidebar-width':             { group: 'spacing', key: 'sidebarWidth',          type: 'number' },
+  'sidebar-width-collapsed':   { group: 'spacing', key: 'sidebarWidthCollapsed', type: 'number' },
+  'content-width':             { group: 'spacing', key: 'contentWidth',          type: 'number' },
+  'radius':                    { group: 'spacing', key: 'radius',                type: 'number' },
+
+  // typography group
+  'font-base':                     { group: 'typography', key: 'fontBase',              type: 'number' },
+  'font-size-page-title':          { group: 'typography', key: 'sizePageTitle',         type: 'number' },
+  'font-size-section-heading':     { group: 'typography', key: 'sizeSectionHeading',    type: 'number' },
+  'font-size-subsection-heading':  { group: 'typography', key: 'sizeSubsectionHeading', type: 'number' },
+  'font-size-body':                { group: 'typography', key: 'sizeBody',              type: 'number' },
+  'font-size-subsection-sm':       { group: 'typography', key: 'sizeSubsectionSm',      type: 'number' },
+  'font-size-caption':             { group: 'typography', key: 'sizeCaption',           type: 'number' },
+  'font-size-overline':            { group: 'typography', key: 'sizeOverline',          type: 'number' },
+};
+
+// Also add text/primary as an alias for foreground (spec: text.primary = foreground)
+const TEXT_PRIMARY_ALIAS = 'foreground';
 
 // ---------------------------------------------------------------------------
 // Main
@@ -207,64 +220,45 @@ function main() {
   const css = readFileSync(cssPath, 'utf-8');
   const vars = parseRootVariables(css);
 
-  // Determine font-base for calc evaluation
   const fontBaseRaw = vars.get('font-base') ?? '16px';
-  const fontBase = parseFloat(fontBaseRaw); // 16
+  const fontBase = parseFloat(fontBaseRaw);
 
-  const colorVars: FigmaVariable[] = [];
-  const spacingVars: FigmaVariable[] = [];
-  const typographyVars: FigmaVariable[] = [];
+  // Build DTCG output — nested objects with $type and $value
+  const output: Record<string, Record<string, { $type: string; $value: string | number }>> = {};
+  let colorCount = 0;
+  let spacingCount = 0;
+  let typographyCount = 0;
 
-  for (const [name, value] of vars) {
-    if (COLOR_TOKENS.has(name)) {
-      const hsl = parseHsl(value);
+  for (const [cssName, rawValue] of vars) {
+    const mapping = TOKEN_MAP[cssName];
+    if (!mapping) continue;
+
+    if (!output[mapping.group]) output[mapping.group] = {};
+
+    if (mapping.type === 'color') {
+      const hsl = parseHsl(rawValue);
       if (!hsl) continue;
       const hex = hslToHex(hsl.h, hsl.s, hsl.l);
-      colorVars.push({
-        name: getFigmaName(name),
-        type: 'COLOR',
-        description: getDescription(name),
-        values: {
-          Light: { hex, hsl: value },
-        },
-      });
-    } else if (SPACING_TOKENS.has(name)) {
-      const px = toPx(value, fontBase);
-      spacingVars.push({
-        name: getFigmaName(name),
-        type: 'FLOAT',
-        description: getDescription(name),
-        values: {
-          Light: { value: px, unit: 'px' },
-        },
-      });
-    } else if (TYPOGRAPHY_TOKENS.has(name)) {
-      const px = toPx(value, fontBase);
-      typographyVars.push({
-        name: getFigmaName(name),
-        type: 'FLOAT',
-        description: getDescription(name),
-        values: {
-          Light: { value: px, unit: 'px' },
-        },
-      });
+      output[mapping.group][mapping.key] = { $type: 'color', $value: hex };
+      colorCount++;
+    } else {
+      const px = toPx(rawValue, fontBase);
+      output[mapping.group][mapping.key] = { $type: 'number', $value: px };
+      if (mapping.group === 'spacing') spacingCount++;
+      else typographyCount++;
     }
   }
 
-  const output = {
-    metadata: {
-      source: 'AK12-MVP-v2',
-      generated: new Date().toISOString(),
-      sourceFiles: ['src/app/globals.css', 'src/lib/design-tokens.ts'],
-    },
-    collections: [
-      {
-        name: 'AK12 Semantic Tokens',
-        modes: ['Light'],
-        variables: [...colorVars, ...spacingVars, ...typographyVars],
-      },
-    ],
-  };
+  // Add text/primary alias (= foreground value)
+  const fgValue = vars.get(TEXT_PRIMARY_ALIAS);
+  if (fgValue) {
+    const hsl = parseHsl(fgValue);
+    if (hsl) {
+      if (!output['text']) output['text'] = {};
+      output['text']['primary'] = { $type: 'color', $value: hslToHex(hsl.h, hsl.s, hsl.l) };
+      colorCount++;
+    }
+  }
 
   const json = JSON.stringify(output, null, 2);
 
@@ -281,12 +275,12 @@ function main() {
     console.log(`  Written: ${outPath}`);
   }
 
-  // Summary
-  console.log('\nToken export complete:');
-  console.log(`  Color variables:      ${colorVars.length}`);
-  console.log(`  Spacing variables:    ${spacingVars.length}`);
-  console.log(`  Typography variables: ${typographyVars.length}`);
-  console.log(`  Total:                ${colorVars.length + spacingVars.length + typographyVars.length}`);
+  const total = colorCount + spacingCount + typographyCount;
+  console.log('\nToken export complete (DTCG format):');
+  console.log(`  Color variables:      ${colorCount}`);
+  console.log(`  Spacing variables:    ${spacingCount}`);
+  console.log(`  Typography variables: ${typographyCount}`);
+  console.log(`  Total:                ${total}`);
 }
 
 main();

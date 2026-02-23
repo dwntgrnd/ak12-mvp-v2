@@ -31,112 +31,95 @@ Add to `package.json` scripts:
 
 ## JSON Structure
 
-The JSON should follow a format compatible with Figma's Variables REST API and common Figma variable import plugins (e.g., "Variables Import/Export" community plugin). Structure:
+Use the **Design Tokens Community Group (DTCG)** format — this is the proven format that Figma's variable import plugins accept. See the working reference file at: `Obsidian: Design-System/Figma-Exports/ak12-figma-variables-v2.tokens.json`
+
+**CRITICAL:** Do NOT use a `collections/variables` array format — that format was tried previously and rejected (see `_DEPRECATED-ak12-figma-variables-v2-wrong-format.json`). Use nested objects with `$type` and `$value` keys.
+
+Structure:
 
 ```json
 {
-  "metadata": {
-    "source": "AK12-MVP-v2",
-    "generated": "2026-02-23T...",
-    "sourceFiles": ["src/app/globals.css", "src/lib/design-tokens.ts"]
+  "semantic": {
+    "background": { "$type": "color", "$value": "#F5F7FA" },
+    "foreground": { "$type": "color", "$value": "#1B3154" },
+    "primary": { "$type": "color", "$value": "#236DA2" },
+    "brandOrange": { "$type": "color", "$value": "#F08632" }
   },
-  "collections": [
-    {
-      "name": "AK12 Semantic Tokens",
-      "modes": ["Light"],
-      "variables": [
-        {
-          "name": "color/background",
-          "type": "COLOR",
-          "description": "Page background",
-          "values": {
-            "Light": { "hex": "#F5F7FA", "hsl": "210 40% 98%" }
-          }
-        },
-        {
-          "name": "color/foreground",
-          "type": "COLOR",
-          "description": "Primary text",
-          "values": {
-            "Light": { "hex": "#1B3154", "hsl": "213 47% 17%" }
-          }
-        }
-      ]
-    }
-  ]
+  "surface": {
+    "page": { "$type": "color", "$value": "#F5F7FA" },
+    "raised": { "$type": "color", "$value": "#FFFFFF" }
+  },
+  "text": {
+    "primary": { "$type": "color", "$value": "#1B3154" },
+    "secondary": { "$type": "color", "$value": "#64748B" },
+    "tertiary": { "$type": "color", "$value": "#8CA0B8" }
+  },
+  "spacing": {
+    "topbarHeight": { "$type": "number", "$value": 56 },
+    "sidebarWidth": { "$type": "number", "$value": 256 }
+  },
+  "typography": {
+    "fontBase": { "$type": "number", "$value": 16 },
+    "sizePageTitle": { "$type": "number", "$value": 24 }
+  }
 }
 ```
 
-## Variable Naming Convention
+**Key rules:**
+- Color values use `"$type": "color"` with hex `$value` (not HSL)
+- Number values use `"$type": "number"` with numeric `$value` (not strings like "56px")
+- Nesting creates Figma variable groups (e.g., `semantic/background`, `surface/page`)
+- No `metadata`, `collections`, `modes`, or `variables` wrapper — just the flat DTCG structure
+- camelCase for multi-word keys (e.g., `brandOrange`, `topbarHeight`) — Figma renders these as group/name in the Variables panel
 
-Use `/`-separated hierarchical names that map cleanly to both CSS custom properties and Figma's variable panel:
+## Variable Grouping
 
-### Color Variables
-Map CSS `--token-name` → Figma `color/token-name`:
+Organize into top-level groups that mirror the codebase token categories. Nesting in the JSON creates Figma variable groups automatically.
 
-| CSS Variable | Figma Variable Name | Type |
-|---|---|---|
-| `--background` | `color/background` | COLOR |
-| `--foreground` | `color/foreground` | COLOR |
-| `--card` | `color/card` | COLOR |
-| `--card-foreground` | `color/card-foreground` | COLOR |
-| `--primary` | `color/primary` | COLOR |
-| `--primary-foreground` | `color/primary-foreground` | COLOR |
-| `--secondary` | `color/secondary` | COLOR |
-| `--secondary-foreground` | `color/secondary-foreground` | COLOR |
-| `--muted` | `color/muted` | COLOR |
-| `--muted-foreground` | `color/muted-foreground` | COLOR |
-| `--accent` | `color/accent` | COLOR |
-| `--accent-foreground` | `color/accent-foreground` | COLOR |
-| `--destructive` | `color/destructive` | COLOR |
-| `--destructive-foreground` | `color/destructive-foreground` | COLOR |
-| `--success` | `color/success` | COLOR |
-| `--success-foreground` | `color/success-foreground` | COLOR |
-| `--warning` | `color/warning` | COLOR |
-| `--warning-foreground` | `color/warning-foreground` | COLOR |
-| `--border` | `color/border` | COLOR |
-| `--input` | `color/input` | COLOR |
-| `--ring` | `color/ring` | COLOR |
-| `--brand-orange` | `color/brand-orange` | COLOR |
-| `--district-link` | `color/district-link` | COLOR |
-| `--sidebar-bg` | `color/sidebar-bg` | COLOR |
-| `--topbar-bg` | `color/topbar-bg` | COLOR |
-| `--sidebar-fg` | `color/sidebar-fg` | COLOR |
-| `--sidebar-hover` | `color/sidebar-hover` | COLOR |
-| `--sidebar-active` | `color/sidebar-active` | COLOR |
-| `--emphasis-surface` | `color/emphasis-surface` | COLOR |
-| `--emphasis-surface-neutral` | `color/emphasis-surface-neutral` | COLOR |
-| `--foreground-secondary` | `color/foreground-secondary` | COLOR |
-| `--foreground-tertiary` | `color/foreground-tertiary` | COLOR |
-| `--surface-page` | `color/surface-page` | COLOR |
-| `--surface-raised` | `color/surface-raised` | COLOR |
-| `--surface-inset` | `color/surface-inset` | COLOR |
-| `--surface-emphasis` | `color/surface-emphasis` | COLOR |
-| `--surface-emphasis-neutral` | `color/surface-emphasis-neutral` | COLOR |
-| `--border-default` | `color/border-default` | COLOR |
-| `--border-subtle` | `color/border-subtle` | COLOR |
+### Group: `semantic` (core shadcn tokens)
+All tokens from the main `:root` block that map to shadcn's semantic system:
+`background`, `foreground`, `card`, `cardForeground`, `popover`, `popoverForeground`, `primary`, `primaryForeground`, `secondary`, `secondaryForeground`, `muted`, `mutedForeground`, `accent`, `accentForeground`, `destructive`, `destructiveForeground`, `success`, `successForeground`, `warning`, `warningForeground`, `border`, `input`, `ring`
 
-### Spacing Variables
-| CSS Variable | Figma Variable Name | Type |
-|---|---|---|
-| `--topbar-height` | `spacing/topbar-height` | FLOAT (px) |
-| `--utility-bar-height` | `spacing/utility-bar-height` | FLOAT (px) |
-| `--sidebar-width` | `spacing/sidebar-width` | FLOAT (px) |
-| `--sidebar-width-collapsed` | `spacing/sidebar-width-collapsed` | FLOAT (px) |
-| `--content-width` | `spacing/content-width` | FLOAT (px) |
-| `--radius` | `spacing/radius` | FLOAT (px) |
+### Group: `brand`
+Brand-specific tokens: `orange`, `districtLink`
 
-### Typography Variables
-| CSS Variable | Figma Variable Name | Type |
-|---|---|---|
-| `--font-base` | `typography/font-base` | FLOAT (px) |
-| `--font-size-page-title` | `typography/size-page-title` | FLOAT (px) |
-| `--font-size-section-heading` | `typography/size-section-heading` | FLOAT (px) |
-| `--font-size-subsection-heading` | `typography/size-subsection-heading` | FLOAT (px) |
-| `--font-size-body` | `typography/size-body` | FLOAT (px) |
-| `--font-size-subsection-sm` | `typography/size-subsection-sm` | FLOAT (px) |
-| `--font-size-caption` | `typography/size-caption` | FLOAT (px) |
-| `--font-size-overline` | `typography/size-overline` | FLOAT (px) |
+### Group: `sidebar`
+Navigation tokens: `bg`, `topbarBg`, `fg`, `hover`, `active`
+
+### Group: `surface`
+Surface tier tokens: `page`, `raised`, `inset`, `emphasis`, `emphasisNeutral`
+
+### Group: `text`
+Text color tier tokens: `primary` (= foreground), `secondary`, `tertiary`
+
+### Group: `borderTier`
+Border tier tokens: `default`, `subtle`
+
+### Group: `emphasis`
+Emphasis surface tokens: `surface`, `surfaceNeutral`
+
+### Group: `spacing`
+Layout tokens: `topbarHeight` (56), `utilityBarHeight` (40), `sidebarWidth` (256), `sidebarWidthCollapsed` (64), `contentWidth` (900), `radius` (8)
+
+### Group: `typography`
+Font size tokens (computed px at base 16): `fontBase` (16), `sizePageTitle` (24), `sizeSectionHeading` (18), `sizeSubsectionHeading` (15), `sizeBody` (14), `sizeSubsectionSm` (13), `sizeCaption` (12), `sizeOverline` (11)
+
+### CSS Variable → Figma Name Mapping Reference
+
+The script should include a comment-level mapping table so the relationship is traceable:
+
+| CSS Variable | Figma Group/Name |
+|---|---|
+| `--background` | `semantic/background` |
+| `--foreground` | `semantic/foreground` |
+| `--brand-orange` | `brand/orange` |
+| `--surface-page` | `surface/page` |
+| `--foreground-secondary` | `text/secondary` |
+| `--border-default` | `borderTier/default` |
+| `--sidebar-bg` | `sidebar/bg` |
+| `--topbar-height` | `spacing/topbarHeight` |
+| `--font-size-page-title` | `typography/sizePageTitle` |
+| (etc.) | |
 
 ## Script Implementation
 
@@ -167,6 +150,9 @@ Parse HSL strings like `"210 40% 98%"` → `{ h: 210, s: 40, l: 98 }` → `#F5F7
 - Do NOT use any external dependencies beyond Node built-ins and `tsx` (already a dev dependency)
 - Do NOT modify `globals.css` or `design-tokens.ts`
 - Do NOT include the primitive `brandColors` or `slate` scale from `design-tokens.ts` — only semantic tokens matter for Figma variables
+- Do NOT use `collections`, `modes`, `variables` array format — this was tried and failed (see `_DEPRECATED` file)
+- Do NOT use `FLOAT` or `COLOR` as type strings — use DTCG `$type` values: `"color"` and `"number"`
+- Do NOT include HSL values in the output — Figma expects hex for colors and numeric for numbers
 - Do NOT generate dark mode values — single mode ("Light") only for now
 
 ## Verification
