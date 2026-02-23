@@ -1,3 +1,4 @@
+// DEPRECATED: Superseded by /dev/design-system — see SS45-01
 "use client";
 
 import Script from "next/script";
