@@ -113,7 +113,7 @@ export default function CardSetPreviewPage() {
   if (process.env.NODE_ENV !== 'development') {
     return (
       <div className="p-8">
-        <p className="text-muted-foreground">This page is only available in development mode.</p>
+        <p className="text-foreground-secondary">This page is only available in development mode.</p>
       </div>
     );
   }
@@ -121,7 +121,7 @@ export default function CardSetPreviewPage() {
   return (
     <div className="p-8 max-w-content">
       <h1 className="text-2xl font-bold tracking-[-0.01em]">Card Set Preview</h1>
-      <p className="text-muted-foreground mt-1 mb-6">Scenario 8 — Sacramento County EL programs</p>
+      <p className="text-foreground-secondary mt-1 mb-6">Scenario 8 — Sacramento County EL programs</p>
       <CardSetRenderer
         content={CONTENT}
         confidence={CONFIDENCE}

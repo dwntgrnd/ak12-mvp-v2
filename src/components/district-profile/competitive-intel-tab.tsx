@@ -24,13 +24,13 @@ function buildDetailContent(
             <p className="text-sm font-medium">
               {m.programName}{m.vendorName && ` (${m.vendorName})`}
             </p>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-foreground-secondary">
               {[m.subjectArea, m.gradeRange].filter(Boolean).join(' · ')}
               {(m.subjectArea || m.gradeRange) ? ' · ' : ''}
               {MENTION_TYPE_LABELS[m.mentionType]}
             </p>
             {m.sourceContext && (
-              <p className="text-xs text-muted-foreground mt-0.5">{m.sourceContext}</p>
+              <p className="text-xs text-foreground-secondary mt-0.5">{m.sourceContext}</p>
             )}
           </div>
         ))}
@@ -46,11 +46,11 @@ function buildDetailContent(
             <p className="text-sm font-medium">
               {c.vendorName}{c.productName && ` — ${c.productName}`}
             </p>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-foreground-secondary">
               {[c.subjectArea, c.gradeRange].filter(Boolean).join(' · ')}
             </p>
             {c.notes && (
-              <p className="text-xs text-muted-foreground mt-0.5">{c.notes}</p>
+              <p className="text-xs text-foreground-secondary mt-0.5">{c.notes}</p>
             )}
           </div>
         ))}

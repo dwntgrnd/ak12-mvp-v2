@@ -61,7 +61,7 @@ export function ResearchTabs({ districtId, yearData }: ResearchTabsProps) {
           <TabsTrigger
             key={tab.key}
             value={tab.key}
-            className="-mb-px gap-1.5 rounded-none border-b-2 border-transparent bg-transparent px-4 py-2 text-sm font-medium text-muted-foreground shadow-none transition-colors hover:text-foreground data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:font-semibold data-[state=active]:text-foreground data-[state=active]:shadow-none"
+            className="-mb-px gap-1.5 rounded-none border-b-2 border-transparent bg-transparent px-4 py-2 text-sm font-medium text-foreground-secondary shadow-none transition-colors hover:text-foreground data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:font-semibold data-[state=active]:text-foreground data-[state=active]:shadow-none"
           >
             <tab.icon className="h-3.5 w-3.5" />
             {tab.label}

@@ -27,7 +27,7 @@ export function LibraryRequiredDialog({ open, onOpenChange }: LibraryRequiredDia
           <AlertDialogTitle className="text-lg font-semibold tracking-[-0.01em] text-foreground">
             Product Library Required
           </AlertDialogTitle>
-          <AlertDialogDescription className="text-sm leading-[1.6] text-muted-foreground">
+          <AlertDialogDescription className="text-sm leading-[1.6] text-foreground-secondary">
             Playbook generation creates product-specific talking points, objection
             handling, and proof-of-fit evidence. Add at least one product to your
             Solutions Library to generate playbooks.

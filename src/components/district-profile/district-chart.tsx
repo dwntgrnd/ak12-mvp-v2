@@ -155,7 +155,7 @@ export function DistrictChart({ yearData }: DistrictChartProps) {
       </div>
 
       {dataGaps.length > 0 && (
-        <p className="mt-2 text-xs text-muted-foreground italic">
+        <p className="mt-2 text-xs text-foreground-secondary italic">
           Note: {dataGaps.join(' ')}
         </p>
       )}

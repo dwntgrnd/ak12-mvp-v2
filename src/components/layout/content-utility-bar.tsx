@@ -59,7 +59,7 @@ export function ContentUtilityBar() {
               <>
                 <BreadcrumbItem>
                   <BreadcrumbLink asChild>
-                    <Link href={parent.href} className="text-muted-foreground hover:text-foreground">
+                    <Link href={parent.href} className="text-foreground-secondary hover:text-foreground">
                       {parent.label}
                     </Link>
                   </BreadcrumbLink>

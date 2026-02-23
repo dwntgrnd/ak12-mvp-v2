@@ -250,7 +250,7 @@ export default function ContainerPreviewPage() {
   if (process.env.NODE_ENV !== 'development') {
     return (
       <div className="p-8">
-        <p className="text-muted-foreground">This page is only available in development mode.</p>
+        <p className="text-foreground-secondary">This page is only available in development mode.</p>
       </div>
     );
   }
@@ -260,7 +260,7 @@ export default function ContainerPreviewPage() {
       <h1 className="text-2xl font-bold tracking-[-0.01em] text-foreground mb-6">
         District Browser
       </h1>
-      <p className="mb-6 text-sm text-muted-foreground">
+      <p className="mb-6 text-sm text-foreground-secondary">
         Browse and filter districts across the Sacramento region
       </p>
       <DistrictListingsContainer

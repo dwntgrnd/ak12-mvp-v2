@@ -23,7 +23,7 @@ export function GoalsFundingTab({ intel }: GoalsFundingTabProps) {
             <p className="text-sm font-medium">
               {signal.name}{signal.amount && ` — ${signal.amount}`}
             </p>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-foreground-secondary">
               {signal.relevanceNote}{signal.expiration && ` · Expires ${signal.expiration}`}
             </p>
           </div>
@@ -40,19 +40,19 @@ export function GoalsFundingTab({ intel }: GoalsFundingTabProps) {
           <p className="text-sm font-semibold">
             {goal.goalNumber && `${goal.goalNumber}: `}{goal.title}
             {goal.academicYear && (
-              <span className="ml-2 text-xs font-normal text-muted-foreground">{goal.academicYear}</span>
+              <span className="ml-2 text-xs font-normal text-foreground-secondary">{goal.academicYear}</span>
             )}
           </p>
           {goal.actions?.map((action) => (
             <div key={action.actionId} className="ml-4 mt-1.5">
               <p className="text-sm">
-                {action.actionNumber && <span className="text-muted-foreground">{action.actionNumber}: </span>}
+                {action.actionNumber && <span className="text-foreground-secondary">{action.actionNumber}: </span>}
                 {action.title}
               </p>
               {action.descriptionSummary && (
-                <p className="text-xs text-muted-foreground mt-0.5">{action.descriptionSummary}</p>
+                <p className="text-xs text-foreground-secondary mt-0.5">{action.descriptionSummary}</p>
               )}
-              <div className="flex gap-3 mt-1 text-xs text-muted-foreground">
+              <div className="flex gap-3 mt-1 text-xs text-foreground-secondary">
                 {action.totalFunds && <span className="font-mono">{action.totalFunds}</span>}
                 {action.fundingSource && <span>{action.fundingSource}</span>}
                 {action.status && <span className="capitalize">{action.status.replace('_', ' ')}</span>}

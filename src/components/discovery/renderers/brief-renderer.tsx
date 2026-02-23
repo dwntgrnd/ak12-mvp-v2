@@ -39,9 +39,9 @@ export function BriefRenderer({ content, confidence, format, productAlignmentMap
   }
 
   return (
-    <div className="bg-white border border-border rounded-lg shadow-sm p-6">
+    <div className="bg-surface-raised border border-border rounded-lg shadow-sm p-6">
       {/* Format label — overline identity for both formats */}
-      <p className="text-overline font-[500] leading-[1.4] tracking-[0.05em] uppercase text-slate-400 mb-3">
+      <p className="text-overline font-medium leading-[1.4] tracking-[0.05em] uppercase text-foreground-tertiary mb-3">
         {format === 'intelligence_brief' ? 'READINESS ASSESSMENT' : 'MARKET INTELLIGENCE'}
       </p>
 
@@ -50,7 +50,7 @@ export function BriefRenderer({ content, confidence, format, productAlignmentMap
         <div className="mb-3 flex items-center gap-3">
           <a
             href={`/districts/${content.subjectDistrictId}`}
-            className="text-section-heading font-[600] leading-[1.3] tracking-[-0.01em] text-district-link hover:underline hover:decoration-district-link/60 underline-offset-2 transition-colors"
+            className="text-section-heading font-semibold leading-[1.3] tracking-[-0.01em] text-district-link hover:underline hover:decoration-district-link/60 underline-offset-2 transition-colors"
             onClick={(e) => {
               e.preventDefault();
               router.push(`/districts/${content.subjectDistrictId}`);
@@ -70,8 +70,8 @@ export function BriefRenderer({ content, confidence, format, productAlignmentMap
       )}
 
       {/* Lead insight — headline treatment, emphasis surface */}
-      <div className="bg-emphasis-surface rounded-md p-5">
-        <p className="text-lg font-[700] leading-[1.5] tracking-[-0.01em] text-foreground">
+      <div className="bg-surface-emphasis rounded-md p-5">
+        <p className="text-lg font-bold leading-[1.5] tracking-[-0.01em] text-foreground">
           {content.leadInsight}
         </p>
       </div>
@@ -120,15 +120,15 @@ export function BriefRenderer({ content, confidence, format, productAlignmentMap
 
               // Plain metric tile — inset surface treatment
               return (
-                <div key={i} className="bg-slate-50 rounded-md p-3">
-                  <p className="text-overline font-[500] leading-[1.4] tracking-[0.05em] uppercase text-slate-400">
+                <div key={i} className="bg-surface-inset rounded-md p-3">
+                  <p className="text-overline font-medium leading-[1.4] tracking-[0.05em] uppercase text-foreground-tertiary">
                     {signal.label}
                   </p>
-                  <p className="mt-1 text-body font-[600] leading-[1.6] text-foreground">
+                  <p className="mt-1 text-body font-semibold leading-[1.6] text-foreground">
                     {signal.value}
                   </p>
                   {signal.detail && (
-                    <p className="mt-0.5 text-caption font-[500] leading-[1.5] text-slate-500">
+                    <p className="mt-0.5 text-caption font-medium leading-[1.5] text-foreground-secondary">
                       {signal.detail}
                     </p>
                   )}
@@ -160,7 +160,7 @@ export function BriefRenderer({ content, confidence, format, productAlignmentMap
                   onClick={() => toggleSection(section.sectionId)}
                   aria-expanded={isOpen}
                   aria-controls={contentId}
-                  className="flex items-center gap-2 w-full text-left py-1.5 px-2 -mx-2 rounded-md hover:bg-slate-50 hover:text-primary transition-colors duration-150 group"
+                  className="flex items-center gap-2 w-full text-left py-1.5 px-2 -mx-2 rounded-md hover:bg-surface-inset hover:text-primary transition-colors duration-150 group"
                 >
                   <ChevronRight
                     size={18}
@@ -168,7 +168,7 @@ export function BriefRenderer({ content, confidence, format, productAlignmentMap
                       isOpen ? 'rotate-90' : 'rotate-0'
                     }`}
                   />
-                  <span className="text-subsection-heading font-[600] leading-[1.4] text-foreground group-hover:text-primary transition-colors duration-150">
+                  <span className="text-subsection-heading font-semibold leading-[1.4] text-foreground group-hover:text-primary transition-colors duration-150">
                     {section.heading}
                   </span>
                 </button>
@@ -190,7 +190,7 @@ export function BriefRenderer({ content, confidence, format, productAlignmentMap
                   }`}
                 >
                   <div className="overflow-hidden">
-                    <div className="bg-slate-50 rounded-md p-4 mt-3">
+                    <div className="bg-surface-inset rounded-md p-4 mt-3">
                       {isEmptySection && transparencyNote ? (
                         // Empty body with coverage gap — show only transparency note inside inset
                         <TransparencyNote
@@ -199,12 +199,12 @@ export function BriefRenderer({ content, confidence, format, productAlignmentMap
                         />
                       ) : (
                         <>
-                          <p className="text-body font-[400] leading-[1.6] text-foreground">
+                          <p className="text-body font-normal leading-[1.6] text-foreground">
                             {section.body}
                           </p>
                           {/* District profile nudge — single-entity briefs only */}
                           {content.subjectDistrictId && (
-                            <div className="mt-3 pt-3 border-t border-border/60">
+                            <div className="mt-3 pt-3 border-t border-border-subtle">
                               <button
                                 type="button"
                                 onClick={() => router.push(`/districts/${content.subjectDistrictId}`)}
@@ -232,7 +232,7 @@ export function BriefRenderer({ content, confidence, format, productAlignmentMap
           <button
             type="button"
             onClick={() => router.push(`/districts/${content.subjectDistrictId}`)}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-white text-primary border border-primary/30 font-medium text-sm rounded-md hover:border-primary/60 hover:shadow-sm transition-all duration-150"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-surface-raised text-primary border border-primary/30 font-medium text-sm rounded-md hover:border-primary/60 hover:shadow-sm transition-all duration-150"
           >
             Open full profile — {content.subjectDistrictName}
             <ArrowRight size={14} />
@@ -246,7 +246,7 @@ export function BriefRenderer({ content, confidence, format, productAlignmentMap
         if (linkedDistricts.length === 0) return null;
         return (
           <div className="border-t border-border mt-6 pt-5">
-            <p className="text-overline font-[500] leading-[1.4] tracking-[0.05em] uppercase text-slate-400 mb-3">
+            <p className="text-overline font-medium leading-[1.4] tracking-[0.05em] uppercase text-foreground-tertiary mb-3">
               Explore District Profiles
             </p>
             <div className="flex flex-wrap gap-2">
@@ -255,7 +255,7 @@ export function BriefRenderer({ content, confidence, format, productAlignmentMap
                   key={s.districtId}
                   type="button"
                   onClick={() => router.push(`/districts/${s.districtId}`)}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-primary/30 rounded-md text-sm font-medium text-primary hover:border-primary/60 hover:shadow-sm transition-all duration-150"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-surface-raised border border-primary/30 rounded-md text-sm font-medium text-primary hover:border-primary/60 hover:shadow-sm transition-all duration-150"
                 >
                   {s.label}
                   <ArrowRight size={13} />

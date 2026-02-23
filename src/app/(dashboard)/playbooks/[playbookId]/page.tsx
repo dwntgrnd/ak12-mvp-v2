@@ -350,7 +350,7 @@ export default function PlaybookDetailPage({
       <div className="p-6 space-y-4">
         <Link
           href="/playbooks"
-          className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors"
+          className="inline-flex items-center gap-1 text-sm text-foreground-secondary hover:text-foreground transition-colors"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to Playbooks
@@ -359,7 +359,7 @@ export default function PlaybookDetailPage({
           <h2 className="text-lg font-semibold text-foreground mb-2">
             {error || 'Playbook not found'}
           </h2>
-          <p className="text-muted-foreground mb-4">
+          <p className="text-foreground-secondary mb-4">
             This playbook may not exist yet. Generate one to get started.
           </p>
           {process.env.NODE_ENV === 'development' && (
@@ -396,7 +396,7 @@ export default function PlaybookDetailPage({
       {/* Back link */}
       <Link
         href="/playbooks"
-        className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors"
+        className="inline-flex items-center gap-1 text-sm text-foreground-secondary hover:text-foreground transition-colors"
       >
         <ArrowLeft className="h-4 w-4" />
         Back to Playbooks
@@ -410,7 +410,7 @@ export default function PlaybookDetailPage({
           </h1>
           <div className="flex items-center gap-3 flex-wrap">
             <OverallStatusBadge status={overallStatus} />
-            <span className="text-sm text-muted-foreground">
+            <span className="text-sm text-foreground-secondary">
               Generated {formatTimestamp(playbook.generatedAt)}
             </span>
           </div>

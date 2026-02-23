@@ -4,7 +4,7 @@ import type { ProductAlignment } from '@/services/types/discovery';
 const ALIGNMENT_STYLES: Record<ProductAlignment['level'], { bg: string; text: string; label: string }> = {
   strong:   { bg: 'bg-success/10',  text: 'text-success',       label: 'Strong alignment' },
   moderate: { bg: 'bg-warning/10',  text: 'text-warning',       label: 'Moderate alignment' },
-  limited:  { bg: 'bg-slate-100',   text: 'text-slate-600',     label: 'Limited alignment' },
+  limited:  { bg: 'bg-surface-emphasis-neutral',   text: 'text-foreground-secondary',     label: 'Limited alignment' },
 };
 
 interface ProductAlignmentBadgeProps {
@@ -23,7 +23,7 @@ export function ProductAlignmentBadge({ alignment }: ProductAlignmentBadgeProps)
         {style.label}
       </Badge>
       {alignment.primaryConnection && (
-        <span className="text-xs font-medium tracking-[0.025em] text-muted-foreground truncate max-w-[200px]">
+        <span className="text-xs font-medium tracking-[0.025em] text-foreground-secondary truncate max-w-[200px]">
           {alignment.primaryConnection}
         </span>
       )}

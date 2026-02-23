@@ -125,7 +125,7 @@ export function InlineEditableBlock({
           'whitespace-pre-wrap rounded-md px-3 py-2 text-foreground transition-colors',
           !disabled && 'cursor-text border border-transparent hover:border-border hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring',
           disabled && 'cursor-default',
-          !value && 'text-muted-foreground'
+          !value && 'text-foreground-secondary'
         )}
       >
         {value || placeholder}
@@ -134,7 +134,7 @@ export function InlineEditableBlock({
         <span
           className={cn(
             'absolute right-2 top-2 text-xs transition-opacity',
-            saveStatus === 'saving' && 'text-muted-foreground',
+            saveStatus === 'saving' && 'text-foreground-secondary',
             saveStatus === 'saved' && 'text-success'
           )}
         >

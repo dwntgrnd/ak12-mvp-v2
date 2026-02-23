@@ -103,7 +103,7 @@ export function RankedListRenderer({
       <h2 className="text-lg font-semibold leading-[1.3] tracking-[-0.01em] text-foreground">
         {title}
       </h2>
-      <p className="mt-1 text-xs font-medium leading-[1.5] tracking-[0.025em] text-muted-foreground">
+      <p className="mt-1 text-xs font-medium leading-[1.5] tracking-[0.025em] text-foreground-secondary">
         Ranked by: {rankingCriterion}
       </p>
     </>
@@ -111,8 +111,8 @@ export function RankedListRenderer({
 
   // Footer slot (synthesis)
   const footer = synthesis ? (
-    <div className="bg-slate-50 rounded-md p-4">
-      <p className="text-overline font-medium leading-[1.4] tracking-[0.05em] uppercase text-slate-400 mb-2">
+    <div className="bg-surface-inset rounded-md p-4">
+      <p className="text-overline font-medium leading-[1.4] tracking-[0.05em] uppercase text-foreground-tertiary mb-2">
         SYNTHESIS
       </p>
       <p className="text-sm leading-[1.6] text-foreground">{synthesis}</p>

@@ -9,7 +9,7 @@ export function SourceCitations({ sources }: SourceCitationsProps) {
 
   return (
     <div className="border-t border-border pt-3">
-      <p className="text-caption font-[500] leading-[1.5] tracking-[0.025em] text-muted-foreground">
+      <p className="text-caption font-medium leading-[1.5] tracking-[0.025em] text-foreground-secondary">
         Sources:{' '}
         {sources.map((source, i) => {
           const label = source.academicYear
@@ -24,7 +24,7 @@ export function SourceCitations({ sources }: SourceCitationsProps) {
                   href={source.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="underline decoration-muted-foreground/30 underline-offset-2 hover:decoration-muted-foreground transition-[text-decoration-color] duration-150"
+                  className="underline decoration-foreground-secondary/30 underline-offset-2 hover:decoration-foreground-secondary transition-[text-decoration-color] duration-150"
                 >
                   {label}
                 </a>

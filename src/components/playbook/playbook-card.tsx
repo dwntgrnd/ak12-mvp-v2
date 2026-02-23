@@ -92,12 +92,12 @@ export function PlaybookCard({ playbook }: PlaybookCardProps) {
       </div>
 
       {/* Products */}
-      <p className="text-sm text-muted-foreground mb-2">
+      <p className="text-sm text-foreground-secondary mb-2">
         {productsFormatted}
       </p>
 
       {/* Date */}
-      <p className="text-xs text-muted-foreground">
+      <p className="text-xs text-foreground-secondary">
         {dateFormatted}
       </p>
     </Link>

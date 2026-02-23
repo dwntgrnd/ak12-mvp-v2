@@ -48,7 +48,7 @@ export function ProductLensSelector({
         <button
           type="button"
           onClick={() => onProductChange(undefined)}
-          className="rounded-full p-1 text-muted-foreground hover:text-foreground hover:bg-slate-100 transition-colors"
+          className="rounded-full p-1 text-foreground-secondary hover:text-foreground hover:bg-surface-emphasis-neutral transition-colors"
           aria-label="Clear product lens"
         >
           <X className="w-3.5 h-3.5" />

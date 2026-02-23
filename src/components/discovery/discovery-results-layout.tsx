@@ -61,7 +61,7 @@ export function DiscoveryResultsLayout({
             <button
               type="button"
               onClick={() => onNewQuery(query)}
-              className="text-sm font-medium text-slate-600 hover:text-foreground transition-colors underline underline-offset-2"
+              className="text-sm font-medium text-foreground-secondary hover:text-foreground transition-colors underline underline-offset-2"
             >
               Try again
             </button>

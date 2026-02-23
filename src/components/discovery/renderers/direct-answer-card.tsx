@@ -14,26 +14,26 @@ export function DirectAnswerCard({ content, productRelevanceMap }: DirectAnswerC
   const router = useRouter();
 
   return (
-    <div className="bg-white border border-slate-200 rounded-lg shadow-sm p-5">
+    <div className="bg-surface-raised border border-border-default rounded-lg shadow-sm p-5">
       {/* Emphasis surface — value + unit centered */}
-      <div className="bg-[#E0F9FC] rounded-md p-5 text-center">
-        <span className="text-page-title font-[700] leading-[1.2] tracking-[-0.01em] text-foreground">
+      <div className="bg-surface-emphasis rounded-md p-5 text-center">
+        <span className="text-page-title font-bold leading-[1.2] tracking-[-0.01em] text-foreground">
           {content.value}
         </span>
         {content.valueUnit && (
-          <span className="ml-1.5 text-body font-[400] leading-[1.6] text-slate-500">
+          <span className="ml-1.5 text-body font-normal leading-[1.6] text-foreground-secondary">
             {content.valueUnit}
           </span>
         )}
       </div>
 
       {/* Context line — with linked district name when available */}
-      <p className="mt-3 text-body font-[400] leading-[1.6] text-slate-500 text-center">
+      <p className="mt-3 text-body font-normal leading-[1.6] text-foreground-secondary text-center">
         {content.districtId && content.districtName ? (
           <>
             <a
               href={`/districts/${content.districtId}`}
-              className="font-[500] text-primary hover:underline hover:decoration-primary/60 underline-offset-2 transition-colors"
+              className="font-medium text-primary hover:underline hover:decoration-primary/60 underline-offset-2 transition-colors"
               onClick={(e) => {
                 e.preventDefault();
                 router.push(`/districts/${content.districtId}`);
@@ -58,7 +58,7 @@ export function DirectAnswerCard({ content, productRelevanceMap }: DirectAnswerC
         <div className="mt-4 text-center">
           <a
             href={`/districts/${content.districtId}`}
-            className="text-caption font-[500] leading-[1.5] tracking-[0.025em] text-primary hover:underline hover:decoration-primary/60 underline-offset-2 transition-colors"
+            className="text-caption font-medium leading-[1.5] tracking-[0.025em] text-primary hover:underline hover:decoration-primary/60 underline-offset-2 transition-colors"
             onClick={(e) => {
               e.preventDefault();
               router.push(`/districts/${content.districtId}`);

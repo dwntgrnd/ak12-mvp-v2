@@ -53,34 +53,34 @@ export function DiscoveryLoadingState({ query }: DiscoveryLoadingStateProps) {
         {/* Status text with aria-live for screen reader announcements */}
         <p
           aria-live="polite"
-          className="text-xs font-medium text-slate-400 tracking-[0.025em] mb-4"
+          className="text-xs font-medium text-foreground-tertiary tracking-[0.025em] mb-4"
         >
           {STATUS_MESSAGES[statusIndex]}
         </p>
 
         {/* Lead insight skeleton — emphasis surface shape */}
         {showLeadSkeleton && (
-          <div className="bg-[#E0F9FC] rounded-md h-16 animate-pulse mb-6" />
+          <div className="bg-surface-emphasis rounded-md h-16 animate-pulse mb-6" />
         )}
 
         {/* Key signals skeleton — 2×2 grid */}
         {showSignalsSkeleton && (
           <div className="grid grid-cols-2 gap-x-6 gap-y-4 mb-6">
-            <div className="bg-slate-100 rounded-md h-12 animate-pulse" />
-            <div className="bg-slate-100 rounded-md h-12 animate-pulse" />
-            <div className="bg-slate-100 rounded-md h-12 animate-pulse" />
-            <div className="bg-slate-100 rounded-md h-12 animate-pulse" />
+            <div className="bg-surface-emphasis-neutral rounded-md h-12 animate-pulse" />
+            <div className="bg-surface-emphasis-neutral rounded-md h-12 animate-pulse" />
+            <div className="bg-surface-emphasis-neutral rounded-md h-12 animate-pulse" />
+            <div className="bg-surface-emphasis-neutral rounded-md h-12 animate-pulse" />
           </div>
         )}
 
         {/* Section 1 skeleton */}
         {showSection1Skeleton && (
-          <div className="bg-slate-50 rounded-md h-24 animate-pulse mb-3" />
+          <div className="bg-surface-inset rounded-md h-24 animate-pulse mb-3" />
         )}
 
         {/* Section 2 skeleton */}
         {showSection2Skeleton && (
-          <div className="bg-slate-50 rounded-md h-24 animate-pulse" />
+          <div className="bg-surface-inset rounded-md h-24 animate-pulse" />
         )}
       </div>
     </div>

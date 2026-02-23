@@ -18,7 +18,7 @@ interface MetricTileProps {
 const sentimentClasses = {
   positive: 'text-success',
   negative: 'text-destructive',
-  neutral: 'text-muted-foreground',
+  neutral: 'text-foreground-secondary',
 } as const;
 
 export function MetricTile({ label, value, trend, trendOptions, neutralTrend }: MetricTileProps) {
@@ -26,7 +26,7 @@ export function MetricTile({ label, value, trend, trendOptions, neutralTrend }: 
 
   return (
     <dl className="rounded-lg border bg-card p-4 shadow-sm">
-      <dt className="text-xs font-medium text-muted-foreground tracking-wide">{label}</dt>
+      <dt className="text-xs font-medium text-foreground-secondary tracking-wide">{label}</dt>
       <dd className="mt-1 flex items-baseline gap-1.5">
         <span className="text-2xl font-bold">{value}</span>
         {trendDisplay && (

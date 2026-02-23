@@ -132,7 +132,7 @@ export default function PlaybooksPage() {
   } else if (error) {
     content = (
       <div className="text-center py-16">
-        <p className="text-muted-foreground">Failed to load playbooks.</p>
+        <p className="text-foreground-secondary">Failed to load playbooks.</p>
         <Button
           variant="outline"
           className="mt-4"

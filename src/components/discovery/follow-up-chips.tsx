@@ -10,7 +10,7 @@ export function FollowUpChips({ chips, onChipClick }: FollowUpChipsProps) {
 
   return (
     <div>
-      <p className="text-sm font-[600] leading-[1.5] text-foreground mb-3">
+      <p className="text-sm font-semibold leading-[1.5] text-foreground mb-3">
         Explore further
       </p>
       <div className="flex flex-wrap gap-2">

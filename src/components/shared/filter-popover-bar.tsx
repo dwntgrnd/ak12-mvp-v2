@@ -94,7 +94,7 @@ export function FilterPopoverBar({
         {sortSlot}
 
         {/* Result count — right-aligned */}
-        <div className="ml-auto text-xs font-medium text-muted-foreground whitespace-nowrap">
+        <div className="ml-auto text-xs font-medium text-foreground-secondary whitespace-nowrap">
           {isFiltered && totalCount != null ? (
             <>
               <span className="text-foreground font-semibold">
@@ -119,13 +119,13 @@ export function FilterPopoverBar({
           {pills.map((pill) => (
             <span
               key={`${pill.filterId}-${pill.value}`}
-              className="inline-flex items-center gap-1 rounded-md bg-slate-100 px-2 py-0.5 text-xs font-medium text-foreground"
+              className="inline-flex items-center gap-1 rounded-md bg-surface-emphasis-neutral px-2 py-0.5 text-xs font-medium text-foreground"
             >
               {pill.label}
               <button
                 type="button"
                 onClick={() => removePill(pill)}
-                className="rounded-sm p-0.5 text-muted-foreground hover:text-foreground transition-colors"
+                className="rounded-sm p-0.5 text-foreground-secondary hover:text-foreground transition-colors"
                 aria-label={`Remove ${pill.label} filter`}
               >
                 <X className="h-3 w-3" />
@@ -136,7 +136,7 @@ export function FilterPopoverBar({
             <button
               type="button"
               onClick={onClearAll}
-              className="text-xs text-muted-foreground hover:text-foreground underline underline-offset-2 decoration-muted-foreground/30 hover:decoration-foreground transition-colors"
+              className="text-xs text-foreground-secondary hover:text-foreground underline underline-offset-2 decoration-foreground-secondary/30 hover:decoration-foreground transition-colors"
             >
               Clear all
             </button>
@@ -256,7 +256,7 @@ function BracketSelect({
                 'text-left text-sm px-3 py-1.5 rounded-md transition-colors',
                 isSelected
                   ? 'bg-primary/10 text-primary font-medium'
-                  : 'text-foreground hover:bg-slate-50',
+                  : 'text-foreground hover:bg-surface-inset',
               )}
             >
               {opt.label}

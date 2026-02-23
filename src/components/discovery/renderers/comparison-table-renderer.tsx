@@ -33,17 +33,17 @@ export function ComparisonTableRenderer({
     productRelevanceMap && entities.some((e) => e.districtId && productRelevanceMap[e.districtId]);
 
   return (
-    <div className="bg-white border border-border rounded-lg shadow-sm p-5">
+    <div className="bg-surface-raised border border-border rounded-lg shadow-sm p-5">
 
       {/* ── Header ── */}
-      <h2 className="text-section-heading font-[600] leading-[1.4] tracking-[-0.01em] text-foreground">
+      <h2 className="text-section-heading font-semibold leading-[1.4] tracking-[-0.01em] text-foreground">
         {title}
       </h2>
 
       {/* Context banner */}
       {contextBanner && (
-        <div className="bg-[#E0F9FC] rounded-md p-3 mt-4">
-          <p className="text-body font-[400] leading-[1.6] text-foreground">{contextBanner}</p>
+        <div className="bg-surface-emphasis rounded-md p-3 mt-4">
+          <p className="text-body font-normal leading-[1.6] text-foreground">{contextBanner}</p>
         </div>
       )}
 
@@ -51,7 +51,7 @@ export function ComparisonTableRenderer({
       <div className="hidden md:block mt-6 overflow-x-auto">
         <table className="w-full border-collapse">
           <thead>
-            <tr className="border-b-2 border-slate-200">
+            <tr className="border-b-2 border-border-default">
               {/* Empty corner cell — dimension label column */}
               <th className="w-[176px] pb-3 text-left" />
 
@@ -63,14 +63,14 @@ export function ComparisonTableRenderer({
                     scope="col"
                     className={cn(
                       'pb-3 text-left pl-6',
-                      entityIdx > 0 && 'border-l border-slate-100'
+                      entityIdx > 0 && 'border-l border-border-subtle'
                     )}
                   >
                     <div className="space-y-1">
                       {entity.districtId ? (
                         <a
                           href={`/districts/${entity.districtId}`}
-                          className="text-body font-[600] leading-[1.4] text-district-link underline decoration-district-link/30 underline-offset-2 hover:decoration-district-link transition-colors"
+                          className="text-body font-semibold leading-[1.4] text-district-link underline decoration-district-link/30 underline-offset-2 hover:decoration-district-link transition-colors"
                           onClick={(e) => {
                             e.preventDefault();
                             router.push(`/districts/${entity.districtId}`);
@@ -79,7 +79,7 @@ export function ComparisonTableRenderer({
                           {entity.name}
                         </a>
                       ) : (
-                        <span className="text-body font-[600] leading-[1.4] text-foreground">
+                        <span className="text-body font-semibold leading-[1.4] text-foreground">
                           {entity.name}
                         </span>
                       )}
@@ -101,8 +101,8 @@ export function ComparisonTableRenderer({
               <tr
                 key={dim.dimensionId}
                 className={cn(
-                  'group hover:bg-slate-50 transition-colors',
-                  dimIdx < dimensions.length - 1 && 'border-b border-slate-100'
+                  'group hover:bg-surface-inset transition-colors',
+                  dimIdx < dimensions.length - 1 && 'border-b border-border-subtle'
                 )}
               >
                 {/* Dimension label — overline tier */}
@@ -110,7 +110,7 @@ export function ComparisonTableRenderer({
                   scope="row"
                   className="py-3.5 pr-4 text-left align-top"
                 >
-                  <span className="text-overline font-[500] leading-[1.4] tracking-[0.05em] uppercase text-slate-400">
+                  <span className="text-overline font-medium leading-[1.4] tracking-[0.05em] uppercase text-foreground-tertiary">
                     {dim.label}
                   </span>
                 </th>
@@ -124,8 +124,8 @@ export function ComparisonTableRenderer({
                     <td
                       key={entity.entityId}
                       className={cn(
-                        'py-3.5 pl-6 text-body font-[400] leading-[1.6] text-foreground align-top',
-                        entityIdx > 0 && 'border-l border-slate-100'
+                        'py-3.5 pl-6 text-body font-normal leading-[1.6] text-foreground align-top',
+                        entityIdx > 0 && 'border-l border-border-subtle'
                       )}
                     >
                       {cell ? (
@@ -136,14 +136,14 @@ export function ComparisonTableRenderer({
                               <PopoverTrigger asChild>
                                 <button
                                   type="button"
-                                  className="text-overline text-slate-400 ml-1 cursor-help inline hover:text-slate-600 transition-colors"
+                                  className="text-overline text-foreground-tertiary ml-1 cursor-help inline hover:text-foreground-secondary transition-colors"
                                   aria-label={`Data coverage note for ${dim.label} — ${entity.name}`}
                                 >
                                   ◆
                                 </button>
                               </PopoverTrigger>
                               <PopoverContent className="max-w-[280px] p-3" align="start">
-                                <p className="text-caption font-[500] leading-[1.5] tracking-[0.025em] text-muted-foreground">
+                                <p className="text-caption font-medium leading-[1.5] tracking-[0.025em] text-foreground-secondary">
                                   {note}
                                 </p>
                               </PopoverContent>
@@ -151,7 +151,7 @@ export function ComparisonTableRenderer({
                           )}
                         </>
                       ) : (
-                        <span className="text-slate-300">—</span>
+                        <span className="text-foreground-tertiary">—</span>
                       )}
                     </td>
                   );
@@ -161,12 +161,12 @@ export function ComparisonTableRenderer({
 
             {/* Product Alignment row — separated by a heavier rule */}
             {hasAnyRelevance && (
-              <tr className="group hover:bg-slate-50 transition-colors border-t-2 border-slate-200">
+              <tr className="group hover:bg-surface-inset transition-colors border-t-2 border-border-default">
                 <th
                   scope="row"
                   className="py-3.5 pr-4 text-left align-top"
                 >
-                  <span className="text-overline font-[500] leading-[1.4] tracking-[0.05em] uppercase text-slate-400">
+                  <span className="text-overline font-medium leading-[1.4] tracking-[0.05em] uppercase text-foreground-tertiary">
                     Product Alignment
                   </span>
                 </th>
@@ -179,13 +179,13 @@ export function ComparisonTableRenderer({
                       key={entity.entityId}
                       className={cn(
                         'py-3.5 pl-6 align-top',
-                        entityIdx > 0 && 'border-l border-slate-100'
+                        entityIdx > 0 && 'border-l border-border-subtle'
                       )}
                     >
                       {relevance ? (
                         <ProductAlignmentBadge alignment={relevance} />
                       ) : (
-                        <span className="text-slate-300">—</span>
+                        <span className="text-foreground-tertiary">—</span>
                       )}
                     </td>
                   );
@@ -206,7 +206,7 @@ export function ComparisonTableRenderer({
           return (
             <div
               key={entity.entityId}
-              className="bg-slate-50 rounded-md p-4"
+              className="bg-surface-inset rounded-md p-4"
               role="listitem"
               aria-label={entity.name}
             >
@@ -214,7 +214,7 @@ export function ComparisonTableRenderer({
               {entity.districtId ? (
                 <a
                   href={`/districts/${entity.districtId}`}
-                  className="text-body font-[600] leading-[1.4] text-district-link underline decoration-district-link/30 underline-offset-2 hover:decoration-district-link transition-colors block"
+                  className="text-body font-semibold leading-[1.4] text-district-link underline decoration-district-link/30 underline-offset-2 hover:decoration-district-link transition-colors block"
                   onClick={(e) => {
                     e.preventDefault();
                     router.push(`/districts/${entity.districtId}`);
@@ -223,7 +223,7 @@ export function ComparisonTableRenderer({
                   {entity.name}
                 </a>
               ) : (
-                <p className="text-body font-[600] leading-[1.4] text-foreground">{entity.name}</p>
+                <p className="text-body font-semibold leading-[1.4] text-foreground">{entity.name}</p>
               )}
 
               {entity.overallConfidence >= 3 && entityNote?.transparencyNote && (
@@ -241,10 +241,10 @@ export function ComparisonTableRenderer({
 
                   return (
                     <div key={dim.dimensionId}>
-                      <p className="text-overline font-[500] leading-[1.4] tracking-[0.05em] uppercase text-slate-400">
+                      <p className="text-overline font-medium leading-[1.4] tracking-[0.05em] uppercase text-foreground-tertiary">
                         {dim.label}
                       </p>
-                      <p className="mt-0.5 text-body font-[400] leading-[1.6] text-foreground">
+                      <p className="mt-0.5 text-body font-normal leading-[1.6] text-foreground">
                         {cell?.value ?? '—'}
                       </p>
                       {note && cell && (
@@ -257,8 +257,8 @@ export function ComparisonTableRenderer({
 
               {/* Product relevance */}
               {relevance && (
-                <div className="mt-3 pt-3 border-t border-slate-200">
-                  <p className="text-overline font-[500] leading-[1.4] tracking-[0.05em] uppercase text-slate-400 mb-1.5">
+                <div className="mt-3 pt-3 border-t border-border-default">
+                  <p className="text-overline font-medium leading-[1.4] tracking-[0.05em] uppercase text-foreground-tertiary mb-1.5">
                     Product Alignment
                   </p>
                   <ProductAlignmentBadge alignment={relevance} />
@@ -271,11 +271,11 @@ export function ComparisonTableRenderer({
 
       {/* ── Synthesis ── */}
       {synthesis && (
-        <div className="mt-6 bg-[#E0F9FC] rounded-md p-4">
-          <p className="text-overline font-[500] leading-[1.4] tracking-[0.05em] uppercase text-slate-400 mb-2">
+        <div className="mt-6 bg-surface-emphasis rounded-md p-4">
+          <p className="text-overline font-medium leading-[1.4] tracking-[0.05em] uppercase text-foreground-tertiary mb-2">
             Synthesis
           </p>
-          <p className="text-body font-[400] leading-[1.6] text-foreground">{synthesis}</p>
+          <p className="text-body font-normal leading-[1.6] text-foreground">{synthesis}</p>
         </div>
       )}
     </div>

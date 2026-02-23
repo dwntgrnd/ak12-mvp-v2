@@ -27,7 +27,7 @@ export function DistrictResolvedCard({
         <p className="font-semibold text-foreground text-base">
           {district.districtName}
         </p>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-sm text-foreground-secondary">
           {district.location} &middot; {formatNumber(district.enrollment)} students
         </p>
       </div>
@@ -35,7 +35,7 @@ export function DistrictResolvedCard({
         variant="ghost"
         size="sm"
         onClick={onChangeClick}
-        className="text-xs text-muted-foreground shrink-0 h-auto py-1 px-2"
+        className="text-xs text-foreground-secondary shrink-0 h-auto py-1 px-2"
       >
         Change
       </Button>

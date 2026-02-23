@@ -100,7 +100,7 @@ export default function DistrictProfilePage({
     return (
       <div className="flex flex-col items-center justify-center gap-4 py-24">
         <h1 className="text-2xl font-bold">District not found</h1>
-        <p className="text-muted-foreground">The district you&apos;re looking for doesn&apos;t exist.</p>
+        <p className="text-foreground-secondary">The district you&apos;re looking for doesn&apos;t exist.</p>
         <Button asChild variant="outline">
           <Link href="/discovery">Back to Discovery</Link>
         </Button>
@@ -113,7 +113,7 @@ export default function DistrictProfilePage({
     return (
       <div className="flex flex-col items-center justify-center gap-4 py-24">
         <h1 className="text-2xl font-bold">Something went wrong</h1>
-        <p className="text-muted-foreground">{error}</p>
+        <p className="text-foreground-secondary">{error}</p>
         <Button onClick={fetchData} variant="outline">
           <RefreshCw className="mr-2 h-4 w-4" />
           Retry
@@ -180,7 +180,7 @@ export default function DistrictProfilePage({
                 Fit Score: {fitAssessment.fitScore}/10
               </span>
             </div>
-            <p className="mt-2 text-sm text-muted-foreground">
+            <p className="mt-2 text-sm text-foreground-secondary">
               {fitAssessment.fitRationale}
             </p>
           </div>

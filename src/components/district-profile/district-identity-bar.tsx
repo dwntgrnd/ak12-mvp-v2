@@ -22,7 +22,7 @@ interface DistrictIdentityBarProps {
 const trendSentimentClasses = {
   positive: 'text-success',
   negative: 'text-destructive',
-  neutral: 'text-muted-foreground',
+  neutral: 'text-foreground-secondary',
 } as const;
 
 export function DistrictIdentityBar({
@@ -193,7 +193,7 @@ export function DistrictIdentityBar({
             className={cn(
               'flex shrink-0 items-center gap-1.5 rounded-md px-2 py-1 text-sm font-medium transition-colors',
               'hover:bg-muted/50 disabled:opacity-50',
-              isSaved ? 'text-foreground' : 'text-muted-foreground'
+              isSaved ? 'text-foreground' : 'text-foreground-secondary'
             )}
           >
             <Bookmark className={cn('h-5 w-5', isSaved && 'fill-current')} />
@@ -233,7 +233,7 @@ export function DistrictIdentityBar({
 
       {/* Row B — Contact Info */}
       {hasContactInfo && (
-        <p className="mt-1.5 text-caption font-medium text-muted-foreground tracking-[0.025em]">
+        <p className="mt-1.5 text-caption font-medium text-foreground-secondary tracking-[0.025em]">
           {contactSegments.map((seg, i) => (
             <span key={seg.key}>
               {i > 0 && <span className="mx-1.5 select-none">·</span>}
@@ -257,7 +257,7 @@ export function DistrictIdentityBar({
               i < metrics.length - 1 && 'md:border-r md:border-border'
             )}
           >
-            <span className="text-overline font-medium uppercase tracking-[0.05em] text-muted-foreground/70">
+            <span className="text-overline font-medium uppercase tracking-[0.05em] text-foreground-tertiary">
               {metric.label}
             </span>
             <div className="flex items-baseline gap-1">

@@ -43,11 +43,11 @@ export function DiscoveryAutocompleteDropdown({
       id="discovery-autocomplete-listbox"
       role="listbox"
       aria-label="District suggestions"
-      className="absolute top-full left-0 right-0 mt-1 bg-white border border-slate-200 rounded-lg shadow-lg z-50 overflow-hidden max-h-[320px] overflow-y-auto text-left"
+      className="absolute top-full left-0 right-0 mt-1 bg-surface-raised border border-border-default rounded-lg shadow-lg z-50 overflow-hidden max-h-[320px] overflow-y-auto text-left"
     >
       {isLoading ? (
         <li
-          className="px-4 py-3 text-xs text-slate-400 italic"
+          className="px-4 py-3 text-xs text-foreground-tertiary italic"
           role="option"
           aria-selected={false}
         >
@@ -55,7 +55,7 @@ export function DiscoveryAutocompleteDropdown({
         </li>
       ) : matches.length === 0 ? (
         <li
-          className="px-4 py-3 text-xs text-slate-400"
+          className="px-4 py-3 text-xs text-foreground-tertiary"
           role="option"
           aria-selected={false}
         >
@@ -71,8 +71,8 @@ export function DiscoveryAutocompleteDropdown({
             aria-selected={index === highlightedIndex}
             className={cn(
               'px-4 py-2.5 cursor-pointer select-none',
-              index !== 0 && 'border-t border-slate-100',
-              index === highlightedIndex ? 'bg-slate-100' : 'hover:bg-slate-50',
+              index !== 0 && 'border-t border-border-subtle',
+              index === highlightedIndex ? 'bg-surface-emphasis-neutral' : 'hover:bg-surface-inset',
             )}
             onMouseEnter={() => onHighlight(index)}
             onMouseDown={(e) => {
@@ -84,7 +84,7 @@ export function DiscoveryAutocompleteDropdown({
             <span className="text-sm font-normal text-foreground">
               <HighlightedName name={entry.name} query={query} />
             </span>
-            <span className="text-xs text-slate-500 font-normal ml-1.5">
+            <span className="text-xs text-foreground-secondary font-normal ml-1.5">
               · {entry.county}, {entry.state}
             </span>
           </li>

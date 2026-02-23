@@ -32,7 +32,7 @@ interface DistrictListCardProps {
 const alignmentBadgeClass: Record<ProductAlignment['level'], string> = {
   strong: 'text-success bg-success/10',
   moderate: 'text-warning bg-warning/10',
-  limited: 'text-slate-500 bg-slate-100',
+  limited: 'text-foreground-secondary bg-surface-emphasis-neutral',
 };
 
 function getFitCategory(fitScore: number): FitCategoryKey {
@@ -126,15 +126,15 @@ export function DistrictListCard({
       className={cn(
         'cursor-pointer px-4 py-2.5 focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#FF7000]',
         variant === 'inset'
-          ? 'bg-slate-50 border border-border/50 rounded-md hover:bg-slate-100 hover:border-slate-300 transition-colors duration-150'
-          : 'bg-white border border-border rounded-lg shadow-sm hover:shadow-md hover:border-slate-300 transition-shadow duration-150',
+          ? 'bg-surface-inset border border-border-subtle rounded-md hover:bg-surface-inset hover:border-border-default transition-colors duration-150'
+          : 'bg-surface-raised border border-border rounded-lg shadow-sm hover:shadow-md hover:border-border-default transition-shadow duration-150',
       )}
     >
       {/* Row 1 — Identity + Actions */}
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2 min-w-0 flex-1">
           {rank != null && (
-            <div className="w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center shrink-0">
+            <div className="w-6 h-6 rounded-full bg-surface-emphasis-neutral flex items-center justify-center shrink-0">
               <span className="text-xs font-semibold text-foreground">
                 {rank}
               </span>
@@ -145,7 +145,7 @@ export function DistrictListCard({
               {name}
             </span>
             {metaParts.length > 0 && (
-              <span className="text-xs text-muted-foreground truncate">
+              <span className="text-xs text-foreground-secondary truncate">
                 <span className="mx-1 select-none">&middot;</span>
                 {metaParts.join(' \u00b7 ')}
               </span>
@@ -153,7 +153,7 @@ export function DistrictListCard({
             {showDocType && (
               <Badge
                 variant="outline"
-                className="text-[10px] px-1.5 py-0 h-4 font-medium text-muted-foreground border-border shrink-0"
+                className="text-[10px] px-1.5 py-0 h-4 font-medium text-foreground-secondary border-border shrink-0"
               >
                 {snapshot.docType}
               </Badge>
@@ -190,7 +190,7 @@ export function DistrictListCard({
               className={cn(
                 'flex items-center gap-1 rounded-md px-1.5 py-1 text-xs font-medium transition-colors',
                 'hover:bg-muted/50',
-                isSaved ? 'text-foreground' : 'text-muted-foreground',
+                isSaved ? 'text-foreground' : 'text-foreground-secondary',
               )}
             >
               <Bookmark
@@ -231,7 +231,7 @@ export function DistrictListCard({
       </div>
 
       {/* Row 2 — Self-contained metrics strip */}
-      <div className="mt-2 pt-2 border-t border-border/50">
+      <div className="mt-2 pt-2 border-t border-border-subtle">
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-start">
             {stripMetrics.map((m, i) => {
@@ -243,7 +243,7 @@ export function DistrictListCard({
                   key={i}
                   className={cn(
                     'flex flex-col',
-                    i > 0 && 'border-l border-border/40 pl-4',
+                    i > 0 && 'border-l border-border-subtle pl-4',
                     i < stripMetrics.length - 1 && 'pr-4',
                     isActive && 'bg-primary/5 rounded-sm px-3 -mx-1',
                   )}
@@ -253,7 +253,7 @@ export function DistrictListCard({
                       'text-[10px] font-medium uppercase tracking-wider leading-tight',
                       isActive
                         ? 'text-primary'
-                        : 'text-muted-foreground/70',
+                        : 'text-foreground-tertiary',
                     )}
                   >
                     {m.label}
@@ -278,7 +278,7 @@ export function DistrictListCard({
                 {productAlignment.level}
               </span>
               {productAlignment.primaryConnection && (
-                <span className="text-xs text-muted-foreground truncate max-w-[200px]">
+                <span className="text-xs text-foreground-secondary truncate max-w-[200px]">
                   {productAlignment.primaryConnection}
                 </span>
               )}

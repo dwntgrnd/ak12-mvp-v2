@@ -64,9 +64,9 @@ export function PlaybookContextCard({
             </div>
           </div>
           {isOpen ? (
-            <ChevronUp className="h-4 w-4 text-muted-foreground shrink-0" />
+            <ChevronUp className="h-4 w-4 text-foreground-secondary shrink-0" />
           ) : (
-            <ChevronDown className="h-4 w-4 text-muted-foreground shrink-0" />
+            <ChevronDown className="h-4 w-4 text-foreground-secondary shrink-0" />
           )}
         </CollapsibleTrigger>
 
@@ -76,40 +76,40 @@ export function PlaybookContextCard({
             <div>
               <h3 className="font-semibold text-foreground mb-2">District Overview</h3>
               {districtLocation && (
-                <p className="text-sm text-muted-foreground">{districtLocation}</p>
+                <p className="text-sm text-foreground-secondary">{districtLocation}</p>
               )}
               <div className="mt-2 grid grid-cols-2 gap-2 text-sm">
                 {districtEnrollment != null && (
                   <div>
-                    <span className="text-muted-foreground">Enrollment:</span>{' '}
+                    <span className="text-foreground-secondary">Enrollment:</span>{' '}
                     <span className="font-medium">{formatNumber(districtEnrollment)}</span>
                   </div>
                 )}
                 {elaProficiency != null && (
                   <div>
-                    <span className="text-muted-foreground">ELA:</span>{' '}
+                    <span className="text-foreground-secondary">ELA:</span>{' '}
                     <span className="font-medium">{elaProficiency}%</span>
                   </div>
                 )}
                 {mathProficiency != null && (
                   <div>
-                    <span className="text-muted-foreground">Math:</span>{' '}
+                    <span className="text-foreground-secondary">Math:</span>{' '}
                     <span className="font-medium">{mathProficiency}%</span>
                   </div>
                 )}
                 {frpmRate != null && (
                   <div>
-                    <span className="text-muted-foreground">FRPM:</span>{' '}
+                    <span className="text-foreground-secondary">FRPM:</span>{' '}
                     <span className="font-medium">{frpmRate}%</span>
                   </div>
                 )}
               </div>
               {fitScore != null && (
                 <div className="mt-2 text-sm">
-                  <span className="text-muted-foreground">Fit Score:</span>{' '}
+                  <span className="text-foreground-secondary">Fit Score:</span>{' '}
                   <span className="font-medium">{fitScore}/10</span>
                   {fitRationale && (
-                    <p className="mt-1 text-xs text-muted-foreground">{fitRationale}</p>
+                    <p className="mt-1 text-xs text-foreground-secondary">{fitRationale}</p>
                   )}
                 </div>
               )}
@@ -121,17 +121,17 @@ export function PlaybookContextCard({
                 <div key={product.productId}>
                   {index > 0 && <div className="border-t border-border mb-4" />}
                   <h4 className="font-medium text-foreground">{product.name}</h4>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-sm text-foreground-secondary">
                     {product.subjectArea} &middot;{' '}
                     {formatGradeRange(product.gradeRange.gradeFrom, product.gradeRange.gradeTo)}
                   </p>
                   {product.description && (
-                    <p className={cn('text-sm text-muted-foreground mt-1 line-clamp-3')}>
+                    <p className={cn('text-sm text-foreground-secondary mt-1 line-clamp-3')}>
                       {product.description}
                     </p>
                   )}
                   {product.pmContact && (
-                    <p className="text-sm text-muted-foreground mt-1">
+                    <p className="text-sm text-foreground-secondary mt-1">
                       PM: {product.pmContact.name} &middot;{' '}
                       <a
                         href={`mailto:${product.pmContact.email}`}

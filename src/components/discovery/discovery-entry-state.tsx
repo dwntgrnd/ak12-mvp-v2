@@ -21,7 +21,7 @@ export function DiscoveryEntryState({
         </h1>
 
         {/* Subtitle */}
-        <p className="mt-2 text-sm font-normal text-muted-foreground">
+        <p className="mt-2 text-sm font-normal text-foreground-secondary">
           Find districts, explore market intelligence, or ask a question.
         </p>
 
@@ -35,7 +35,7 @@ export function DiscoveryEntryState({
         </div>
 
         {/* Helper text */}
-        <p className="mt-3 text-xs font-medium text-muted-foreground/70 max-w-[480px] mx-auto">
+        <p className="mt-3 text-xs font-medium text-foreground-tertiary max-w-[480px] mx-auto">
           Search by district name for direct navigation, or ask a natural language question to
           explore trends, compare districts, and surface sales intelligence.
         </p>

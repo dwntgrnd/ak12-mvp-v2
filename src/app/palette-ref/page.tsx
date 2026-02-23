@@ -225,7 +225,7 @@ function SurfaceDemo() {
           <div key={label} className="text-center">
             <div className="text-[11px] font-mono text-gray-400 mb-2">{label}</div>
             <div className="rounded-xl p-4" style={{ backgroundColor: "#F8FAFC" }}>
-              <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-4">
+              <div className="bg-surface-raised rounded-lg border border-border-default shadow-sm p-4">
                 <div className="rounded-md p-3" style={{ backgroundColor: bg }}>
                   <div className="text-xs text-gray-700 leading-relaxed">
                     LAUSD is actively evaluating K-8 math materials with $12.5M allocated.
@@ -238,7 +238,7 @@ function SurfaceDemo() {
       </div>
       <div className="rounded-xl p-6" style={{ backgroundColor: "#F8FAFC" }}>
         <div className="text-[11px] font-mono text-gray-400 mb-3">PAGE SURFACE — slate-50 · #F8FAFC</div>
-        <div className="bg-white rounded-lg border border-gray-200 p-5 shadow-sm">
+        <div className="bg-surface-raised rounded-lg border border-border-default p-5 shadow-sm">
           <div className="text-[11px] font-mono text-gray-400 mb-3">CARD SURFACE — white · #FFFFFF</div>
           <div className="rounded-md p-4" style={{ backgroundColor: "#E0F9FC" }}>
             <div className="text-[11px] font-mono text-gray-400 mb-1">EMPHASIS SURFACE — background tint only, no border</div>
@@ -260,7 +260,7 @@ function TypeScaleDemo() {
   return (
     <div className="mb-8">
       <h3 className="text-base font-semibold text-gray-900 mb-4">Typography Hierarchy</h3>
-      <div className="space-y-4 bg-white rounded-lg border border-gray-200 p-6">
+      <div className="space-y-4 bg-surface-raised rounded-lg border border-border-default p-6">
         {[
           { label: "Page Title — 24/700", style: { fontSize: "24px", fontWeight: 700, lineHeight: 1.2, letterSpacing: "-0.01em", color: "#172642" }, text: "Los Angeles Unified" },
           { label: "Section — 18/600", style: { fontSize: "18px", fontWeight: 600, lineHeight: 1.3, letterSpacing: "-0.01em", color: "#172642" }, text: "Goals & Funding" },
@@ -286,7 +286,7 @@ function BriefAnatomyDemo() {
       <h3 className="text-base font-semibold text-gray-900 mb-1">Research Brief Anatomy — Full Example</h3>
       <p className="text-xs text-gray-500 mb-4">No decorative borders. Hierarchy through background color, typography weight, and spacing.</p>
       <div className="rounded-xl p-6" style={{ backgroundColor: "#F8FAFC" }}>
-        <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-5">
+        <div className="bg-surface-raised rounded-lg border border-border-default shadow-sm p-5">
           <div className="rounded-md p-4" style={{ backgroundColor: "#E0F9FC" }}>
             <p style={{ fontSize: "14px", fontWeight: 400, lineHeight: 1.6, color: "#172642" }}>
               LAUSD is actively evaluating K-8 math materials aligned to the CA Math Framework, with $12.5M allocated for 2024-25.
@@ -341,7 +341,7 @@ function NegativeStateDemo() {
       <h3 className="text-base font-semibold text-gray-900 mb-1">Negative Signal Brief — &quot;Not Now&quot; State</h3>
       <p className="text-xs text-gray-500 mb-4">Honest intelligence is still valuable. Different emphasis surface for neutral/negative signals.</p>
       <div className="rounded-xl p-6" style={{ backgroundColor: "#F8FAFC" }}>
-        <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-5">
+        <div className="bg-surface-raised rounded-lg border border-border-default shadow-sm p-5">
           <div className="rounded-md p-4" style={{ backgroundColor: "#F1F5F9" }}>
             <p style={{ fontSize: "14px", fontWeight: 400, lineHeight: 1.6, color: "#334155" }}>
               This district&apos;s current LCAP priorities focus on social-emotional learning and attendance recovery. No active curriculum evaluation is signaled for 2024-25.
@@ -376,7 +376,7 @@ function ButtonDemo() {
   return (
     <div className="mb-8">
       <h3 className="text-base font-semibold text-gray-900 mb-4">Button Tiers</h3>
-      <div className="bg-white rounded-lg border border-gray-200 p-6 flex items-center gap-4">
+      <div className="bg-surface-raised rounded-lg border border-border-default p-6 flex items-center gap-4">
         <button className="px-4 py-2 rounded-md text-sm font-semibold text-white" style={{ backgroundColor: "#F08632" }}>Generate Playbook</button>
         <button className="px-4 py-2 rounded-md text-sm font-medium border" style={{ borderColor: "#E2E8F0", color: "#172642", backgroundColor: "#FFFFFF" }}>Save District</button>
         <button className="px-4 py-2 rounded-md text-sm font-medium" style={{ color: "#64748B" }}>Find Similar</button>
@@ -397,7 +397,7 @@ function MetricTileDemo() {
             { label: "Math Proficiency", value: "32.8%", delta: "+2.3%", color: "#00DE9C", up: true },
             { label: "FRPM Eligible", value: "80.3%", delta: "—", color: "#64748B", up: null },
           ].map(({ label, value, delta, color, up }) => (
-            <div key={label} className="bg-white rounded-lg border border-gray-200 shadow-sm p-4">
+            <div key={label} className="bg-surface-raised rounded-lg border border-border-default shadow-sm p-4">
               <div style={{ fontSize: "12px", fontWeight: 500, color: "#64748B", letterSpacing: "0.025em" }}>{label}</div>
               <div className="mt-1" style={{ fontSize: "24px", fontWeight: 700, color: "#172642", lineHeight: 1.2 }}>{value}</div>
               <div className="mt-1 flex items-center gap-1">
@@ -429,7 +429,7 @@ function InteractiveCardDemo() {
             { name: "Los Angeles Unified", meta: "Los Angeles County · 420,370 students · K-12", badge: "Strong Fit", badgeBg: "#ECFDF6", dot: "#00DE9C", text: "#009466" },
             { name: "San Diego Unified", meta: "San Diego County · 121,185 students · K-12", badge: "Moderate Fit", badgeBg: "#FFFAEB", dot: "#FFC205", text: "#B58603" },
           ].map(({ name, meta, badge, badgeBg, dot, text }) => (
-            <div key={name} className="bg-white rounded-lg border border-gray-200 shadow-sm p-4 cursor-pointer">
+            <div key={name} className="bg-surface-raised rounded-lg border border-border-default shadow-sm p-4 cursor-pointer">
               <div className="flex items-start justify-between">
                 <div>
                   <div style={{ fontSize: "15px", fontWeight: 600, color: "#172642" }}>{name}</div>
@@ -454,7 +454,7 @@ function TabBarDemo() {
   return (
     <div className="mb-8">
       <h3 className="text-base font-semibold text-gray-900 mb-4">Tab Bar</h3>
-      <div className="bg-white rounded-lg border border-gray-200 p-6">
+      <div className="bg-surface-raised rounded-lg border border-border-default p-6">
         <div className="flex gap-6" style={{ borderBottom: "1px solid #E2E8F0" }}>
           {tabs.map((tab, i) => (
             <button
@@ -499,7 +499,7 @@ export default function PaletteReferencePage() {
           <div className="flex gap-6 mt-4">
             {[{ label: "White", hex: surfaces.white }, { label: "Brand Warm White", hex: surfaces.warmWhite }].map(({ label, hex }) => (
               <div key={label} className="flex items-center gap-3">
-                <div className="w-14 h-14 rounded-lg border border-gray-200" style={{ backgroundColor: hex }}></div>
+                <div className="w-14 h-14 rounded-lg border border-border-default" style={{ backgroundColor: hex }}></div>
                 <div>
                   <div className="text-[11px] font-mono font-semibold text-gray-700">{label}</div>
                   <div className="text-[10px] font-mono text-gray-400">{hex}</div>
@@ -509,7 +509,7 @@ export default function PaletteReferencePage() {
           </div>
         </div>
 
-        <hr className="my-10 border-gray-200" />
+        <hr className="my-10 border-border-default" />
 
         <h2 className="text-lg font-semibold text-gray-900 mb-6">Component Standards</h2>
         <TypeScaleDemo />

@@ -40,8 +40,8 @@ function StatusIndicator({
   switch (status) {
     case 'pending':
       return (
-        <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
-          <span className="inline-block h-2 w-2 rounded-full bg-muted-foreground" />
+        <span className="flex items-center gap-1.5 text-sm text-foreground-secondary">
+          <span className="inline-block h-2 w-2 rounded-full bg-foreground-secondary" />
           Pending
         </span>
       );
@@ -174,7 +174,7 @@ export function PlaybookSection({
 
       {/* Metadata footer */}
       {status === 'complete' && (
-        <div className="text-sm text-muted-foreground mt-6 pt-4 border-t border-border">
+        <div className="text-sm text-foreground-secondary mt-6 pt-4 border-t border-border">
           {isEdited && lastEditedAt
             ? `Edited ${formatDate(lastEditedAt)}`
             : generatedAt

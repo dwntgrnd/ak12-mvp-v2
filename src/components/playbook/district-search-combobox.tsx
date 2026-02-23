@@ -176,7 +176,7 @@ export function DistrictSearchCombobox({
                   <span className="font-semibold text-sm">
                     {district.districtName}
                   </span>
-                  <span className="text-xs text-muted-foreground">
+                  <span className="text-xs text-foreground-secondary">
                     {district.location} &middot;{' '}
                     {formatNumber(district.enrollment)} students
                   </span>
@@ -188,7 +188,7 @@ export function DistrictSearchCombobox({
 
         {/* Pre-search hint */}
         {!isLoading && !error && !hasSearched && query.length > 0 && query.length < 2 && (
-          <div className="py-6 text-center text-sm text-muted-foreground">
+          <div className="py-6 text-center text-sm text-foreground-secondary">
             Type at least 2 characters to search
           </div>
         )}

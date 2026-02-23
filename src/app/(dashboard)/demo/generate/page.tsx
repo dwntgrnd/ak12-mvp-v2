@@ -23,7 +23,7 @@ export default function GenerateDemoPage() {
   if (process.env.NODE_ENV !== 'development') {
     return (
       <div className="p-8">
-        <p className="text-muted-foreground">This page is only available in development mode.</p>
+        <p className="text-foreground-secondary">This page is only available in development mode.</p>
       </div>
     );
   }
@@ -32,7 +32,7 @@ export default function GenerateDemoPage() {
     <div className="p-8 space-y-6">
       <div>
         <h1 className="text-2xl font-bold">Generate Playbook — Demo Scenarios</h1>
-        <p className="text-muted-foreground mt-1">
+        <p className="text-foreground-secondary mt-1">
           Test the generation trigger from different entry points.
         </p>
       </div>
@@ -79,7 +79,7 @@ export default function GenerateDemoPage() {
       {/* District Listing Previews */}
       <div className="mt-8">
         <h2 className="text-lg font-semibold">District Listing Previews</h2>
-        <p className="text-muted-foreground mt-1">
+        <p className="text-foreground-secondary mt-1">
           Preview district card rendering across listing formats.
         </p>
         <div className="flex flex-col gap-3 max-w-md mt-3">

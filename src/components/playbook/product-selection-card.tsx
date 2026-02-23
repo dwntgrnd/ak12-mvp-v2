@@ -60,7 +60,7 @@ export function ProductSelectionCard({
       <Badge variant="secondary" className="shrink-0">
         {product.subjectArea}
       </Badge>
-      <span className="text-sm text-muted-foreground shrink-0 whitespace-nowrap">
+      <span className="text-sm text-foreground-secondary shrink-0 whitespace-nowrap">
         {gradeLabel}
       </span>
     </div>

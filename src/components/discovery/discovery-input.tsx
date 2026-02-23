@@ -303,7 +303,7 @@ export function DiscoveryInput({
         className={cn(
           'absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none z-10 transition-colors duration-200',
           variant === 'full' ? 'w-4.5 h-4.5' : 'w-4 h-4',
-          isFocused ? 'text-primary' : 'text-slate-400',
+          isFocused ? 'text-primary' : 'text-foreground-tertiary',
         )}
         aria-hidden="true"
       />
@@ -331,7 +331,7 @@ export function DiscoveryInput({
         onBlur={handleBlur}
         onKeyDown={handleKeyDown}
         className={cn(
-          'w-full bg-white border text-sm text-foreground outline-none transition-[border-color,box-shadow] duration-200',
+          'w-full bg-surface-raised border text-sm text-foreground outline-none transition-[border-color,box-shadow] duration-200',
           variant === 'full'
             ? cn('h-14 rounded-xl pl-11', value.length > 0 ? 'pr-14' : 'pr-5')
             : cn('h-10 rounded-lg pl-10', value.length > 0 ? 'pr-9' : 'pr-4'),
@@ -376,7 +376,7 @@ export function DiscoveryInput({
           type="button"
           aria-label="Clear search"
           onClick={handleClear}
-          className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors z-10"
+          className="absolute right-3 top-1/2 -translate-y-1/2 text-foreground-tertiary hover:text-foreground-secondary transition-colors z-10"
         >
           <X className="w-4 h-4" />
         </button>
@@ -388,7 +388,7 @@ export function DiscoveryInput({
           aria-hidden="true"
           className="absolute left-11 top-1/2 -translate-y-1/2 pointer-events-none select-none overflow-hidden whitespace-nowrap max-w-[calc(100%-3.5rem)]"
         >
-          <span className="text-sm text-slate-400 font-normal">{displayText}</span>
+          <span className="text-sm text-foreground-tertiary font-normal">{displayText}</span>
           {showCursor && (
             <span className="text-sm text-primary font-normal animate-blink">|</span>
           )}

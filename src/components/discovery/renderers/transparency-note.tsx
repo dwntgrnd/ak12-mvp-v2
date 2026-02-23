@@ -10,7 +10,7 @@ export function TransparencyNote({ note }: TransparencyNoteProps) {
 
   return (
     <p
-      className="mt-1.5 text-caption font-[500] leading-[1.5] tracking-[0.025em] text-slate-400 italic"
+      className="mt-1.5 text-caption font-medium leading-[1.5] tracking-[0.025em] text-foreground-tertiary italic"
       aria-label="Data coverage note"
     >
       ◆ {note}

@@ -29,7 +29,7 @@ export function ResearchBrief({
   return (
     <div>
       {/* Lead Insight — emphasis surface, no border */}
-      <div className="bg-emphasis-surface rounded-md p-4">
+      <div className="bg-surface-emphasis rounded-md p-4">
         <p className="text-sm leading-relaxed text-foreground">{leadInsight}</p>
       </div>
 
@@ -38,12 +38,12 @@ export function ResearchBrief({
         <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
           {keySignals.map((signal, i) => (
             <div key={i}>
-              <p className="text-overline font-medium uppercase tracking-[0.05em] text-muted-foreground">
+              <p className="text-overline font-medium uppercase tracking-[0.05em] text-foreground-secondary">
                 {signal.label}
               </p>
               <p className="mt-1 text-sm font-semibold text-foreground">{signal.value}</p>
               {signal.detail && (
-                <p className="mt-0.5 text-xs text-muted-foreground">{signal.detail}</p>
+                <p className="mt-0.5 text-xs text-foreground-secondary">{signal.detail}</p>
               )}
             </div>
           ))}
@@ -52,7 +52,7 @@ export function ResearchBrief({
 
       {/* Additional Content — inset surface */}
       {additionalContent && (
-        <div className="mt-6 bg-slate-50 rounded-md p-4">{additionalContent}</div>
+        <div className="mt-6 bg-surface-inset rounded-md p-4">{additionalContent}</div>
       )}
 
       {/* Collapsible Detail */}
@@ -63,7 +63,7 @@ export function ResearchBrief({
               <button
                 className={cn(
                   'flex w-full items-center gap-1.5 py-1.5 px-2 -mx-2 rounded-md',
-                  'transition-colors hover:bg-slate-50',
+                  'transition-colors hover:bg-surface-inset',
                   'text-foreground hover:text-primary',
                 )}
               >
@@ -77,7 +77,7 @@ export function ResearchBrief({
               </button>
             </CollapsibleTrigger>
             <CollapsibleContent>
-              <div className="bg-slate-50 rounded-md p-4 mt-3">{detailContent}</div>
+              <div className="bg-surface-inset rounded-md p-4 mt-3">{detailContent}</div>
             </CollapsibleContent>
           </Collapsible>
         </div>

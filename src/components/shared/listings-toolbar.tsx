@@ -116,7 +116,7 @@ export function ListingsToolbar({
       >
         {/* Search input */}
         <div className="relative w-full md:w-60">
-          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground-secondary pointer-events-none" />
           <Input
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
@@ -128,7 +128,7 @@ export function ListingsToolbar({
             <button
               type="button"
               onClick={() => onSearchChange('')}
-              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-foreground-secondary hover:text-foreground transition-colors"
               aria-label="Clear search"
             >
               <X className="h-4 w-4" />
@@ -169,7 +169,7 @@ export function ListingsToolbar({
               className="w-full md:w-48"
               aria-label="Sort districts"
             >
-              <SlidersHorizontal className="h-3.5 w-3.5 mr-1.5 text-muted-foreground shrink-0" />
+              <SlidersHorizontal className="h-3.5 w-3.5 mr-1.5 text-foreground-secondary shrink-0" />
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -203,13 +203,13 @@ export function ListingsToolbar({
           {activeFilters.map((af) => (
             <span
               key={af.filterId}
-              className="inline-flex items-center gap-1 rounded-md bg-slate-100 px-2 py-0.5 text-xs font-medium text-foreground"
+              className="inline-flex items-center gap-1 rounded-md bg-surface-emphasis-neutral px-2 py-0.5 text-xs font-medium text-foreground"
             >
               {af.optionLabel}
               <button
                 type="button"
                 onClick={() => onFilterChange(af.filterId, undefined)}
-                className="ml-0.5 rounded-sm hover:bg-slate-200 p-0.5 transition-colors"
+                className="ml-0.5 rounded-sm hover:bg-surface-emphasis-neutral p-0.5 transition-colors"
                 aria-label={`Remove ${af.filterLabel} filter`}
               >
                 <X className="h-3 w-3" />
@@ -221,7 +221,7 @@ export function ListingsToolbar({
             <button
               type="button"
               onClick={handleClearAll}
-              className="text-xs font-medium text-muted-foreground hover:text-foreground transition-colors underline underline-offset-2 decoration-muted-foreground/30 hover:decoration-foreground ml-1"
+              className="text-xs font-medium text-foreground-secondary hover:text-foreground transition-colors underline underline-offset-2 decoration-foreground-secondary/30 hover:decoration-foreground ml-1"
             >
               Clear all
             </button>

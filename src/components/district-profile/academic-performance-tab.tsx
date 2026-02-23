@@ -13,9 +13,9 @@ function proficiencyColor(rate: number): string {
 }
 
 function changeIndicator(current: number, prior?: number): { text: string; className: string } {
-  if (prior === undefined) return { text: '—', className: 'text-muted-foreground' };
+  if (prior === undefined) return { text: '—', className: 'text-foreground-secondary' };
   const delta = current - prior;
-  if (Math.abs(delta) < 0.05) return { text: '—', className: 'text-muted-foreground' };
+  if (Math.abs(delta) < 0.05) return { text: '—', className: 'text-foreground-secondary' };
   const sign = delta > 0 ? '↑ +' : '↓ ';
   const cls = delta > 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-destructive';
   return { text: `${sign}${Math.abs(delta).toFixed(1)}`, className: cls };
@@ -46,7 +46,7 @@ function buildDetailContent(
                 <span className="text-sm">{b.subject}</span>
                 <span className="flex items-baseline gap-3 text-sm tabular-nums">
                   {b.priorYearRate !== undefined && (
-                    <span className="text-xs text-muted-foreground">{b.priorYearRate.toFixed(1)}%</span>
+                    <span className="text-xs text-foreground-secondary">{b.priorYearRate.toFixed(1)}%</span>
                   )}
                   <span className={cn('font-medium', proficiencyColor(b.proficiencyRate))}>
                     {b.proficiencyRate.toFixed(1)}%
@@ -68,7 +68,7 @@ function buildDetailContent(
             <div key={i} className="flex items-baseline justify-between py-1">
               <span className="text-sm">
                 {g.subgroup}
-                <span className="text-xs text-muted-foreground"> · {g.subject}</span>
+                <span className="text-xs text-foreground-secondary"> · {g.subject}</span>
               </span>
               <span className="flex items-baseline gap-2 text-sm tabular-nums">
                 <span className={cn('font-medium', proficiencyColor(g.proficiencyRate))}>

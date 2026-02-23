@@ -43,7 +43,7 @@ export function ColumnHeaderBar({
 
   return (
     <div
-      className="flex items-center bg-slate-50 border-y border-border py-1.5 px-4"
+      className="flex items-center bg-surface-inset border-y border-border py-1.5 px-4"
       role="row"
       aria-label="Column headers"
     >
@@ -56,7 +56,7 @@ export function ColumnHeaderBar({
             return (
               <div
                 key={col.key}
-                className="text-overline text-muted-foreground shrink-0 w-8"
+                className="text-overline text-foreground-secondary shrink-0 w-8"
                 role="columnheader"
                 aria-sort="none"
               >
@@ -74,7 +74,7 @@ export function ColumnHeaderBar({
                 'text-overline flex items-center gap-0.5 transition-colors duration-150',
                 'hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring rounded-sm',
                 'flex-1 min-w-0',
-                isActive ? 'text-foreground' : 'text-muted-foreground',
+                isActive ? 'text-foreground' : 'text-foreground-secondary',
               )}
               role="columnheader"
               aria-sort={getAriaSortValue(col.key, activeSort)}
@@ -105,7 +105,7 @@ export function ColumnHeaderBar({
               'text-overline flex items-center gap-0.5 transition-colors duration-150 shrink-0',
               'hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring rounded-sm',
               widthClass,
-              isActive ? 'text-foreground' : 'text-muted-foreground',
+              isActive ? 'text-foreground' : 'text-foreground-secondary',
             )}
             role="columnheader"
             aria-sort={getAriaSortValue(col.key, activeSort)}

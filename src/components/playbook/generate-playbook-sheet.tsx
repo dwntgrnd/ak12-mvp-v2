@@ -320,7 +320,7 @@ export function GeneratePlaybookSheet({
         <div ref={contentRef} className="flex-1 overflow-y-auto px-6 pb-4">
           {/* Section A: Products */}
           <div>
-            <p className="text-xs uppercase tracking-wider text-muted-foreground font-medium mb-2">
+            <p className="text-xs uppercase tracking-wider text-foreground-secondary font-medium mb-2">
               Products
             </p>
 
@@ -345,7 +345,7 @@ export function GeneratePlaybookSheet({
 
             {!productsLoading && !productsError && products.length === 0 && (
               <div className="text-center py-8 space-y-3">
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-foreground-secondary">
                   No products available. Add products to your Solutions Library to generate playbooks.
                 </p>
                 <Button
@@ -385,7 +385,7 @@ export function GeneratePlaybookSheet({
           <div className={cn(
             products.length === 0 && !productsLoading && 'opacity-50 pointer-events-none'
           )}>
-            <p className="text-xs uppercase tracking-wider text-muted-foreground font-medium mb-2">
+            <p className="text-xs uppercase tracking-wider text-foreground-secondary font-medium mb-2">
               District
             </p>
 
@@ -410,7 +410,7 @@ export function GeneratePlaybookSheet({
             aria-live="polite"
             className={cn(
               'text-sm transition-opacity duration-150',
-              summary.complete ? 'text-foreground' : 'text-muted-foreground'
+              summary.complete ? 'text-foreground' : 'text-foreground-secondary'
             )}
           >
             {summary.complete && summary.parts ? (
@@ -464,7 +464,7 @@ export function GeneratePlaybookSheet({
           {/* Cancel */}
           <Button
             variant="ghost"
-            className="w-full text-sm text-muted-foreground"
+            className="w-full text-sm text-foreground-secondary"
             onClick={() => onOpenChange(false)}
           >
             Cancel
