@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { DiscoveryEntryState } from '@/components/discovery/discovery-entry-state';
 import { DiscoveryLoadingState } from '@/components/discovery/discovery-loading-state';
@@ -8,10 +8,12 @@ import { DiscoveryResultsLayout } from '@/components/discovery/discovery-results
 import { GeneratePlaybookSheet } from '@/components/playbook/generate-playbook-sheet';
 import { LibraryRequiredDialog } from '@/components/shared/library-required-dialog';
 import { useLibraryReadiness } from '@/hooks/use-library-readiness';
+import { useProductLens } from '@/hooks/use-product-lens';
 import { useSavedDistricts } from '@/hooks/use-saved-districts';
-import { getDiscoveryService } from '@/services';
+import { getDiscoveryService, getDistrictService } from '@/services';
 import type { IDiscoveryService } from '@/services';
 import type { DiscoveryQueryResponse } from '@/services/types/discovery';
+import type { MatchSummary } from '@/services/types/common';
 
 type DiscoveryPageState = 'entry' | 'loading' | 'results';
 
@@ -21,7 +23,9 @@ export default function DiscoveryPage() {
   const [activeQuery, setActiveQuery] = useState('');
   const [response, setResponse] = useState<DiscoveryQueryResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [productLensId, setProductLensId] = useState<string | undefined>(undefined);
+  // Product lens — shared singleton hook (persists across navigation)
+  const { activeProduct, setProduct, clearProduct } = useProductLens();
+  const productLensId = activeProduct?.productId;
 
   // Library readiness — session-cached
   const readiness = useLibraryReadiness();
@@ -29,6 +33,38 @@ export default function DiscoveryPage() {
 
   // Saved districts — shared singleton hook
   const { savedDistrictIds, saveDistrict, removeSavedDistrict } = useSavedDistricts();
+
+  // Match summaries for active lens
+  const [matchSummaries, setMatchSummaries] = useState<Record<string, MatchSummary>>({});
+  const [, setMatchLoading] = useState(false);
+
+  // Adapter: productId string → ProductLensSummary for useProductLens
+  const handleProductLensChange = useCallback((productId: string | undefined) => {
+    if (!productId) { clearProduct(); return; }
+    const product = readiness.products.find(p => p.productId === productId);
+    if (product) setProduct(product);
+  }, [readiness.products, setProduct, clearProduct]);
+
+  // Fetch match summaries when lens + results change
+  useEffect(() => {
+    if (!productLensId || !response) {
+      setMatchSummaries({});
+      return;
+    }
+    const districtIds = extractDistrictIds(response);
+    if (districtIds.length === 0) {
+      setMatchSummaries({});
+      return;
+    }
+    let cancelled = false;
+    setMatchLoading(true);
+    getDistrictService()
+      .then(s => s.getMatchSummaries(productLensId, districtIds))
+      .then(result => { if (!cancelled) setMatchSummaries(result); })
+      .catch(() => { if (!cancelled) setMatchSummaries({}); })
+      .finally(() => { if (!cancelled) setMatchLoading(false); });
+    return () => { cancelled = true; };
+  }, [productLensId, response]);
 
   // Playbook sheet state
   const [playbookOpen, setPlaybookOpen] = useState(false);
@@ -116,8 +152,9 @@ export default function DiscoveryPage() {
           onClearResults={handleClearResults}
           products={products}
           productLensId={productLensId}
-          onProductLensChange={setProductLensId}
+          onProductLensChange={handleProductLensChange}
           hasProducts={readiness.hasProducts}
+          matchSummaries={matchSummaries}
           savedDistricts={savedDistrictIds}
           onSaveDistrict={saveDistrict}
           onRemoveSaved={removeSavedDistrict}
@@ -149,6 +186,23 @@ export default function DiscoveryPage() {
       />
     </>
   );
+}
+
+/** Extract all district IDs from a discovery response (any format). */
+function extractDistrictIds(response: DiscoveryQueryResponse): string[] {
+  const { content } = response;
+  if (content.format === 'ranked_list') {
+    return content.data.entries.map(e => e.districtId);
+  }
+  if (content.format === 'card_set') {
+    return content.data.districts.map(e => e.districtId);
+  }
+  if (content.format === 'narrative_brief' || content.format === 'intelligence_brief') {
+    return content.data.keySignals
+      .filter(s => s.districtId)
+      .map(s => s.districtId!);
+  }
+  return [];
 }
 
 /** Extract district info from response data for playbook sheet. */

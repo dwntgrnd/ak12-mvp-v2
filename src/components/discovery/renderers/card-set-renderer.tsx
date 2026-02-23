@@ -8,6 +8,7 @@ import { ProductLensSelector } from '@/components/discovery/product-lens-selecto
 import { CARD_SET_CONFIG, buildListContextConfig, type ActiveSort } from '@/components/shared/list-context-config';
 import { sortBySnapshotField, filterBySnapshot, mapSortKeyToLabel } from '@/lib/utils/sort-utils';
 import type { CardSetContent, ResponseConfidence, ProductAlignment } from '@/services/types/discovery';
+import type { MatchSummary } from '@/services/types/common';
 
 interface CardSetRendererProps {
   content: CardSetContent;
@@ -17,6 +18,7 @@ interface CardSetRendererProps {
   productLensId: string | undefined;
   onProductLensChange: (productId: string | undefined) => void;
   hasProducts: boolean;
+  matchSummaries?: Record<string, MatchSummary>;
   activeSortMetric?: string;
   savedDistricts?: Set<string>;
   onSaveDistrict?: (districtId: string) => void;
@@ -31,6 +33,7 @@ export function CardSetRenderer({
   productLensId,
   onProductLensChange,
   hasProducts,
+  matchSummaries,
   activeSortMetric,
   savedDistricts,
   onSaveDistrict,
@@ -128,6 +131,7 @@ export function CardSetRenderer({
           additionalMetrics={entry.keyMetric ? [entry.keyMetric] : undefined}
           activeSortMetric={derivedSortMetric}
           productAlignment={productRelevanceMap?.[entry.districtId]}
+          matchSummary={matchSummaries?.[entry.districtId]}
           isSaved={savedDistricts?.has(entry.districtId)}
           onSave={onSaveDistrict}
           onRemoveSaved={onRemoveSaved}

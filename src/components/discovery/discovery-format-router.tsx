@@ -1,4 +1,5 @@
 import type { DiscoveryQueryResponse, ProductAlignment } from '@/services/types/discovery';
+import type { MatchSummary } from '@/services/types/common';
 import { BriefRenderer } from './renderers/brief-renderer';
 import { DirectAnswerCard } from './renderers/direct-answer-card';
 import { RecoveryRenderer } from './renderers/recovery-renderer';
@@ -13,13 +14,14 @@ interface DiscoveryFormatRouterProps {
   productLensId: string | undefined;
   onProductLensChange: (productId: string | undefined) => void;
   hasProducts: boolean;
+  matchSummaries?: Record<string, MatchSummary>;
   savedDistricts?: Set<string>;
   onSaveDistrict?: (districtId: string) => void;
   onRemoveSaved?: (districtId: string) => void;
   onGeneratePlaybook?: (districtId: string) => void;
 }
 
-export function DiscoveryFormatRouter({ response, onNewQuery, products, productLensId, onProductLensChange, hasProducts, savedDistricts, onSaveDistrict, onRemoveSaved, onGeneratePlaybook }: DiscoveryFormatRouterProps) {
+export function DiscoveryFormatRouter({ response, onNewQuery, products, productLensId, onProductLensChange, hasProducts, matchSummaries, savedDistricts, onSaveDistrict, onRemoveSaved, onGeneratePlaybook }: DiscoveryFormatRouterProps) {
   const { content, confidence } = response;
   const relevanceMap: Record<string, ProductAlignment> | undefined = response.productRelevanceMap;
 
@@ -38,9 +40,9 @@ export function DiscoveryFormatRouter({ response, onNewQuery, products, productL
     case 'comparison_table':
       return <ComparisonTableRenderer content={content.data} confidence={confidence} productRelevanceMap={relevanceMap} />;
     case 'ranked_list':
-      return <RankedListRenderer content={content.data} confidence={confidence} productRelevanceMap={relevanceMap} hasProducts={hasProducts} {...lensProps} {...actionProps} />;
+      return <RankedListRenderer content={content.data} confidence={confidence} productRelevanceMap={relevanceMap} hasProducts={hasProducts} matchSummaries={matchSummaries} {...lensProps} {...actionProps} />;
     case 'card_set':
-      return <CardSetRenderer content={content.data} confidence={confidence} productRelevanceMap={relevanceMap} hasProducts={hasProducts} {...lensProps} {...actionProps} />;
+      return <CardSetRenderer content={content.data} confidence={confidence} productRelevanceMap={relevanceMap} hasProducts={hasProducts} matchSummaries={matchSummaries} {...lensProps} {...actionProps} />;
     default:
       return null;
   }

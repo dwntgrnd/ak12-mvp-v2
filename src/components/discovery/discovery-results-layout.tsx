@@ -4,6 +4,7 @@ import { SourceCitations } from './source-citations';
 import { DiscoveryFormatRouter } from './discovery-format-router';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import type { DiscoveryQueryResponse } from '@/services/types/discovery';
+import type { MatchSummary } from '@/services/types/common';
 
 interface DiscoveryResultsLayoutProps {
   query: string;
@@ -16,6 +17,7 @@ interface DiscoveryResultsLayoutProps {
   productLensId: string | undefined;
   onProductLensChange: (productId: string | undefined) => void;
   hasProducts: boolean;
+  matchSummaries?: Record<string, MatchSummary>;
   savedDistricts?: Set<string>;
   onSaveDistrict?: (districtId: string) => void;
   onRemoveSaved?: (districtId: string) => void;
@@ -33,6 +35,7 @@ export function DiscoveryResultsLayout({
   productLensId,
   onProductLensChange,
   hasProducts,
+  matchSummaries,
   savedDistricts,
   onSaveDistrict,
   onRemoveSaved,
@@ -78,6 +81,7 @@ export function DiscoveryResultsLayout({
               productLensId={productLensId}
               onProductLensChange={onProductLensChange}
               hasProducts={hasProducts}
+              matchSummaries={matchSummaries}
               savedDistricts={savedDistricts}
               onSaveDistrict={onSaveDistrict}
               onRemoveSaved={onRemoveSaved}
