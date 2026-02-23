@@ -177,7 +177,7 @@ export function GeneratePlaybookSheet({
                   ' and ' +
                   productNames[productNames.length - 1];
             setDuplicateNotice(
-              `A playbook already exists for ${selectedDistrict.districtName} with ${productStr}. Generating a new one will create a separate version.`
+              `You already have a playbook for ${productStr} at ${selectedDistrict.districtName}. You can generate a fresh one, but the existing playbook will remain as-is.`
             );
           } else {
             setDuplicateNotice(null);
@@ -276,13 +276,13 @@ export function GeneratePlaybookSheet({
       .map((p) => p.name);
 
     if (productNames.length === 0 && !selectedDistrict) {
-      return { text: 'Select products and a district to continue', complete: false };
+      return { text: 'Pick your products and district to get started', complete: false };
     }
     if (productNames.length === 0) {
-      return { text: 'Select at least one product to continue', complete: false };
+      return { text: 'Choose at least one product', complete: false };
     }
     if (!selectedDistrict) {
-      return { text: 'Select a district to continue', complete: false };
+      return { text: 'Now choose a district', complete: false };
     }
 
     const productStr =
@@ -304,24 +304,25 @@ export function GeneratePlaybookSheet({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="max-w-[520px] max-h-[85vh] flex flex-col p-0 gap-0"
+        className="max-w-lg max-h-[85vh] flex flex-col p-0 gap-0 top-[10vh] translate-y-0"
       >
         {/* Header */}
-        <DialogHeader className="px-6 pt-6 pb-4 shrink-0">
+        <DialogHeader className="px-6 pt-6 pb-5 shrink-0">
           <DialogTitle className="text-lg font-semibold">
-            Generate Playbook
+            Generate Sales Playbook
           </DialogTitle>
-          <DialogDescription className="sr-only">
-            Select products and a district to generate a sales playbook.
+          <DialogDescription className="text-sm text-foreground-secondary mt-1">
+            Choose your products and target district — we&apos;ll generate a conversation-ready playbook with district context, evidence, and talking points.
           </DialogDescription>
         </DialogHeader>
 
         {/* Scrollable content */}
         <div ref={contentRef} className="flex-1 overflow-y-auto px-6 pb-4">
+         <div className="space-y-10">
           {/* Section A: Products */}
           <div>
-            <p className="text-xs uppercase tracking-wider text-foreground-secondary font-medium mb-2">
-              Products
+            <p className="text-sm font-medium text-foreground-secondary mb-3">
+              Which products are you presenting?
             </p>
 
             {productsLoading && (
@@ -335,7 +336,7 @@ export function GeneratePlaybookSheet({
             {productsError && (
               <div className="text-center py-6">
                 <p className="text-sm text-destructive mb-2">
-                  Couldn&apos;t load products
+                  We couldn&apos;t load your products right now.
                 </p>
                 <Button variant="outline" size="sm" onClick={handleRetryProducts}>
                   Retry
@@ -346,7 +347,7 @@ export function GeneratePlaybookSheet({
             {!productsLoading && !productsError && products.length === 0 && (
               <div className="text-center py-8 space-y-3">
                 <p className="text-sm text-foreground-secondary">
-                  No products available. Add products to your Solutions Library to generate playbooks.
+                  You&apos;ll need products in your Solutions Library before generating a playbook.
                 </p>
                 <Button
                   variant="outline"
@@ -355,13 +356,13 @@ export function GeneratePlaybookSheet({
                     router.push('/solutions');
                   }}
                 >
-                  Go to Solutions Library
+                  Add Products
                 </Button>
               </div>
             )}
 
             {!productsLoading && !productsError && products.length > 0 && (
-              <div className="space-y-2">
+              <div className="space-y-3">
                 {products.map((product, index) => (
                   <div
                     key={product.productId}
@@ -378,15 +379,12 @@ export function GeneratePlaybookSheet({
             )}
           </div>
 
-          {/* Section gap */}
-          <div className="mt-8" />
-
           {/* Section B: District */}
           <div className={cn(
             products.length === 0 && !productsLoading && 'opacity-50 pointer-events-none'
           )}>
-            <p className="text-xs uppercase tracking-wider text-foreground-secondary font-medium mb-2">
-              District
+            <p className="text-sm font-medium text-foreground-secondary mb-3">
+              Which district are you visiting?
             </p>
 
             {districtMode === 'search' ? (
@@ -401,10 +399,11 @@ export function GeneratePlaybookSheet({
               />
             ) : null}
           </div>
+         </div>
         </div>
 
         {/* Footer */}
-        <div className="shrink-0 border-t px-6 py-4 space-y-3">
+        <div className="shrink-0 border-t px-6 py-5 space-y-4">
           {/* Confirmation summary */}
           <p
             aria-live="polite"
@@ -428,7 +427,7 @@ export function GeneratePlaybookSheet({
           {generateError && (
             <Alert variant="destructive">
               <AlertDescription>
-                Playbook generation failed. Please try again.
+                Something went wrong generating your playbook. Try again — your selections are still here.
               </AlertDescription>
             </Alert>
           )}
@@ -444,7 +443,8 @@ export function GeneratePlaybookSheet({
           {/* Generate button — hidden when catalog is empty */}
           {(products.length > 0 || productsLoading) && (
             <Button
-              className="w-full h-12"
+              className="w-full"
+              size="lg"
               disabled={!canGenerate}
               aria-disabled={!canGenerate}
               aria-busy={isGenerating}
@@ -453,7 +453,7 @@ export function GeneratePlaybookSheet({
               {isGenerating ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin" />
-                  Generating...
+                  Generating your playbook...
                 </>
               ) : (
                 'Generate Playbook'

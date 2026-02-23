@@ -40,11 +40,11 @@ export function ProductSelectionCard({
         }
       }}
       className={cn(
-        'flex items-center gap-3 px-4 py-3 rounded-lg border cursor-pointer transition-colors',
+        'flex items-center gap-3 px-4 py-4 rounded-lg border cursor-pointer transition-colors',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
         'hover:bg-muted/50',
         selected
-          ? 'border-l-[3px] border-l-brand-orange border-y-border-default border-r-border-default bg-brand-orange/[0.04]'
+          ? 'border-border-default bg-brand-orange/5'
           : 'border-border-default bg-surface-raised'
       )}
     >
@@ -54,7 +54,7 @@ export function ProductSelectionCard({
         aria-hidden
         className="pointer-events-none shrink-0"
       />
-      <span className="font-semibold text-foreground flex-grow truncate text-sm">
+      <span className="font-semibold text-foreground flex-grow min-w-0 break-words text-sm">
         {product.name}
       </span>
       <Badge variant="secondary" className="shrink-0">

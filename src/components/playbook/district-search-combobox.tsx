@@ -134,11 +134,11 @@ export function DistrictSearchCombobox({
     >
       <CommandInput
         ref={inputRef}
-        placeholder="Search districts by name..."
+        placeholder="Start typing a district name..."
         value={query}
         onValueChange={setQuery}
       />
-      <CommandList>
+      <CommandList className="max-h-[200px] overflow-y-auto">
         {/* Loading state */}
         {isLoading && (
           <div className="p-2 space-y-2">
@@ -150,15 +150,15 @@ export function DistrictSearchCombobox({
 
         {/* Error state */}
         {error && !isLoading && (
-          <div className="py-6 text-center text-sm text-destructive">
-            Search unavailable. Please try again.
+          <div className="py-4 text-center text-sm text-destructive">
+            District search isn&apos;t responding right now. Try again in a moment.
           </div>
         )}
 
         {/* Empty state */}
         {!isLoading && !error && hasSearched && results.length === 0 && (
           <CommandEmpty>
-            No districts found for &ldquo;{query}&rdquo;
+            No districts match &ldquo;{query}&rdquo; &mdash; try a shorter name or check the spelling.
           </CommandEmpty>
         )}
 
@@ -188,7 +188,7 @@ export function DistrictSearchCombobox({
 
         {/* Pre-search hint */}
         {!isLoading && !error && !hasSearched && query.length > 0 && query.length < 2 && (
-          <div className="py-6 text-center text-sm text-foreground-secondary">
+          <div className="py-4 text-center text-sm text-foreground-secondary">
             Type at least 2 characters to search
           </div>
         )}
