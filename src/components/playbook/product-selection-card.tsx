@@ -44,8 +44,8 @@ export function ProductSelectionCard({
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
         'hover:bg-muted/50',
         selected
-          ? 'border-l-[3px] border-l-[#FF7000] border-y-border border-r-border bg-[#FF7000]/[0.04]'
-          : 'border-border bg-background'
+          ? 'border-l-[3px] border-l-brand-orange border-y-border-default border-r-border-default bg-brand-orange/[0.04]'
+          : 'border-border-default bg-surface-raised'
       )}
     >
       <Checkbox

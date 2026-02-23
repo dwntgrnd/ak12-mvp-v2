@@ -204,8 +204,7 @@ export function DistrictIdentityBar({
         {/* Button group */}
         <div className="flex items-center gap-2">
           <Button
-            variant="outline"
-            className="border-[1.5px] border-brand-orange text-brand-orange hover:bg-orange-50 hover:text-brand-orange"
+            variant="outlineBrand"
             onClick={() => router.push('/discovery')}
           >
             Find Similar
@@ -214,15 +213,13 @@ export function DistrictIdentityBar({
             <Skeleton className="h-9 w-32" />
           ) : existingPlaybookId ? (
             <Button
-              variant="outline"
-              className="border-[1.5px] border-brand-orange text-brand-orange hover:bg-orange-50 hover:text-brand-orange"
+              variant="outlineBrand"
               onClick={() => router.push(`/playbooks/${existingPlaybookId}`)}
             >
               View Playbook
             </Button>
           ) : (
             <Button
-              className="bg-brand-orange text-white hover:bg-brand-orange/90"
               onClick={onGeneratePlaybook}
             >
               Create Playbook

@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { Bookmark, ArrowRight } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useDistrictPlaybookStatus } from '@/hooks/use-district-playbook-status';
 import { fitCategoryColors, type FitCategoryKey } from '@/lib/design-tokens';
@@ -124,7 +125,7 @@ export function DistrictListCard({
       onClick={handleClick}
       onKeyDown={handleKeyDown}
       className={cn(
-        'cursor-pointer px-4 py-2.5 focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#FF7000]',
+        'cursor-pointer px-4 py-2.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
         variant === 'inset'
           ? 'bg-surface-inset border border-border-subtle rounded-md hover:bg-surface-inset hover:border-border-default transition-colors duration-150'
           : 'bg-surface-raised border border-border rounded-lg shadow-sm hover:shadow-md hover:border-border-default transition-shadow duration-150',
@@ -203,29 +204,30 @@ export function DistrictListCard({
           {playbookLoading ? (
             <Skeleton className="h-6 w-24" />
           ) : existingPlaybookId ? (
-            <button
-              type="button"
+            <Button
+              variant="outlineBrand"
+              size="sm"
+              className="h-auto py-1 px-2.5 text-xs"
               onClick={(e) => {
                 e.stopPropagation();
                 router.push(`/playbooks/${existingPlaybookId}`);
               }}
-              className="flex items-center gap-1 border border-brand-orange text-brand-orange text-xs font-medium px-2.5 py-1 rounded-md hover:bg-orange-50 transition-colors"
             >
               View Playbook
               <ArrowRight className="h-3 w-3" />
-            </button>
+            </Button>
           ) : onGeneratePlaybook ? (
-            <button
-              type="button"
+            <Button
+              size="sm"
+              className="h-auto py-1 px-2.5 text-xs"
               onClick={(e) => {
                 e.stopPropagation();
                 onGeneratePlaybook(districtId);
               }}
-              className="flex items-center gap-1 bg-brand-orange text-white text-xs font-medium px-2.5 py-1 rounded-md hover:bg-brand-orange/90 transition-colors"
             >
               Create Playbook
               <ArrowRight className="h-3 w-3" />
-            </button>
+            </Button>
           ) : null}
         </div>
       </div>

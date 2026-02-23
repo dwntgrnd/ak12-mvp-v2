@@ -17,7 +17,7 @@ export function EmptyPlaybooksState({ onCreateClick }: EmptyPlaybooksStateProps)
       </p>
       <Button
         size="lg"
-        className="bg-[#FF7000] hover:bg-[#FF7000]/90 text-white h-12 px-8 mt-6"
+        className="h-12 px-8 mt-6"
         onClick={onCreateClick}
       >
         New Playbook

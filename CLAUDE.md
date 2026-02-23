@@ -158,11 +158,15 @@ Do NOT use `text-slate-*` utilities for text color. Do NOT use `text-muted-foreg
 - Entire row is hit target: `py-1.5 px-2 -mx-2 rounded-md`
 - Hover: `hover:bg-surface-inset`, text → cyan-600, chevron rotates 90° (200ms)
 
-**Buttons — three tiers only:**
-- Primary: `bg-brand-orange text-white font-semibold`
-- Secondary: `bg-surface-raised text-foreground border border-border-default font-medium`
-- Ghost: `bg-transparent text-foreground-secondary font-medium`
-- All: `px-4 py-2 rounded-md text-sm transition-colors`
+**Buttons — use only these variants (from `components/ui/button.tsx`):**
+- `default` — brand-orange filled. Primary CTAs: Generate, Create, New, Submit.
+- `outlineBrand` — brand-orange outline. Brand-prominent secondary: View Playbook, Find Similar.
+- `outline` — neutral outline. Utility actions: filter triggers, Retry, Go to Solutions.
+- `ghost` — transparent. Subtle actions: Cancel, sidebar toggle, toolbar controls.
+- `destructive` — red filled. Destructive confirmations only.
+- `link` — text link styled as button. Rare.
+
+Do NOT apply brand-orange styling via className. Use the `default` or `outlineBrand` variant. If a button needs brand-orange, it should use a variant, not inline classes.
 
 **Cards (interactive):** Hover = `shadow-md` + `border-border-default` transition. No background color change.
 

@@ -48,14 +48,14 @@ export function PlaybookCard({ playbook }: PlaybookCardProps) {
   return (
     <Link
       href={`/playbooks/${playbook.playbookId}`}
-      className="relative block rounded-lg border bg-card p-5 hover:shadow-md transition-shadow cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#FF7000]"
+      className="relative block rounded-lg border bg-card p-5 hover:shadow-md transition-shadow cursor-pointer focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
       aria-label={ariaLabel}
     >
       {/* Status badge — top-right, only for non-complete statuses */}
       {playbook.overallStatus === 'generating' && (
-        <span className="absolute top-4 right-4 inline-flex items-center gap-1.5 text-xs font-medium text-[#FF7000]">
+        <span className="absolute top-4 right-4 inline-flex items-center gap-1.5 text-xs font-medium text-brand-orange">
           <span
-            className="inline-block h-2 w-2 rounded-full bg-[#FF7000] motion-safe:animate-pulse"
+            className="inline-block h-2 w-2 rounded-full bg-brand-orange motion-safe:animate-pulse"
             aria-hidden="true"
           />
           Generating

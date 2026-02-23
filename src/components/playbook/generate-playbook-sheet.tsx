@@ -444,7 +444,7 @@ export function GeneratePlaybookSheet({
           {/* Generate button — hidden when catalog is empty */}
           {(products.length > 0 || productsLoading) && (
             <Button
-              className="w-full h-12 bg-[#FF7000] hover:bg-[#E56400] text-white"
+              className="w-full h-12"
               disabled={!canGenerate}
               aria-disabled={!canGenerate}
               aria-busy={isGenerating}
