@@ -120,7 +120,7 @@ export function PlaybookSection({
   return (
     <div>
       {/* Section header */}
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center justify-between mb-3">
         <h2 className="text-lg font-semibold text-foreground">{sectionLabel}</h2>
         <div className="flex items-center gap-3">
           <StatusIndicator status={status} isEdited={isEdited} />
@@ -161,27 +161,30 @@ export function PlaybookSection({
         </div>
       </div>
 
-      {/* Content area */}
-      {status === 'pending' && <SkeletonContent animated={false} />}
-      {status === 'generating' && <SkeletonContent animated={true} />}
-      {status === 'error' && errorMessage && (
-        <Alert variant="destructive">
-          <AlertCircle className="h-4 w-4" />
-          <AlertDescription>{errorMessage}</AlertDescription>
-        </Alert>
-      )}
-      {status === 'complete' && children}
+      {/* Content surface */}
+      <div className="bg-surface-raised border border-border-subtle rounded-lg p-5 shadow-sm">
+        {/* Content area */}
+        {status === 'pending' && <SkeletonContent animated={false} />}
+        {status === 'generating' && <SkeletonContent animated={true} />}
+        {status === 'error' && errorMessage && (
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>{errorMessage}</AlertDescription>
+          </Alert>
+        )}
+        {status === 'complete' && children}
 
-      {/* Metadata footer */}
-      {status === 'complete' && (
-        <div className="text-sm text-foreground-secondary mt-6 pt-4 border-t border-border">
-          {isEdited && lastEditedAt
-            ? `Edited ${formatDate(lastEditedAt)}`
-            : generatedAt
-              ? `Generated ${formatDate(generatedAt)}`
-              : null}
-        </div>
-      )}
+        {/* Metadata footer — inside card */}
+        {status === 'complete' && (
+          <div className="text-xs text-foreground-tertiary mt-5 pt-3 border-t border-border-subtle">
+            {isEdited && lastEditedAt
+              ? `Edited ${formatDate(lastEditedAt)}`
+              : generatedAt
+                ? `Generated ${formatDate(generatedAt)}`
+                : null}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

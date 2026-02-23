@@ -45,6 +45,7 @@ function StatusDot({ status }: { status: SectionStatus }) {
       return <span className="inline-block h-2 w-2 rounded-full bg-primary animate-pulse" />;
     case 'error':
       return <span className="inline-block h-2 w-2 rounded-full bg-destructive" />;
+    case 'complete':
     default:
       return null;
   }
@@ -410,7 +411,7 @@ export default function PlaybookDetailPage({
           </h1>
           <div className="flex items-center gap-3 flex-wrap">
             <OverallStatusBadge status={overallStatus} />
-            <span className="text-sm text-foreground-secondary">
+            <span className="text-xs text-foreground-tertiary">
               Generated {formatTimestamp(playbook.generatedAt)}
             </span>
           </div>
@@ -469,12 +470,16 @@ export default function PlaybookDetailPage({
 
       {/* Tabbed sections */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="w-full justify-start overflow-x-auto">
+        <TabsList className="h-auto w-full justify-start gap-0 rounded-none border-b border-border bg-transparent p-0 overflow-x-auto">
           {TAB_CONFIG.map(({ sectionType, label }) => {
             const section = getSection(sectionType);
             const status = section?.status || 'pending';
             return (
-              <TabsTrigger key={sectionType} value={sectionType} className="gap-1.5">
+              <TabsTrigger
+                key={sectionType}
+                value={sectionType}
+                className="-mb-px gap-1.5 rounded-none border-b-2 border-transparent bg-transparent px-4 py-2.5 text-sm font-medium text-foreground-secondary shadow-none transition-colors hover:text-foreground data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:font-semibold data-[state=active]:text-foreground data-[state=active]:shadow-none"
+              >
                 <StatusDot status={status} />
                 {label}
               </TabsTrigger>
@@ -503,16 +508,20 @@ export default function PlaybookDetailPage({
                 retryable={section.retryable}
                 onRegenerate={() => handleRegenerate(section.sectionId)}
               >
-                <div className="space-y-1">
+                <div className="space-y-4">
                   {contentBlocks.map((block, blockIdx) => (
-                    <InlineEditableBlock
+                    <div
                       key={`${section.sectionId}-block-${blockIdx}`}
-                      value={block}
-                      onSave={(newValue) =>
-                        handleSaveBlock(section.sectionId, blockIdx, newValue)
-                      }
-                      aria-label={`Edit ${label} content block ${blockIdx + 1}`}
-                    />
+                      className="bg-surface-inset rounded-md p-4"
+                    >
+                      <InlineEditableBlock
+                        value={block}
+                        onSave={(newValue) =>
+                          handleSaveBlock(section.sectionId, blockIdx, newValue)
+                        }
+                        aria-label={`Edit ${label} content block ${blockIdx + 1}`}
+                      />
+                    </div>
                   ))}
                 </div>
               </PlaybookSection>

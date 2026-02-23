@@ -51,3 +51,10 @@ export const fitCategoryColors = {
 } as const;
 
 export type FitCategoryKey = keyof typeof fitCategoryColors;
+
+// Elevation shadow scale
+export const shadowTokens = {
+  sm: 'shadow-sm',   // subtle lift — cards, context panels
+  md: 'shadow-md',   // moderate elevation — modals, sheets, dropdowns
+  lg: 'shadow-lg',   // high elevation — overlays, popovers
+} as const;

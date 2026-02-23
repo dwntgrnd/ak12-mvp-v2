@@ -82,6 +82,11 @@
   --border-default: 214 32% 91%;
   --border-subtle: 214 32% 95%;
 
+  /* Elevation shadow tokens */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.07), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.07), 0 4px 6px -4px rgb(0 0 0 / 0.05);
+
   /* Layout tokens */
   --topbar-height: 3.5rem;
   --utility-bar-height: 2.5rem;
@@ -147,6 +152,10 @@
   /* Border tier utilities */
   --color-border-default: hsl(var(--border-default));
   --color-border-subtle: hsl(var(--border-subtle));
+
+  --shadow-sm: var(--shadow-sm);
+  --shadow-md: var(--shadow-md);
+  --shadow-lg: var(--shadow-lg);
 
   --font-heading: var(--font-manrope);
   --font-body: var(--font-manrope);
