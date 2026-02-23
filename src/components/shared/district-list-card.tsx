@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { Bookmark, ArrowRight } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useDistrictPlaybookStatus } from '@/hooks/use-district-playbook-status';
 import { fitCategoryColors, type FitCategoryKey } from '@/lib/design-tokens';
 import { formatNumber } from '@/lib/utils/format';
 import { cn } from '@/lib/utils';
@@ -62,6 +63,7 @@ export function DistrictListCard({
 }: DistrictListCardProps) {
   const router = useRouter();
   const { districtId, name } = snapshot;
+  const { loading: playbookLoading, existingPlaybookId } = useDistrictPlaybookStatus(districtId);
 
   const location = `${snapshot.city}, ${snapshot.county}`;
   const gradeBand = formatGradeBand(snapshot.lowGrade, snapshot.highGrade);
@@ -198,7 +200,21 @@ export function DistrictListCard({
             </button>
           )}
 
-          {onGeneratePlaybook && (
+          {playbookLoading ? (
+            <Skeleton className="h-6 w-24" />
+          ) : existingPlaybookId ? (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                router.push(`/playbooks/${existingPlaybookId}`);
+              }}
+              className="flex items-center gap-1 border border-brand-orange text-brand-orange text-xs font-medium px-2.5 py-1 rounded-md hover:bg-orange-50 transition-colors"
+            >
+              View Playbook
+              <ArrowRight className="h-3 w-3" />
+            </button>
+          ) : onGeneratePlaybook ? (
             <button
               type="button"
               onClick={(e) => {
@@ -210,7 +226,7 @@ export function DistrictListCard({
               Playbook
               <ArrowRight className="h-3 w-3" />
             </button>
-          )}
+          ) : null}
         </div>
       </div>
 

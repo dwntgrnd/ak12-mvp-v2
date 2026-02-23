@@ -4,6 +4,8 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Bookmark } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
+import { useDistrictPlaybookStatus } from '@/hooks/use-district-playbook-status';
 import type { DistrictProfile } from '@/services/types/district';
 import type { DistrictYearData } from '@/services/providers/mock/fixtures/districts';
 import { formatNumber } from '@/lib/utils/format';
@@ -31,6 +33,7 @@ export function DistrictIdentityBar({
   const router = useRouter();
   const [isSaved, setIsSaved] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const { loading: playbookLoading, existingPlaybookId } = useDistrictPlaybookStatus(district.districtId);
 
   async function handleToggleSave() {
     if (isSaving) return;
@@ -207,12 +210,24 @@ export function DistrictIdentityBar({
           >
             Find Similar
           </Button>
-          <Button
-            className="bg-brand-orange text-white hover:bg-brand-orange/90"
-            onClick={onGeneratePlaybook}
-          >
-            Create Playbook
-          </Button>
+          {playbookLoading ? (
+            <Skeleton className="h-9 w-32" />
+          ) : existingPlaybookId ? (
+            <Button
+              variant="outline"
+              className="border-[1.5px] border-brand-orange text-brand-orange hover:bg-orange-50 hover:text-brand-orange"
+              onClick={() => router.push(`/playbooks/${existingPlaybookId}`)}
+            >
+              View Playbook
+            </Button>
+          ) : (
+            <Button
+              className="bg-brand-orange text-white hover:bg-brand-orange/90"
+              onClick={onGeneratePlaybook}
+            >
+              Create Playbook
+            </Button>
+          )}
         </div>
       </div>
 
