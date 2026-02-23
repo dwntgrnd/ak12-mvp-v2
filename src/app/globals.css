@@ -53,7 +53,7 @@
   --radius: 0.5rem;
 
   /* Sidebar tokens */
-  --sidebar-bg: 219 27% 41%;
+  --sidebar-bg: 202.6 66.1% 32.4%;
   --topbar-bg: 213 47% 17%;
   --sidebar-fg: 180 3% 95%;
   --sidebar-hover: 217 33% 27%;
@@ -128,10 +128,10 @@
   --color-border: hsl(var(--border));
   --color-input: hsl(var(--input));
   --color-ring: hsl(var(--ring));
-  --color-sidebar: hsl(var(--sidebar-bg));
+  --color-sidebar: #1C6089;
   --color-topbar: hsl(var(--topbar-bg));
   --color-sidebar-foreground: hsl(var(--sidebar-fg));
-  --color-sidebar-hover: hsl(var(--sidebar-hover));
+  --color-sidebar-hover: #1B5070;
   --color-sidebar-active: hsl(var(--sidebar-active));
   --color-brand-orange: hsl(var(--brand-orange));
   --color-district-link: hsl(var(--district-link));

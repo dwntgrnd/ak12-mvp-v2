@@ -27,7 +27,7 @@ export function SidebarNavItem({
   const linkClasses = cn(
     'flex items-center text-sidebar-foreground transition-colors',
     'hover:bg-sidebar-hover',
-    isActive && 'bg-sidebar-hover border-l-2 border-sidebar-active',
+    isActive && 'bg-sidebar-hover',
     collapsed ? 'justify-center py-2.5 px-0' : 'gap-3 px-4 py-2.5'
   );
 
