@@ -4,18 +4,22 @@ import { useRouter } from 'next/navigation';
 import { Bookmark } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Badge } from '@/components/ui/badge';
 import { useDistrictPlaybookStatus } from '@/hooks/use-district-playbook-status';
 import { useSavedDistricts } from '@/hooks/use-saved-districts';
 import type { DistrictProfile } from '@/services/types/district';
+import type { MatchSummary } from '@/services/types/common';
 import type { DistrictYearData } from '@/services/providers/mock/fixtures/districts';
 import { formatNumber } from '@/lib/utils/format';
 import { calculateTrend, getTrendDisplay } from '@/lib/utils/trends';
+import { matchTierColors } from '@/lib/design-tokens';
 import { cn } from '@/lib/utils';
 
 interface DistrictIdentityBarProps {
   district: DistrictProfile;
   yearData: DistrictYearData[];
-  productId?: string;
+  matchSummary?: MatchSummary | null;
+  activeProductName?: string;
   onGeneratePlaybook: () => void;
 }
 
@@ -28,6 +32,8 @@ const trendSentimentClasses = {
 export function DistrictIdentityBar({
   district,
   yearData,
+  matchSummary,
+  activeProductName,
   onGeneratePlaybook,
 }: DistrictIdentityBarProps) {
   const router = useRouter();
@@ -179,6 +185,14 @@ export function DistrictIdentityBar({
             <Bookmark className={cn('h-5 w-5', isSaved && 'fill-current text-brand-orange')} />
             <span>{isSaved ? 'Saved' : 'Save'}</span>
           </button>
+          {matchSummary && (
+            <Badge
+              className={`${matchTierColors[matchSummary.overallTier].bg} ${matchTierColors[matchSummary.overallTier].text} ${matchTierColors[matchSummary.overallTier].border} border`}
+              variant="outline"
+            >
+              {matchTierColors[matchSummary.overallTier].label}
+            </Badge>
+          )}
         </div>
 
         {/* Button group */}
@@ -202,7 +216,9 @@ export function DistrictIdentityBar({
             <Button
               onClick={onGeneratePlaybook}
             >
-              Generate Playbook
+              {activeProductName
+                ? `Generate ${activeProductName} Playbook`
+                : 'Generate Playbook'}
             </Button>
           )}
         </div>
@@ -217,6 +233,11 @@ export function DistrictIdentityBar({
               {seg.node}
             </span>
           ))}
+        </p>
+      )}
+      {matchSummary && (
+        <p className="mt-1 text-sm text-foreground-secondary">
+          {matchSummary.headline}
         </p>
       )}
 

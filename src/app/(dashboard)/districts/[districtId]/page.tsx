@@ -6,24 +6,18 @@ import Link from 'next/link';
 import { RefreshCw } from 'lucide-react';
 import { useSidebar } from '@/components/layout/sidebar-context';
 import type { DistrictProfile } from '@/services/types/district';
-import type { FitAssessment } from '@/services/types/common';
+import type { MatchSummary } from '@/services/types/common';
 import type { DistrictYearData } from '@/services/providers/mock/fixtures/districts';
+import { getDistrictService } from '@/services';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import {
   DistrictIdentityBar,
   ResearchTabs,
 } from '@/components/district-profile';
 import { GeneratePlaybookSheet } from '@/components/playbook/generate-playbook-sheet';
-import { fitCategoryColors, type FitCategoryKey } from '@/lib/design-tokens';
-import { cn } from '@/lib/utils';
-
-function getFitCategory(score: number): FitCategoryKey {
-  if (score >= 7) return 'strong';
-  if (score >= 4) return 'moderate';
-  return 'low';
-}
+import { useProductLens } from '@/hooks/use-product-lens';
+import { useLibraryReadiness } from '@/hooks/use-library-readiness';
 
 export default function DistrictProfilePage({
   params,
@@ -37,11 +31,40 @@ export default function DistrictProfilePage({
 
   const [district, setDistrict] = useState<DistrictProfile | null>(null);
   const [yearData, setYearData] = useState<DistrictYearData[]>([]);
-  const [fitAssessment, setFitAssessment] = useState<FitAssessment | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [notFound, setNotFound] = useState(false);
   const [playbookOpen, setPlaybookOpen] = useState(false);
+
+  const { activeProduct, setProduct, isLensActive } = useProductLens();
+  const readiness = useLibraryReadiness();
+
+  // Seed lens from URL param on mount (doesn't override existing lens)
+  useEffect(() => {
+    if (productId && !isLensActive && readiness.products.length > 0) {
+      const product = readiness.products.find(p => p.productId === productId);
+      if (product) setProduct(product);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [productId, readiness.products.length]);
+
+  const activeProductId = activeProduct?.productId ?? null;
+
+  // Fetch match summary when lens is active
+  const [matchSummary, setMatchSummary] = useState<MatchSummary | null>(null);
+
+  useEffect(() => {
+    if (!activeProductId || !districtId) {
+      setMatchSummary(null);
+      return;
+    }
+    let cancelled = false;
+    getDistrictService()
+      .then(s => s.getMatchSummaries(activeProductId, [districtId]))
+      .then(summaries => { if (!cancelled) setMatchSummary(summaries[districtId] ?? null); })
+      .catch(() => { if (!cancelled) setMatchSummary(null); });
+    return () => { cancelled = true; };
+  }, [activeProductId, districtId]);
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -69,20 +92,12 @@ export default function DistrictProfilePage({
         const years: DistrictYearData[] = await yearsRes.json();
         setYearData(years);
       }
-
-      // Fetch fit assessment if productId present (independent, progressive)
-      if (productId) {
-        fetch(`/api/districts/fit-assessment?districtId=${districtId}&productIds=${productId}`)
-          .then((res) => (res.ok ? res.json() : null))
-          .then((data) => { if (data) setFitAssessment(data); })
-          .catch(() => { /* non-critical */ });
-      }
     } catch {
       setError('Something went wrong. Please try again.');
     } finally {
       setLoading(false);
     }
-  }, [districtId, productId]);
+  }, [districtId]);
 
   useEffect(() => {
     fetchData();
@@ -152,9 +167,6 @@ export default function DistrictProfilePage({
   }
 
   // --- Loaded state ---
-  const fitCategory = fitAssessment ? getFitCategory(fitAssessment.fitScore) : null;
-  const fitColors = fitCategory ? fitCategoryColors[fitCategory] : null;
-
   return (
     <div>
       {/* Zone 1 — Identity Bar (constrained to match content column) */}
@@ -162,30 +174,14 @@ export default function DistrictProfilePage({
         <DistrictIdentityBar
           district={district}
           yearData={yearData}
-          productId={productId ?? undefined}
+          matchSummary={matchSummary}
+          activeProductName={activeProduct?.name}
           onGeneratePlaybook={() => setPlaybookOpen(true)}
         />
       </div>
 
       {/* Zone 2 — Content Column */}
       <div className="max-w-content mx-auto mt-8 space-y-4">
-        {/* Fit Assessment (if product context) */}
-        {fitAssessment && fitColors && (
-          <div className={cn('rounded-lg border p-4', fitColors.bg)}>
-            <div className="flex items-center gap-3">
-              <Badge className={cn(fitColors.bg, fitColors.text, fitColors.border, 'border')}>
-                {fitColors.label}
-              </Badge>
-              <span className="text-sm font-medium">
-                Fit Score: {fitAssessment.fitScore}/10
-              </span>
-            </div>
-            <p className="mt-2 text-sm text-foreground-secondary">
-              {fitAssessment.fitRationale}
-            </p>
-          </div>
-        )}
-
         {/* Research Tabs */}
         <ResearchTabs districtId={districtId} yearData={yearData} />
       </div>
@@ -200,7 +196,7 @@ export default function DistrictProfilePage({
           location: district.location,
           enrollment: district.totalEnrollment,
         }}
-        initialProductIds={productId ? [productId] : undefined}
+        initialProductIds={activeProductId ? [activeProductId] : undefined}
       />
     </div>
   );
