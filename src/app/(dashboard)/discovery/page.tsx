@@ -107,9 +107,9 @@ export default function DiscoveryPage() {
     setPlaybookOpen(true);
   }, [readiness.hasProducts]);
 
-  // Resolve playbook district name from response data
-  const playbookDistrictName = playbookDistrictId
-    ? getDistrictNameFromResponse(response, playbookDistrictId)
+  // Resolve playbook district info from response data
+  const playbookDistrictInfo = playbookDistrictId
+    ? getDistrictInfoFromResponse(response, playbookDistrictId)
     : undefined;
 
   return (
@@ -152,9 +152,9 @@ export default function DiscoveryPage() {
           playbookDistrictId
             ? {
                 districtId: playbookDistrictId,
-                districtName: playbookDistrictName ?? playbookDistrictId,
-                location: '',
-                enrollment: 0,
+                districtName: playbookDistrictInfo?.name ?? playbookDistrictId,
+                location: playbookDistrictInfo?.location ?? '',
+                enrollment: playbookDistrictInfo?.enrollment ?? 0,
               }
             : undefined
         }
@@ -170,24 +170,36 @@ export default function DiscoveryPage() {
   );
 }
 
-/** Extract district name from response data for playbook sheet. */
-function getDistrictNameFromResponse(
+/** Extract district info from response data for playbook sheet. */
+function getDistrictInfoFromResponse(
   response: DiscoveryQueryResponse | null,
   districtId: string,
-): string | undefined {
+): { name: string; location: string; enrollment: number } | undefined {
   if (!response) return undefined;
   const { content } = response;
   if (content.format === 'ranked_list') {
     const entry = content.data.entries.find((e) => e.districtId === districtId);
-    if (entry) return entry.name;
+    if (entry) {
+      return {
+        name: entry.snapshot.name,
+        location: `${entry.snapshot.city}, ${entry.snapshot.county}`,
+        enrollment: entry.snapshot.totalEnrollment,
+      };
+    }
   }
   if (content.format === 'card_set') {
     const entry = content.data.districts.find((e) => e.districtId === districtId);
-    if (entry) return entry.name;
+    if (entry) {
+      return {
+        name: entry.snapshot.name,
+        location: `${entry.snapshot.city}, ${entry.snapshot.county}`,
+        enrollment: entry.snapshot.totalEnrollment,
+      };
+    }
   }
   if (content.format === 'narrative_brief' || content.format === 'intelligence_brief') {
     const signal = content.data.keySignals.find((s) => s.districtId === districtId);
-    if (signal) return signal.label;
+    if (signal) return { name: signal.label, location: '', enrollment: 0 };
   }
   return undefined;
 }

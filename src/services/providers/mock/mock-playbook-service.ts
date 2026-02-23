@@ -13,25 +13,44 @@ import { MOCK_PRODUCTS } from './fixtures/products';
 import { SEED_PLAYBOOKS } from './fixtures/playbooks';
 import { DISTRICT_FIXTURES } from './fixtures/districts';
 
-// === In-memory store ===
+// === In-memory store (globalThis singleton survives HMR) ===
 
 interface StoredPlaybook extends Playbook {
   overallStatus: 'generating' | 'complete' | 'partial' | 'failed';
 }
 
-// Initialize with seed data for immediate list view testing
-const playbooks: Map<string, StoredPlaybook> = new Map(
-  SEED_PLAYBOOKS.map(pb => [pb.playbookId, pb])
-);
-let idCounter = SEED_PLAYBOOKS.length;
+interface PlaybookStore {
+  playbooks: Map<string, StoredPlaybook>;
+  idCounter: number;
+}
+
+declare global {
+  // eslint-disable-next-line no-var
+  var __ak12_mock_playbooks__: PlaybookStore | undefined;
+}
+
+function getStore(): PlaybookStore {
+  if (!globalThis.__ak12_mock_playbooks__) {
+    globalThis.__ak12_mock_playbooks__ = {
+      playbooks: new Map(SEED_PLAYBOOKS.map(pb => [pb.playbookId, pb])),
+      idCounter: SEED_PLAYBOOKS.length,
+    };
+  }
+  return globalThis.__ak12_mock_playbooks__;
+}
+
+function getPlaybooks(): Map<string, StoredPlaybook> {
+  return getStore().playbooks;
+}
 
 function delay(ms: number = 200): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 function generateId(): string {
-  idCounter++;
-  return `pb-${String(idCounter).padStart(4, '0')}`;
+  const store = getStore();
+  store.idCounter++;
+  return `pb-${String(store.idCounter).padStart(4, '0')}`;
 }
 
 // Interpolate template placeholders with actual data
@@ -74,13 +93,13 @@ function resolveDistrictName(districtId: string): string {
 
 // Simulate progressive generation — sections complete one by one with delays
 function simulateGeneration(playbookId: string): void {
-  const playbook = playbooks.get(playbookId);
+  const playbook = getPlaybooks().get(playbookId);
   if (!playbook) return;
 
   SECTION_ORDER.forEach((sectionType, index) => {
     // Set to generating after a short delay
     setTimeout(() => {
-      const pb = playbooks.get(playbookId);
+      const pb = getPlaybooks().get(playbookId);
       if (!pb) return;
       const section = pb.sections.find((s) => s.sectionType === sectionType);
       if (section) {
@@ -90,7 +109,7 @@ function simulateGeneration(playbookId: string): void {
 
     // Set to complete with content after a longer delay
     setTimeout(() => {
-      const pb = playbooks.get(playbookId);
+      const pb = getPlaybooks().get(playbookId);
       if (!pb) return;
       const section = pb.sections.find((s) => s.sectionType === sectionType);
       if (section) {
@@ -156,7 +175,7 @@ export const mockPlaybookService: IPlaybookService = {
       overallStatus: 'generating',
     };
 
-    playbooks.set(playbookId, playbook);
+    getPlaybooks().set(playbookId, playbook);
 
     // Start async generation simulation
     simulateGeneration(playbookId);
@@ -166,7 +185,7 @@ export const mockPlaybookService: IPlaybookService = {
 
   async getPlaybookStatus(playbookId: string): Promise<PlaybookStatusResponse> {
     await delay(100);
-    const playbook = playbooks.get(playbookId);
+    const playbook = getPlaybooks().get(playbookId);
     if (!playbook) {
       throw { code: 'PLAYBOOK_NOT_FOUND', message: `Playbook ${playbookId} not found`, retryable: false };
     }
@@ -183,7 +202,7 @@ export const mockPlaybookService: IPlaybookService = {
 
   async getPlaybook(playbookId: string): Promise<Playbook> {
     await delay(200);
-    const playbook = playbooks.get(playbookId);
+    const playbook = getPlaybooks().get(playbookId);
     if (!playbook) {
       throw { code: 'PLAYBOOK_NOT_FOUND', message: `Playbook ${playbookId} not found`, retryable: false };
     }
@@ -194,7 +213,7 @@ export const mockPlaybookService: IPlaybookService = {
 
   async getPlaybookSection(playbookId: string, sectionId: string): Promise<PlaybookSection> {
     await delay(100);
-    const playbook = playbooks.get(playbookId);
+    const playbook = getPlaybooks().get(playbookId);
     if (!playbook) {
       throw { code: 'PLAYBOOK_NOT_FOUND', message: `Playbook ${playbookId} not found`, retryable: false };
     }
@@ -210,7 +229,7 @@ export const mockPlaybookService: IPlaybookService = {
     pagination?: PaginatedRequest
   ): Promise<PaginatedResponse<PlaybookSummary>> {
     await delay(200);
-    let items = Array.from(playbooks.values());
+    let items = Array.from(getPlaybooks().values());
 
     if (filters?.fitScoreMin !== undefined) {
       items = items.filter((p) => p.fitAssessment.fitScore >= filters.fitScoreMin!);
@@ -257,7 +276,7 @@ export const mockPlaybookService: IPlaybookService = {
 
   async getExistingPlaybooks(districtId: string): Promise<PlaybookSummary[]> {
     await delay(100);
-    const matching = Array.from(playbooks.values()).filter((p) => p.districtId === districtId);
+    const matching = Array.from(getPlaybooks().values()).filter((p) => p.districtId === districtId);
     return matching.map((p) => ({
       playbookId: p.playbookId,
       districtId: p.districtId,
@@ -277,7 +296,7 @@ export const mockPlaybookService: IPlaybookService = {
     content: string
   ): Promise<PlaybookSection> {
     await delay(200);
-    const playbook = playbooks.get(playbookId);
+    const playbook = getPlaybooks().get(playbookId);
     if (!playbook) {
       throw { code: 'PLAYBOOK_NOT_FOUND', message: `Playbook ${playbookId} not found`, retryable: false };
     }
@@ -296,7 +315,7 @@ export const mockPlaybookService: IPlaybookService = {
     sectionId: string
   ): Promise<{ status: 'generating' }> {
     await delay(200);
-    const playbook = playbooks.get(playbookId);
+    const playbook = getPlaybooks().get(playbookId);
     if (!playbook) {
       throw { code: 'PLAYBOOK_NOT_FOUND', message: `Playbook ${playbookId} not found`, retryable: false };
     }
@@ -314,7 +333,7 @@ export const mockPlaybookService: IPlaybookService = {
 
     // Simulate regeneration delay, then restore content
     setTimeout(() => {
-      const pb = playbooks.get(playbookId);
+      const pb = getPlaybooks().get(playbookId);
       if (!pb) return;
       const sec = pb.sections.find((s) => s.sectionId === sectionId);
       if (!sec) return;
@@ -334,9 +353,9 @@ export const mockPlaybookService: IPlaybookService = {
 
   async deletePlaybook(playbookId: string): Promise<void> {
     await delay(200);
-    if (!playbooks.has(playbookId)) {
+    if (!getPlaybooks().has(playbookId)) {
       throw { code: 'PLAYBOOK_NOT_FOUND', message: `Playbook ${playbookId} not found`, retryable: false };
     }
-    playbooks.delete(playbookId);
+    getPlaybooks().delete(playbookId);
   },
 };

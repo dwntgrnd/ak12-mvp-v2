@@ -223,7 +223,7 @@ export function DistrictListCard({
               }}
               className="flex items-center gap-1 bg-brand-orange text-white text-xs font-medium px-2.5 py-1 rounded-md hover:bg-brand-orange/90 transition-colors"
             >
-              Playbook
+              Create Playbook
               <ArrowRight className="h-3 w-3" />
             </button>
           ) : null}
