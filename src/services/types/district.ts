@@ -1,6 +1,6 @@
 // DistrictService domain types
 
-import type { FitAssessment } from './common';
+import type { FitAssessment, MatchSummary } from './common';
 import type { ExclusionCategory } from './controlled-vocabulary';
 
 export interface DistrictSummary {
@@ -77,7 +77,9 @@ export interface DistrictProfile {
   additionalData?: Record<string, unknown>;
 
   // Populated only after product selection
+  /** @deprecated Use matchSummary instead */
   fitAssessment?: FitAssessment;
+  matchSummary?: MatchSummary;
 }
 
 // exclusion_status controls visibility of excluded districts in search results.

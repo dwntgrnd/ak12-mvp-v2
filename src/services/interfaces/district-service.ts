@@ -1,6 +1,6 @@
 // DistrictService interface
 
-import type { PaginatedRequest, PaginatedResponse, FitAssessment } from '../types/common';
+import type { PaginatedRequest, PaginatedResponse, FitAssessment, MatchSummary } from '../types/common';
 import type {
   DistrictSummary,
   DistrictProfile,
@@ -24,7 +24,12 @@ export interface IDistrictService {
 
   // Authorization: publisher-admin, publisher-rep
   // Errors: DISTRICT_NOT_FOUND, PRODUCT_NOT_FOUND
+  /** @deprecated Use getMatchSummaries instead */
   getDistrictFitAssessment(districtId: string, productIds: string[]): Promise<FitAssessment>;
+
+  // Authorization: publisher-admin, publisher-rep
+  // Errors: DISTRICT_NOT_FOUND, PRODUCT_NOT_FOUND
+  getMatchSummaries(districtId: string, productIds: string[]): Promise<MatchSummary>;
 
   // Authorization: publisher-admin, publisher-rep
   getAvailableFilters(): Promise<FilterFacet[]>;

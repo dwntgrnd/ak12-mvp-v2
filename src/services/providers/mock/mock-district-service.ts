@@ -1,5 +1,5 @@
 import type { IDistrictService } from '../../interfaces/district-service';
-import type { PaginatedRequest, PaginatedResponse, FitAssessment } from '../../types/common';
+import type { PaginatedRequest, PaginatedResponse, FitAssessment, MatchSummary } from '../../types/common';
 import type {
   DistrictSummary,
   DistrictProfile,
@@ -102,6 +102,41 @@ export const mockDistrictService: IDistrictService = {
     }
 
     return { fitScore, fitRationale };
+  },
+
+  async getMatchSummaries(districtId: string, productIds: string[]): Promise<MatchSummary> {
+    await delay(50 + Math.floor(Math.random() * 100));
+
+    const district = MOCK_DISTRICTS.find((d) => d.districtId === districtId);
+    if (!district) {
+      throw { code: 'DISTRICT_NOT_FOUND', message: `District ${districtId} not found`, retryable: false };
+    }
+
+    // Deterministic tier from existing fit assessment logic
+    const hashInput = `${districtId}:${productIds.sort().join(',')}`;
+    let hash = 0;
+    for (let i = 0; i < hashInput.length; i++) {
+      const char = hashInput.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash |= 0;
+    }
+    const fitScore = Math.abs(hash) % 11;
+    const overallTier = fitScore >= 7 ? 'strong' : fitScore >= 4 ? 'moderate' : 'limited';
+
+    const productName = productIds[0] === 'prod-001' ? 'mathematics' : 'ELA';
+
+    return {
+      overallTier,
+      headline: `${overallTier === 'strong' ? 'Strong' : overallTier === 'moderate' ? 'Moderate' : 'Limited'} alignment with district ${productName} priorities`,
+      dimensions: [
+        { key: 'goals_priorities', tier: overallTier, signal: `District ${productName} goals ${overallTier === 'limited' ? 'do not closely' : ''} align with product focus.` },
+        { key: 'student_population', tier: 'moderate', signal: 'Student demographics suggest moderate opportunity.' },
+      ],
+      topSignals: [
+        `District prioritizes ${productName} improvement in strategic plan.`,
+        `${district.totalEnrollment.toLocaleString()} students enrolled.`,
+      ],
+    };
   },
 
   async getAvailableFilters(): Promise<FilterFacet[]> {

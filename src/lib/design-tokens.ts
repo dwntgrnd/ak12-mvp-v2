@@ -28,8 +28,8 @@ export const brandColors = {
   },
 } as const;
 
-// Fit category semantic colors
-export const fitCategoryColors = {
+// Match tier semantic colors (Spec 16)
+export const matchTierColors = {
   strong: {
     bg: 'bg-success/10',
     text: 'text-success',
@@ -42,14 +42,24 @@ export const fitCategoryColors = {
     border: 'border-warning',
     label: 'Moderate Fit',
   },
-  low: {
+  limited: {
     bg: 'bg-destructive/10',
     text: 'text-destructive',
     border: 'border-destructive',
-    label: 'Low Fit',
+    label: 'Limited Fit',
   },
 } as const;
 
+export type MatchTierKey = keyof typeof matchTierColors;
+
+/** @deprecated Use matchTierColors instead */
+export const fitCategoryColors = {
+  strong: matchTierColors.strong,
+  moderate: matchTierColors.moderate,
+  low: matchTierColors.limited,
+} as const;
+
+/** @deprecated Use MatchTierKey instead */
 export type FitCategoryKey = keyof typeof fitCategoryColors;
 
 // Elevation shadow scale

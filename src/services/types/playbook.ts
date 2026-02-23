@@ -1,6 +1,6 @@
 // PlaybookService domain types
 
-import type { FitAssessment, ContentSource, SectionStatus } from './common';
+import type { FitAssessment, MatchSummary, ContentSource, SectionStatus } from './common';
 
 export type PlaybookSectionType =
   | 'district_story'         // was 'district_data' — narrative lead with real metrics and trends
@@ -16,7 +16,9 @@ export interface PlaybookSummary {
   districtName: string;
   productIds: string[];
   productNames: string[];       // denormalized snapshot at generation time
+  /** @deprecated Use matchSummary instead */
   fitAssessment: FitAssessment;
+  matchSummary?: MatchSummary;
   generatedAt: string;          // ISO 8601
   hasEditedSections: boolean;
   sectionStatuses: Record<string, SectionStatus>;
@@ -28,7 +30,9 @@ export interface Playbook {
   districtName: string;
   productIds: string[];
   productNames: string[];
+  /** @deprecated Use matchSummary instead */
   fitAssessment: FitAssessment;
+  matchSummary?: MatchSummary;
   generatedAt: string;          // ISO 8601
   sections: PlaybookSection[];
 }

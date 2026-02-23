@@ -1,4 +1,5 @@
 import type { DistrictSnapshot } from './district';
+import type { MatchTier, MatchSummary } from './common';
 
 // Discovery domain types
 //
@@ -222,12 +223,12 @@ export interface RecoveryContent {
  * See Spec 15 §8 — Guiding Principle alignment.
  */
 export interface ProductAlignment {
-  level: 'strong' | 'moderate' | 'limited';
+  level: MatchTier;
   signals: string[];
   primaryConnection: string;
 }
 
-/** @deprecated Use ProductAlignment instead */
+/** @deprecated Use MatchSummary instead */
 export type ProductRelevance = ProductAlignment;
 
 // ============================================================
