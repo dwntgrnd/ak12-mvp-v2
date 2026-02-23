@@ -2,7 +2,7 @@
 
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { PanelLeft } from 'lucide-react';
+import { PanelLeft, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Breadcrumb,
@@ -13,12 +13,20 @@ import {
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
 import { useSidebar } from './sidebar-context';
+import { useProductLens } from '@/hooks/use-product-lens';
 
 function useBreadcrumbs(pathname: string, breadcrumbOverride: string | null) {
   if (pathname.startsWith('/districts/')) {
     return {
       parent: { label: 'Discovery', href: '/discovery' },
       current: breadcrumbOverride ?? 'District',
+    };
+  }
+
+  if (pathname.startsWith('/solutions/') && pathname !== '/solutions') {
+    return {
+      parent: { label: 'Solutions Library', href: '/solutions' },
+      current: breadcrumbOverride ?? 'Product',
     };
   }
 
@@ -38,6 +46,7 @@ export function ContentUtilityBar() {
   const pathname = usePathname();
   const { toggleSidebar, pageActions, breadcrumbOverride } = useSidebar();
   const { parent, current } = useBreadcrumbs(pathname, breadcrumbOverride);
+  const { activeProduct, isLensActive, clearProduct } = useProductLens();
 
   return (
     <div className="h-10 bg-background border-b border-border flex items-center justify-between px-4 shrink-0">
@@ -80,6 +89,23 @@ export function ContentUtilityBar() {
             )}
           </BreadcrumbList>
         </Breadcrumb>
+
+        {isLensActive && activeProduct && (
+          <>
+            <span className="text-foreground-tertiary">·</span>
+            <div className="flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-primary shrink-0" />
+              <span className="text-sm font-medium text-foreground">{activeProduct.name}</span>
+              <button
+                onClick={clearProduct}
+                className="hover:bg-surface-emphasis-neutral rounded-full p-0.5"
+                aria-label={`Active product lens: ${activeProduct.name}. Click to dismiss.`}
+              >
+                <X className="w-3.5 h-3.5 text-foreground-secondary" />
+              </button>
+            </div>
+          </>
+        )}
       </div>
 
       {/* Right zone */}
