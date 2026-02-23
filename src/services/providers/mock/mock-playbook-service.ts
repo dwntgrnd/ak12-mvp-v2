@@ -1,5 +1,5 @@
 import type { IPlaybookService } from '../../interfaces/playbook-service';
-import type { PaginatedRequest, PaginatedResponse, SectionStatus } from '../../types/common';
+import type { PaginatedRequest, PaginatedResponse, SectionStatus, MatchTier, MatchSummary } from '../../types/common';
 import type {
   PlaybookSummary,
   Playbook,
@@ -163,13 +163,31 @@ export const mockPlaybookService: IPlaybookService = {
       };
     });
 
+    // Compute matchSummary from fitScore
+    const fitScore = 7;
+    const overallTier: MatchTier = fitScore >= 7 ? 'strong' : fitScore >= 4 ? 'moderate' : 'limited';
+    const productLabel = productNames.join(' and ');
+    const matchSummary: MatchSummary = {
+      overallTier,
+      headline: `${overallTier === 'strong' ? 'Strong' : overallTier === 'moderate' ? 'Moderate' : 'Limited'} alignment with ${districtName} priorities`,
+      dimensions: [
+        { key: 'goals_priorities', tier: overallTier, signals: [`District priorities align with ${productLabel} focus areas.`], productConnection: `${productLabel} directly addresses stated district goals.` },
+        { key: 'student_population', tier: 'moderate', signals: ['Student demographics suggest moderate opportunity.'], productConnection: 'Product target population overlaps with district demographics.' },
+      ],
+      topSignals: [
+        `District priorities align with ${productLabel} focus areas`,
+        `${districtName} shows active evaluation signals`,
+      ],
+    };
+
     const playbook: StoredPlaybook = {
       playbookId,
       districtId: request.districtId,
       districtName,
       productIds: request.productIds,
       productNames,
-      fitAssessment: { fitScore: 7, fitRationale: 'Strong alignment with district priorities.' },
+      fitAssessment: { fitScore, fitRationale: 'Strong alignment with district priorities.' },
+      matchSummary,
       generatedAt: now,
       sections,
       overallStatus: 'generating',
@@ -260,6 +278,7 @@ export const mockPlaybookService: IPlaybookService = {
       productIds: p.productIds,
       productNames: p.productNames,
       fitAssessment: p.fitAssessment,
+      matchSummary: p.matchSummary,
       generatedAt: p.generatedAt,
       hasEditedSections: p.sections.some((s) => s.isEdited),
       sectionStatuses: Object.fromEntries(p.sections.map((s) => [s.sectionType, s.status])),
@@ -284,6 +303,7 @@ export const mockPlaybookService: IPlaybookService = {
       productIds: p.productIds,
       productNames: p.productNames,
       fitAssessment: p.fitAssessment,
+      matchSummary: p.matchSummary,
       generatedAt: p.generatedAt,
       hasEditedSections: p.sections.some((s) => s.isEdited),
       sectionStatuses: Object.fromEntries(p.sections.map((s) => [s.sectionType, s.status])),

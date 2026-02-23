@@ -1,5 +1,5 @@
 import type { Playbook, PlaybookSection, PlaybookSectionType } from '../../../types/playbook';
-import type { ContentSource, SectionStatus } from '../../../types/common';
+import type { ContentSource, SectionStatus, MatchSummary } from '../../../types/common';
 import { SECTION_ORDER, GENERIC_SECTION_TEMPLATES, DISTRICT_SPECIFIC_CONTENT } from './playbook-content';
 
 // StoredPlaybook shape matches the in-memory store in mock-playbook-service.ts
@@ -130,6 +130,18 @@ export const SEED_PLAYBOOKS: StoredPlaybook[] = [
     productIds: ['prod-001'],
     productNames: ['EnvisionMath'],
     fitAssessment: { fitScore: 2, fitRationale: 'Low alignment — district recently adopted a competing math program with a 5-year contract.' },
+    matchSummary: {
+      overallTier: 'limited',
+      headline: 'District recently adopted a competing math program',
+      dimensions: [
+        { key: 'competitive_landscape', tier: 'limited', signals: ['Competing math program adopted with a 5-year contract.'], productConnection: 'Product competes directly with current adoption.' },
+        { key: 'goals_priorities', tier: 'moderate', signals: ['Large district with math needs but evaluation timing unclear.'], productConnection: 'Product addresses math intervention needs.' },
+      ],
+      topSignals: [
+        'Competing math program adopted with a 5-year contract',
+        'Large district with math needs but evaluation status unknown',
+      ],
+    },
     generatedAt: new Date(now - 7 * DAY).toISOString(),
     sections: buildCompleteSections('pb-seed-004', '75c04266-c622-4294-aa22-046245c95e51', 'Fresno Unified', ['EnvisionMath']),
     overallStatus: 'complete',
@@ -142,6 +154,19 @@ export const SEED_PLAYBOOKS: StoredPlaybook[] = [
     productIds: ['prod-001', 'prod-002'],
     productNames: ['EnvisionMath', 'myPerspectives'],
     fitAssessment: { fitScore: 7, fitRationale: 'Strong alignment with district STEM and literacy initiatives.' },
+    matchSummary: {
+      overallTier: 'strong',
+      headline: 'Strong alignment with district STEM and literacy initiatives',
+      dimensions: [
+        { key: 'goals_priorities', tier: 'strong', signals: ['District STEM and literacy initiatives align with both product areas.'], productConnection: 'Products directly support district STEM and literacy goals.' },
+        { key: 'student_population', tier: 'strong', signals: ['Large diverse student population benefits from multi-subject approach.'], productConnection: 'Product suite covers diverse learner needs across subjects.' },
+        { key: 'academic_need', tier: 'moderate', signals: ['Math and ELA proficiency gaps present across grade spans.'], productConnection: 'Products address identified proficiency gaps in math and ELA.' },
+      ],
+      topSignals: [
+        'District STEM and literacy initiatives align with both product areas',
+        'Large diverse student population benefits from multi-subject approach',
+      ],
+    },
     generatedAt: new Date(now - 0.5 * DAY).toISOString(),
     sections: buildGeneratingSections('pb-seed-005', 'San Diego Unified', ['EnvisionMath', 'myPerspectives']),
     overallStatus: 'generating',
@@ -154,6 +179,19 @@ export const SEED_PLAYBOOKS: StoredPlaybook[] = [
     productIds: ['prod-002'],
     productNames: ['myPerspectives'],
     fitAssessment: { fitScore: 6, fitRationale: 'Moderate alignment — strong ELA needs but budget constraints limit near-term adoption.' },
+    matchSummary: {
+      overallTier: 'moderate',
+      headline: 'Strong ELA needs but budget constraints limit near-term adoption',
+      dimensions: [
+        { key: 'academic_need', tier: 'strong', signals: ['ELA proficiency gaps indicate strong need for intervention materials.'], productConnection: 'Product directly addresses ELA intervention needs.' },
+        { key: 'budget_capacity', tier: 'limited', signals: ['Budget constraints limit near-term adoption capacity.'], productConnection: 'Product pricing may challenge current budget availability.' },
+        { key: 'goals_priorities', tier: 'moderate', signals: ['ELA improvement referenced in LCAP but not top priority.'], productConnection: 'Product aligns with stated but non-priority ELA goals.' },
+      ],
+      topSignals: [
+        'Strong ELA needs across multiple grade spans',
+        'Budget constraints limit near-term adoption capacity',
+      ],
+    },
     generatedAt: new Date(now - 2 * DAY).toISOString(),
     sections: buildErrorSections('pb-seed-006', 'Oakland Unified', ['myPerspectives']),
     overallStatus: 'failed',
@@ -166,6 +204,19 @@ export const SEED_PLAYBOOKS: StoredPlaybook[] = [
     productIds: ['prod-001', 'prod-002'],
     productNames: ['EnvisionMath', 'myPerspectives'],
     fitAssessment: { fitScore: 8, fitRationale: 'Strong alignment — district piloting new math curriculum and evaluating ELA supplements.' },
+    matchSummary: {
+      overallTier: 'strong',
+      headline: 'District piloting new math curriculum and evaluating ELA supplements',
+      dimensions: [
+        { key: 'goals_priorities', tier: 'strong', signals: ['Active math curriculum pilot and ELA supplement evaluation in progress.'], productConnection: 'Products align with active pilot and evaluation cycles.' },
+        { key: 'academic_need', tier: 'strong', signals: ['Math and ELA proficiency trends warrant new instructional materials.'], productConnection: 'Products address identified proficiency gaps in both subjects.' },
+        { key: 'budget_capacity', tier: 'moderate', signals: ['Budget allocated for pilot phase; full adoption funding TBD.'], productConnection: 'Product pricing fits within pilot budget allocation.' },
+      ],
+      topSignals: [
+        'District piloting new math curriculum with active evaluation timeline',
+        'ELA supplement evaluation underway alongside math pilot',
+      ],
+    },
     generatedAt: new Date(now - 10 * DAY).toISOString(),
     sections: buildCompleteSections('pb-seed-007', '7c2603bd-7cca-414f-8813-320d8ef2020b', 'Long Beach Unified', ['EnvisionMath', 'myPerspectives']),
     overallStatus: 'complete',

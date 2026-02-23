@@ -29,7 +29,10 @@ export interface IDistrictService {
 
   // Authorization: publisher-admin, publisher-rep
   // Errors: DISTRICT_NOT_FOUND, PRODUCT_NOT_FOUND
-  getMatchSummaries(districtId: string, productIds: string[]): Promise<MatchSummary>;
+  // Batch: returns match summaries for multiple districts against a single product.
+  // Used by discovery, saved districts, and other list surfaces.
+  // Districts not found or without matching data are omitted from the result.
+  getMatchSummaries(productId: string, districtIds: string[]): Promise<Record<string, MatchSummary>>;
 
   // Authorization: publisher-admin, publisher-rep
   getAvailableFilters(): Promise<FilterFacet[]>;

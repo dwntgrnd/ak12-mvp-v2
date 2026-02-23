@@ -48,7 +48,8 @@ export type AlignmentDimensionKey =
 export interface AlignmentDimension {
   key: AlignmentDimensionKey;
   tier: MatchTier;
-  signal: string;            // one-sentence evidence
+  signals: string[];          // evidence statements for this dimension
+  productConnection: string;  // how the product relates to this dimension
 }
 
 /** Unified match summary — replaces FitAssessment */
@@ -67,11 +68,14 @@ export interface ProductDistrictMatch {
   generatedAt: string;       // ISO 8601
 }
 
-/** Per-solution match within a playbook context */
+/** Multi-product solution assessment — future state (Spec 16 §3.2) */
 export interface SolutionMatch {
-  productId: string;
-  productName: string;
-  summary: MatchSummary;
+  districtId: string;
+  products: ProductDistrictMatch[];
+  combinedTier: MatchTier;
+  coverageSummary: string;
+  gaps: string[];
+  solutionSynthesis: string;
 }
 
 export type ContentSource = 'verbatim' | 'constrained' | 'synthesis' | 'hybrid';
