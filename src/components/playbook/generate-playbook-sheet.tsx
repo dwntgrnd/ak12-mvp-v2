@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { Loader2, Info } from 'lucide-react';
+import { Loader2, Info, X } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -69,6 +69,7 @@ export function GeneratePlaybookSheet({
 
   // Submission state
   const [duplicateNotice, setDuplicateNotice] = useState<string | null>(null);
+  const [duplicateDismissed, setDuplicateDismissed] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [generateError, setGenerateError] = useState(false);
 
@@ -87,6 +88,7 @@ export function GeneratePlaybookSheet({
       setDistrictMode(initialDistrict ? 'resolved' : 'search');
       setSelectedDistrict(initialDistrict || null);
       setDuplicateNotice(null);
+      setDuplicateDismissed(false);
       setIsGenerating(false);
       setGenerateError(false);
       setProductsLoading(true);
@@ -146,6 +148,7 @@ export function GeneratePlaybookSheet({
 
   // Duplicate detection
   useEffect(() => {
+    setDuplicateDismissed(false);
     if (selectedProductIds.size === 0 || !selectedDistrict) {
       setDuplicateNotice(null);
       return;
@@ -433,10 +436,18 @@ export function GeneratePlaybookSheet({
           )}
 
           {/* Duplicate notice */}
-          {duplicateNotice && (
-            <Alert>
+          {duplicateNotice && !duplicateDismissed && (
+            <Alert className="relative">
               <Info className="h-4 w-4" />
-              <AlertDescription>{duplicateNotice}</AlertDescription>
+              <AlertDescription className="pr-8">{duplicateNotice}</AlertDescription>
+              <button
+                type="button"
+                onClick={() => setDuplicateDismissed(true)}
+                className="absolute top-3 right-3 text-foreground-secondary hover:text-foreground transition-colors"
+                aria-label="Dismiss notice"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
             </Alert>
           )}
 
