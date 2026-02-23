@@ -150,6 +150,21 @@ export const CARD_SET_CONFIG: ListContextConfig = {
   sortOptions: SHARED_SORT_OPTIONS,
 };
 
+export const SAVED_DISTRICTS_CONFIG: ListContextConfig = {
+  columns: [
+    { key: 'name', label: 'District', minWidth: 'min-w-0', sortable: true },
+    ...SHARED_METRIC_COLUMNS,
+  ],
+  availableFilters: SHARED_FILTERS,
+  showLocalFilter: false,
+  showColumnHeaders: false,
+  searchPlaceholder: 'Search saved districts...',
+  sortOptions: [
+    { key: 'savedAt', label: 'Date Saved' },
+    ...SHARED_SORT_OPTIONS,
+  ],
+};
+
 /* ------------------------------------------------------------------ */
 /*  Alignment filter / column (product lens active)                    */
 /* ------------------------------------------------------------------ */
