@@ -10,19 +10,19 @@ export function Topbar() {
       <nav className="flex items-center gap-6">
         <a
           href="#"
-          className="text-sm text-sidebar-foreground/70 hover:text-sidebar-foreground transition-colors"
+          className="text-sm font-medium text-sidebar-foreground/70 hover:text-sidebar-foreground transition-colors"
         >
           About AlchemyK12
         </a>
         <a
           href="#"
-          className="text-sm text-sidebar-foreground/70 hover:text-sidebar-foreground transition-colors"
+          className="text-sm font-medium text-sidebar-foreground/70 hover:text-sidebar-foreground transition-colors"
         >
           Help / Feedback
         </a>
         <a
           href="#"
-          className="text-sm text-sidebar-foreground/70 hover:text-sidebar-foreground transition-colors"
+          className="text-sm font-medium text-sidebar-foreground/70 hover:text-sidebar-foreground transition-colors"
         >
           Logout
         </a>
