@@ -8,6 +8,7 @@ import { DiscoveryResultsLayout } from '@/components/discovery/discovery-results
 import { GeneratePlaybookSheet } from '@/components/playbook/generate-playbook-sheet';
 import { LibraryRequiredDialog } from '@/components/shared/library-required-dialog';
 import { useLibraryReadiness } from '@/hooks/use-library-readiness';
+import { useSavedDistricts } from '@/hooks/use-saved-districts';
 import { getDiscoveryService } from '@/services';
 import type { IDiscoveryService } from '@/services';
 import type { DiscoveryQueryResponse } from '@/services/types/discovery';
@@ -26,8 +27,8 @@ export default function DiscoveryPage() {
   const readiness = useLibraryReadiness();
   const products = readiness.products.map((p) => ({ productId: p.productId, name: p.name }));
 
-  // Saved districts — optimistic local state
-  const [savedDistricts, setSavedDistricts] = useState<Set<string>>(new Set());
+  // Saved districts — shared singleton hook
+  const { savedDistrictIds, saveDistrict, removeSavedDistrict } = useSavedDistricts();
 
   // Playbook sheet state
   const [playbookOpen, setPlaybookOpen] = useState(false);
@@ -78,26 +79,6 @@ export default function DiscoveryPage() {
     // productLensId intentionally NOT reset — lens persists across query clears
   }
 
-  const handleSaveDistrict = useCallback(async (districtId: string) => {
-    setSavedDistricts((prev) => new Set(prev).add(districtId));
-    try {
-      const res = await fetch(`/api/districts/${districtId}/save`, { method: 'POST' });
-      if (!res.ok) setSavedDistricts((prev) => { const next = new Set(prev); next.delete(districtId); return next; });
-    } catch {
-      setSavedDistricts((prev) => { const next = new Set(prev); next.delete(districtId); return next; });
-    }
-  }, []);
-
-  const handleRemoveSaved = useCallback(async (districtId: string) => {
-    setSavedDistricts((prev) => { const next = new Set(prev); next.delete(districtId); return next; });
-    try {
-      const res = await fetch(`/api/districts/${districtId}/save`, { method: 'DELETE' });
-      if (!res.ok) setSavedDistricts((prev) => new Set(prev).add(districtId));
-    } catch {
-      setSavedDistricts((prev) => new Set(prev).add(districtId));
-    }
-  }, []);
-
   const handleGeneratePlaybook = useCallback((districtId: string) => {
     if (!readiness.hasProducts) {
       setShowLibraryDialog(true);
@@ -137,9 +118,9 @@ export default function DiscoveryPage() {
           productLensId={productLensId}
           onProductLensChange={setProductLensId}
           hasProducts={readiness.hasProducts}
-          savedDistricts={savedDistricts}
-          onSaveDistrict={handleSaveDistrict}
-          onRemoveSaved={handleRemoveSaved}
+          savedDistricts={savedDistrictIds}
+          onSaveDistrict={saveDistrict}
+          onRemoveSaved={removeSavedDistrict}
           onGeneratePlaybook={handleGeneratePlaybook}
         />
       )}
