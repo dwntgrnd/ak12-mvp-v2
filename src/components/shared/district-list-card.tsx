@@ -6,10 +6,10 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useDistrictPlaybookStatus } from '@/hooks/use-district-playbook-status';
-import { fitCategoryColors, type FitCategoryKey } from '@/lib/design-tokens';
+import { fitCategoryColors, matchTierColors, type FitCategoryKey } from '@/lib/design-tokens';
 import { formatNumber } from '@/lib/utils/format';
 import { cn } from '@/lib/utils';
-import type { FitAssessment } from '@/services/types/common';
+import type { FitAssessment, MatchSummary } from '@/services/types/common';
 import type { ProductAlignment } from '@/services/types/discovery';
 import type { DistrictSnapshot } from '@/services/types/district';
 
@@ -19,6 +19,7 @@ interface DistrictListCardProps {
   rank?: number;
   productAlignment?: ProductAlignment;
   fitAssessment?: FitAssessment;
+  matchSummary?: MatchSummary;
   fitLoading?: boolean;
   additionalMetrics?: Array<{ label: string; value: string }>;
   activeSortMetric?: string;
@@ -52,6 +53,7 @@ export function DistrictListCard({
   rank,
   productAlignment,
   fitAssessment,
+  matchSummary,
   fitLoading,
   additionalMetrics,
   activeSortMetric,
@@ -93,10 +95,12 @@ export function DistrictListCard({
     name,
     ...metaParts,
     `${formatNumber(snapshot.totalEnrollment)} students`,
-    fitAssessment
-      ? fitCategoryColors[getFitCategory(fitAssessment.fitScore)].label
-      : null,
-    productAlignment ? `${productAlignment.level} alignment` : null,
+    matchSummary
+      ? `${matchTierColors[matchSummary.overallTier].label} — ${matchSummary.headline}`
+      : fitAssessment
+        ? fitCategoryColors[getFitCategory(fitAssessment.fitScore)].label
+        : null,
+    matchSummary ? null : (productAlignment ? `${productAlignment.level} alignment` : null),
   ]
     .filter(Boolean)
     .join(' \u00b7 ');
@@ -163,17 +167,24 @@ export function DistrictListCard({
         </div>
 
         <div className="flex items-center gap-2 shrink-0">
-          {fitLoading && !fitAssessment && (
+          {fitLoading && !fitAssessment && !matchSummary && (
             <Skeleton className="h-5 w-20" />
           )}
-          {fitAssessment && fitColors && (
+          {matchSummary ? (
+            <Badge
+              className={`${matchTierColors[matchSummary.overallTier].bg} ${matchTierColors[matchSummary.overallTier].text} ${matchTierColors[matchSummary.overallTier].border} border`}
+              variant="outline"
+            >
+              {matchTierColors[matchSummary.overallTier].label}
+            </Badge>
+          ) : fitAssessment && fitColors ? (
             <Badge
               className={`${fitColors.bg} ${fitColors.text} ${fitColors.border} border`}
               variant="outline"
             >
               {fitColors.label}
             </Badge>
-          )}
+          ) : null}
 
           {(onSave || onRemoveSaved) && (
             <button
@@ -268,8 +279,12 @@ export function DistrictListCard({
             })}
           </div>
 
-          {/* Product alignment — right side of metrics row */}
-          {productAlignment && (
+          {/* Product context — right side of metrics row */}
+          {matchSummary ? (
+            <span className="text-xs text-foreground-secondary truncate max-w-[280px]">
+              {matchSummary.headline}
+            </span>
+          ) : productAlignment ? (
             <div className="flex items-center gap-1.5 shrink-0">
               <span
                 className={cn(
@@ -285,7 +300,7 @@ export function DistrictListCard({
                 </span>
               )}
             </div>
-          )}
+          ) : null}
         </div>
       </div>
 
