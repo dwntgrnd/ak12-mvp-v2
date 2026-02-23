@@ -161,6 +161,7 @@ export const SAVED_DISTRICTS_CONFIG: ListContextConfig = {
   searchPlaceholder: 'Search saved districts...',
   sortOptions: [
     { key: 'savedAt', label: 'Date Saved' },
+    { key: 'matchTier', label: 'Match Tier' },
     ...SHARED_SORT_OPTIONS,
   ],
 };

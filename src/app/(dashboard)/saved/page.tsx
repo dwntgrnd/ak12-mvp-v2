@@ -1,17 +1,25 @@
 'use client';
 
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Bookmark } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useSavedDistricts } from '@/hooks/use-saved-districts';
 import { useLibraryReadiness } from '@/hooks/use-library-readiness';
+import { useProductLens } from '@/hooks/use-product-lens';
+import { ProductLensSelector } from '@/components/discovery/product-lens-selector';
 import { DistrictListCard } from '@/components/shared/district-list-card';
 import { DistrictListingsContainer } from '@/components/shared/district-listings-container';
-import { SAVED_DISTRICTS_CONFIG, type ActiveSort } from '@/components/shared/list-context-config';
+import {
+  SAVED_DISTRICTS_CONFIG,
+  buildListContextConfig,
+  type ActiveSort,
+} from '@/components/shared/list-context-config';
 import { GeneratePlaybookSheet } from '@/components/playbook/generate-playbook-sheet';
 import { LibraryRequiredDialog } from '@/components/shared/library-required-dialog';
 import { sortBySnapshotField, filterBySnapshot } from '@/lib/utils/sort-utils';
+import { getDistrictService } from '@/services';
+import type { MatchSummary } from '@/services/types/common';
 
 export default function SavedDistrictsPage() {
   const router = useRouter();
@@ -31,6 +39,52 @@ export default function SavedDistrictsPage() {
   // Hooks
   const { savedDistricts, removeSavedDistrict, loading } = useSavedDistricts();
   const readiness = useLibraryReadiness();
+  const { activeProduct, setProduct, clearProduct } = useProductLens();
+  const productLensId = activeProduct?.productId;
+
+  // Match summaries for active lens
+  const [matchSummaries, setMatchSummaries] = useState<Record<string, MatchSummary>>({});
+
+  // Fetch match summaries when lens + saved districts change
+  useEffect(() => {
+    if (!productLensId || savedDistricts.length === 0) {
+      setMatchSummaries({});
+      return;
+    }
+    const districtIds = savedDistricts.map((sd) => sd.districtId);
+    let cancelled = false;
+    getDistrictService()
+      .then((s) => s.getMatchSummaries(productLensId, districtIds))
+      .then((result) => { if (!cancelled) setMatchSummaries(result); })
+      .catch(() => { if (!cancelled) setMatchSummaries({}); })
+    return () => { cancelled = true; };
+  }, [productLensId, savedDistricts]);
+
+  // Dynamic list config with lens awareness
+  const listConfig = useMemo(
+    () => buildListContextConfig(SAVED_DISTRICTS_CONFIG, {
+      hasProducts: readiness.hasProducts,
+      productLensActive: !!productLensId,
+    }),
+    [readiness.hasProducts, productLensId],
+  );
+
+  // Product lens change handler
+  const handleProductLensChange = useCallback((productId: string | undefined) => {
+    if (!productId) { clearProduct(); return; }
+    const product = readiness.products.find((p) => p.productId === productId);
+    if (product) setProduct(product);
+  }, [readiness.products, setProduct, clearProduct]);
+
+  // Product lens slot
+  const productLensSlot = readiness.hasProducts ? (
+    <ProductLensSelector
+      products={readiness.products.map((p) => ({ productId: p.productId, name: p.name }))}
+      selectedProductId={productLensId}
+      onProductChange={handleProductLensChange}
+      variant="compact"
+    />
+  ) : undefined;
 
   // Enrich with top-level `name` for HasSnapshot compatibility
   const enriched = useMemo(
@@ -57,7 +111,17 @@ export default function SavedDistrictsPage() {
     result = filterBySnapshot(result, filterValues);
 
     // Sort
-    if (activeSort?.key === 'savedAt') {
+    if (activeSort?.key === 'matchTier') {
+      const tierOrder: Record<string, number> = { strong: 0, moderate: 1, limited: 2 };
+      const dir = activeSort.direction === 'asc' ? 1 : -1;
+      result = [...result].sort((a, b) => {
+        const aTier = matchSummaries[a.districtId]?.overallTier;
+        const bTier = matchSummaries[b.districtId]?.overallTier;
+        const aVal = aTier ? tierOrder[aTier] : 999;
+        const bVal = bTier ? tierOrder[bTier] : 999;
+        return dir * (aVal - bVal);
+      });
+    } else if (activeSort?.key === 'savedAt') {
       const dir = activeSort.direction === 'asc' ? 1 : -1;
       result = [...result].sort((a, b) => dir * a.savedAt.localeCompare(b.savedAt));
     } else {
@@ -65,7 +129,7 @@ export default function SavedDistrictsPage() {
     }
 
     return result;
-  }, [enriched, searchQuery, filterValues, activeSort]);
+  }, [enriched, searchQuery, filterValues, activeSort, matchSummaries]);
 
   const handleFilterChange = useCallback((filterId: string, values: string[]) => {
     setFilterValues((prev) => ({ ...prev, [filterId]: values }));
@@ -107,7 +171,7 @@ export default function SavedDistrictsPage() {
         <h1 className="text-2xl font-bold tracking-[-0.01em] text-foreground">Saved Districts</h1>
         <div className="mt-6">
           <DistrictListingsContainer
-            config={SAVED_DISTRICTS_CONFIG}
+            config={listConfig}
             resultCount={0}
             searchQuery=""
             onSearchChange={() => {}}
@@ -116,6 +180,7 @@ export default function SavedDistrictsPage() {
             filterValues={{}}
             onFilterChange={() => {}}
             onClearAllFilters={() => {}}
+            productLensSlot={productLensSlot}
             loading
             skeletonRows={4}
           >
@@ -152,7 +217,7 @@ export default function SavedDistrictsPage() {
         <h1 className="text-2xl font-bold tracking-[-0.01em] text-foreground">Saved Districts</h1>
         <div className="mt-6">
           <DistrictListingsContainer
-            config={SAVED_DISTRICTS_CONFIG}
+            config={listConfig}
             resultCount={processed.length}
             totalCount={savedDistricts.length}
             searchQuery={searchQuery}
@@ -162,6 +227,7 @@ export default function SavedDistrictsPage() {
             filterValues={filterValues}
             onFilterChange={handleFilterChange}
             onClearAllFilters={handleClearAllFilters}
+            productLensSlot={productLensSlot}
             emptyTitle="No districts match your search"
           >
             {processed.map((entry) => (
@@ -169,6 +235,7 @@ export default function SavedDistrictsPage() {
                 key={entry.districtId}
                 snapshot={entry.snapshot}
                 variant="inset"
+                matchSummary={matchSummaries[entry.districtId]}
                 isSaved
                 onRemoveSaved={removeSavedDistrict}
                 onGeneratePlaybook={handleGeneratePlaybook}
@@ -182,6 +249,7 @@ export default function SavedDistrictsPage() {
         open={playbookOpen}
         onOpenChange={setPlaybookOpen}
         initialDistrict={playbookDistrictInfo}
+        initialProductIds={productLensId ? [productLensId] : undefined}
       />
 
       <LibraryRequiredDialog
