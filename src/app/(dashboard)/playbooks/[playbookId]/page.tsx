@@ -510,18 +510,14 @@ export default function PlaybookDetailPage({
               >
                 <div className="space-y-4">
                   {contentBlocks.map((block, blockIdx) => (
-                    <div
+                    <InlineEditableBlock
                       key={`${section.sectionId}-block-${blockIdx}`}
-                      className="bg-surface-inset rounded-md p-4"
-                    >
-                      <InlineEditableBlock
-                        value={block}
-                        onSave={(newValue) =>
-                          handleSaveBlock(section.sectionId, blockIdx, newValue)
-                        }
-                        aria-label={`Edit ${label} content block ${blockIdx + 1}`}
-                      />
-                    </div>
+                      value={block}
+                      onSave={(newValue) =>
+                        handleSaveBlock(section.sectionId, blockIdx, newValue)
+                      }
+                      aria-label={`Edit ${label} content block ${blockIdx + 1}`}
+                    />
                   ))}
                 </div>
               </PlaybookSection>
