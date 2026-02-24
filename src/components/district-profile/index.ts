@@ -1,4 +1,5 @@
 export { DistrictIdentityBar } from './district-identity-bar';
+export { PersistentDataStrip } from './persistent-data-strip';
 // Retained for potential reuse — not currently used on district profile page
 // export { MetricTile } from './metric-tile';
 export { DistrictChart } from './district-chart';

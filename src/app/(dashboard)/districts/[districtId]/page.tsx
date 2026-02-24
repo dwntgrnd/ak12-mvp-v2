@@ -1,7 +1,7 @@
 'use client';
 
 import { use, useEffect, useState, useCallback } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { RefreshCw } from 'lucide-react';
 import { useAppShell } from '@/components/layout/app-shell-context';
@@ -12,12 +12,13 @@ import { getDistrictService } from '@/services';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import {
-  DistrictIdentityBar,
+  PersistentDataStrip,
   ResearchTabs,
 } from '@/components/district-profile';
 import { GeneratePlaybookSheet } from '@/components/playbook/generate-playbook-sheet';
 import { useProductLens } from '@/hooks/use-product-lens';
 import { useLibraryReadiness } from '@/hooks/use-library-readiness';
+import { useDistrictPlaybookStatus } from '@/hooks/use-district-playbook-status';
 
 export default function DistrictProfilePage({
   params,
@@ -25,6 +26,7 @@ export default function DistrictProfilePage({
   params: Promise<{ districtId: string }>;
 }) {
   const { districtId } = use(params);
+  const router = useRouter();
   const searchParams = useSearchParams();
   const productId = searchParams.get('productId');
   const { setBreadcrumbs } = useAppShell();
@@ -38,6 +40,7 @@ export default function DistrictProfilePage({
 
   const { activeProduct, setProduct, isLensActive } = useProductLens();
   const readiness = useLibraryReadiness();
+  const { loading: playbookLoading, existingPlaybookId } = useDistrictPlaybookStatus(districtId);
 
   // Seed lens from URL param on mount (doesn't override existing lens)
   useEffect(() => {
@@ -144,24 +147,24 @@ export default function DistrictProfilePage({
   if (loading || !district) {
     return (
       <div className="space-y-6">
-        {/* Identity bar skeleton */}
-        <div className="max-w-content mx-auto space-y-3">
-          <div className="flex items-center justify-between">
-            <Skeleton className="h-7 w-64" />
-            <div className="flex gap-2">
-              <Skeleton className="h-9 w-28" />
-              <Skeleton className="h-9 w-28" />
-            </div>
-          </div>
-          <div className="pt-3 border-t border-border flex gap-4">
+        {/* Data strip skeleton */}
+        <div className="space-y-3">
+          <Skeleton className="h-7 w-64" />
+          <div className="pt-3 border-t border-border-subtle flex gap-4">
             {Array.from({ length: 5 }).map((_, i) => (
               <Skeleton key={i} className="h-12 w-24" />
             ))}
           </div>
         </div>
 
-        {/* Content column skeleton */}
-        <div className="max-w-content mx-auto mt-6 space-y-4">
+        {/* Temporary action row skeleton */}
+        <div className="flex gap-2">
+          <Skeleton className="h-9 w-40" />
+          <Skeleton className="h-9 w-36" />
+        </div>
+
+        {/* Tab area skeleton */}
+        <div className="space-y-4">
           <Skeleton className="h-9 w-full" />
           <Skeleton className="h-64 w-full" />
         </div>
@@ -172,20 +175,53 @@ export default function DistrictProfilePage({
   // --- Loaded state ---
   return (
     <div>
-      {/* Zone 1 — Identity Bar (constrained to match content column) */}
-      <div className="max-w-content mx-auto">
-        <DistrictIdentityBar
-          district={district}
-          yearData={yearData}
-          matchSummary={matchSummary}
-          activeProductName={activeProduct?.name}
-          onGeneratePlaybook={() => setPlaybookOpen(true)}
-        />
+      {/* Layer 1 — Persistent Data Strip */}
+      <PersistentDataStrip
+        district={district}
+        yearData={yearData}
+        matchSummary={matchSummary}
+        activeProductName={activeProduct?.name}
+      />
+
+      {/* Temporary action buttons (parked until CC03b builds mode bar) */}
+      <div className="flex items-center gap-2 mt-4">
+        <Button
+          variant="outlineBrand"
+          onClick={() => {
+            const searchTerm = district.county || district.name;
+            router.push(`/discovery?q=${encodeURIComponent(`districts in ${searchTerm} county`)}`);
+          }}
+        >
+          Find Similar Districts
+        </Button>
+        {playbookLoading ? (
+          <Skeleton className="h-9 w-32" />
+        ) : existingPlaybookId ? (
+          <Button
+            variant="outlineBrand"
+            onClick={() => router.push(`/districts/${districtId}/playbooks/${existingPlaybookId}`)}
+          >
+            View Playbook
+          </Button>
+        ) : (
+          <Button
+            onClick={() => setPlaybookOpen(true)}
+          >
+            {activeProduct?.name
+              ? `Generate ${activeProduct.name} Playbook`
+              : 'Generate Playbook'}
+          </Button>
+        )}
       </div>
 
-      {/* Zone 2 — Content Column */}
-      <div className="max-w-content mx-auto mt-8 space-y-4">
-        {/* Research Tabs */}
+      {/* Layer 2 — Mode Bar (CC03b placeholder) */}
+      <div id="mode-bar-slot" />
+
+      {/* Layer 3 — Lens Control Bar (CC03c placeholder) */}
+      <div id="lens-bar-slot" />
+
+      {/* Layer 4 — Tab Area */}
+      <div className="mt-8">
         <ResearchTabs districtId={districtId} yearData={yearData} />
       </div>
 
