@@ -65,7 +65,8 @@ const config: Config = {
         body: ['var(--font-inter)', 'sans-serif'],
       },
       maxWidth: {
-        content: 'var(--content-width)',
+        content: 'var(--content-width)',      // 900px — page content columns
+        layout: 'var(--content-max-width)',   // 1400px — layout container
       },
       borderRadius: {
         lg: 'var(--radius)',

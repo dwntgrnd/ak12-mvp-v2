@@ -47,7 +47,7 @@
   --ring: 208 60% 38%;
 
   /* Content width */
-  --content-width: 900px;
+  --content-width: 96rem; /* 1536px — Tailwind 2xl */
 
   /* Border radius */
   --radius: 0.5rem;
@@ -91,6 +91,7 @@
 
   /* Layout tokens */
   --topbar-height: 5.5rem;
+  --content-max-width: 90rem; /* 1440px */
 
   /* Typography scale tokens */
   --font-base: 16px; /* ← change this to scale all sizes */
@@ -162,6 +163,8 @@
   --font-body: var(--font-manrope);
   --font-mono: var(--font-mono);
   --spacing-topbar-height: var(--topbar-height);
+  --container-content: var(--content-width);
+  --container-layout: var(--content-max-width);
   /* Font size utilities */
   --text-page-title: var(--font-size-page-title);
   --text-section-heading: var(--font-size-section-heading);

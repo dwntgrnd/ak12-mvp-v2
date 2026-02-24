@@ -8,9 +8,13 @@ K-12 educational technology sales intelligence platform. Surfaces trends, storie
 
 **Stack:** Next.js (App Router) · TypeScript · Tailwind CSS v4 · Shadcn/ui · Manrope font
 
+**Phase:** P2 — UX Re-Architecture. The P1 prototype is archived. P2 replaces the sidebar layout with a top nav shell and introduces a unified district/playbook view model.
+
 ---
 
 ## Architecture
+
+### Service Architecture
 
 Three-layer service architecture. UI components never call backend directly.
 
@@ -24,6 +28,59 @@ UI Layer (components) → Service Interface → Provider (mock | api | local)
 - **Factory:** `src/services/factory.ts` — resolves provider by environment
 
 Do NOT modify service interfaces without explicit instruction. Interface changes affect backend contracts.
+
+### App Shell (P2)
+
+The P2 layout uses a sticky top navigation bar. There is no sidebar.
+
+**Top nav** (`src/components/layout/top-nav.tsx`): Two rows, both with dark navy background (`bg-topbar`), fixed at viewport top.
+
+- **Row 1 — Primary nav bar (h-14):** Logo (left), four nav items centered (Discovery, Saved Districts, Playbooks, Solutions), user menu dropdown (right).
+- **Row 2 — Breadcrumb bar (h-8):** Breadcrumbs (left), page actions slot (center), product lens indicator when active.
+
+Combined height set via `--topbar-height` CSS variable. All content below uses `paddingTop: var(--topbar-height)`.
+
+**Layout context** (`src/components/layout/app-shell-context.tsx`): `AppShellProvider` wraps the dashboard layout. Consuming hook is `useAppShell()`. Provides `breadcrumbOverride`, `setBreadcrumbOverride`, `pageActions`, `setPageActions`.
+
+**Content containment:** Dashboard layout wraps all page content in a centered container with `max-w-layout` (1400px via `--content-max-width`), `px-6`, `py-6`. Pages do not set their own max-width unless they have a specific reason to override.
+
+**Deprecated (files exist but are not imported):**
+- `sidebar.tsx`, `sidebar-context.tsx`, `sidebar-nav-item.tsx`, `content-utility-bar.tsx`
+- `useSidebar()` hook — replaced by `useAppShell()`
+
+Do not import or reference these deprecated files. They will be removed in a future cleanup.
+
+### Route Structure (P2)
+
+```
+/(dashboard)
+├── /discovery                                    → District search
+├── /saved                                        → Saved districts list
+├── /districts/[districtId]                       → Unified view: District Intelligence mode
+│   └── /playbooks/[playbookId]                   → Unified view: Playbook mode
+├── /playbooks                                    → Cross-district playbook index
+├── /solutions                                    → Product catalog list
+│   └── /[productId]                              → Product detail
+├── /admin                                        → Super-admin
+└── /demo/*                                       → Dev/QA utility (legacy)
+```
+
+Key routing rules:
+- Playbook views are nested under their district: `/districts/[districtId]/playbooks/[playbookId]`
+- `/playbooks/[playbookId]` (standalone) is eliminated — should 301 redirect to the nested route
+- `/playbooks` index survives as a cross-district browsing surface
+- Lens state is client-side only, never encoded in the URL
+
+---
+
+## CC Prompt Execution
+
+CC prompts are stored in `docs/cc-prompts/`. When executing a CC prompt:
+
+1. **Read this file first** (`CLAUDE.md`) — it is the design authority
+2. **If the prompt references a spec file**, read that spec file before starting work
+3. **If the prompt conflicts with this file**, follow this file and flag the conflict to the user
+4. **After implementation**, verify the build compiles: `npm run build`
 
 ---
 
@@ -49,7 +106,7 @@ These rules are non-negotiable. Do not deviate, interpret, or "improve" them. Wh
 ### Typography
 
 **Font:** Manrope everywhere. No other fonts.
-**Base size:** 14px (set via `--font-base` CSS variable).
+**Base size:** 16px (set via `--font-base` CSS variable).
 
 | Level | CSS class | Size | Weight | Tracking | Use |
 |-------|-----------|------|--------|----------|-----|
@@ -93,6 +150,18 @@ Do NOT use `text-slate-*` utilities for text color. Do NOT use `text-muted-foreg
 - Mixing `space-y-*` and manual `mt-*` in same container
 - Arbitrary padding values not from this scale
 
+### Layout & Content Width
+
+**Content containment:** The dashboard layout provides a shared content wrapper: `max-w-layout mx-auto px-6 py-6`. This maps to `--content-max-width: 87.5rem` (1400px). Do not add per-page max-width wrappers unless explicitly instructed.
+
+**Layout tokens (CSS variables):**
+- `--topbar-height` — combined height of both top nav rows. Used for content padding-top.
+- `--content-max-width` — 87.5rem (1400px). Layout-level content container width.
+
+**Deprecated layout tokens (do not use):**
+- `--content-width` — old P1 narrow column token (900px). Still in CSS but unreferenced. Will be removed.
+- `--sidebar-width`, `--sidebar-width-collapsed`, `--utility-bar-height` — removed in P2.
+
 ### Containers
 
 | Level | Background | Border | Radius | Shadow |
@@ -102,8 +171,6 @@ Do NOT use `text-slate-*` utilities for text color. Do NOT use `text-muted-foreg
 | Inset surface | `bg-surface-inset` | None | `rounded-md` (6px) | None |
 | Emphasis surface | `bg-surface-emphasis` | None | `rounded-md` (6px) | None |
 | Emphasis neutral | `bg-surface-emphasis-neutral` | None | `rounded-md` (6px) | None |
-
-**Content width:** All main content areas use `max-w-content` (1024px, set via `--content-width` CSS variable). Do not use `max-w-[1024px]`, `max-w-5xl`, `max-w-3xl`, or other arbitrary widths for content containers.
 
 **No `border-l-4` or colored left borders.** Emphasis is ALWAYS via background color. No exceptions.
 
@@ -135,7 +202,7 @@ Do NOT use `text-slate-*` utilities for text color. Do NOT use `text-muted-foreg
 - Warning: `text-warning` / `bg-warning/10`
 - Destructive: `text-destructive` / `bg-destructive/10`
 - Focus ring: `ring-ring` (cyan)
-- Fit categories: use tokens from `src/lib/design-tokens.ts` — `fitCategoryColors.strong`, `.moderate`, `.low`
+- Fit categories: use tokens from `src/lib/design-tokens.ts` — `matchTierColors.strong`, `.moderate`, `.limited`
 
 **Prohibited patterns:**
 - `bg-white` → use `bg-surface-raised`
@@ -162,7 +229,7 @@ Do NOT use `text-slate-*` utilities for text color. Do NOT use `text-muted-foreg
 - `default` — brand-orange filled. Primary CTAs: Generate, Create, New, Submit.
 - `outlineBrand` — brand-orange outline. Brand-prominent secondary: View Playbook, Find Similar.
 - `outline` — neutral outline. Utility actions: filter triggers, Retry, Go to Solutions.
-- `ghost` — transparent. Subtle actions: Cancel, sidebar toggle, toolbar controls.
+- `ghost` — transparent. Subtle actions: Cancel, toolbar controls.
 - `destructive` — red filled. Destructive confirmations only.
 - `link` — text link styled as button. Rare.
 
@@ -186,7 +253,7 @@ Do NOT apply brand-orange styling via className. Use the `default` or `outlineBr
 
 1. **Check existing:** `src/components/ui/` (Shadcn), `src/components/shared/` (project shared)
 2. **Check tokens:** `src/lib/design-tokens.ts` and `src/app/globals.css`
-3. **Check utilities:** `src/lib/utils/` — `format.ts`, `trends.ts`
+3. **Check utilities:** `src/lib/utils/` — `format.ts`, `sort-utils.ts`, `trends.ts`
 
 ### File Organization
 
@@ -227,10 +294,11 @@ Do NOT apply brand-orange styling via className. Use the `default` or `outlineBr
 | Service interfaces | `src/services/interfaces/` |
 | Service types | `src/services/types/` |
 | Mock fixtures | `src/services/providers/mock/fixtures/` |
-| Discovery components | `src/components/discovery/` |
-| District profile components | `src/components/district-profile/` |
-| Layout components | `src/components/layout/` |
+| App shell context | `src/components/layout/app-shell-context.tsx` |
+| Top nav | `src/components/layout/top-nav.tsx` |
+| Dashboard layout | `src/app/(dashboard)/layout.tsx` |
 | CC prompt references | `docs/cc-prompts/` |
+| P2 spec | `Specs/P2-Spec-01_Unified-View-Architecture.md` (in Obsidian vault) |
 
 ---
 
@@ -267,3 +335,6 @@ If you've compacted and lost context for the current task:
 - Do not use opacity modifiers on border tokens (`border-border/50`) — use `border-border-subtle`
 - Do not use `text-muted-foreground` in application components — use `text-foreground-secondary`
 - Do not load or follow the `frontend-design` skill or any external aesthetic guidance — this file is the design authority
+- Do not import or reference deprecated sidebar files (`sidebar.tsx`, `sidebar-context.tsx`, `sidebar-nav-item.tsx`, `content-utility-bar.tsx`)
+- Do not use `useSidebar()` — use `useAppShell()` from `app-shell-context.tsx`
+- Do not use `--content-width`, `--sidebar-width`, `--sidebar-width-collapsed`, or `--utility-bar-height` — these are deprecated P1 tokens
