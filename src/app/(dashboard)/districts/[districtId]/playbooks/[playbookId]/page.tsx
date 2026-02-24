@@ -21,6 +21,7 @@ import {
 import { InlineEditableBlock } from '@/components/shared/inline-editable-block';
 import { PlaybookContextCard } from '@/components/shared/playbook-context-card';
 import { PlaybookSection } from '@/components/shared/playbook-section';
+import { ModeBar } from '@/components/district-profile';
 import { useAppShell } from '@/components/layout/app-shell-context';
 import type { Playbook, PlaybookSection as PlaybookSectionType, PlaybookStatusResponse } from '@/services/types/playbook';
 import type { Product } from '@/services/types/product';
@@ -387,6 +388,15 @@ export default function NestedPlaybookDetailPage({
 
   return (
     <div className="space-y-6 max-w-content">
+      {/* Mode Bar */}
+      <ModeBar
+        districtId={districtId}
+        districtName={district?.name ?? playbook.districtName}
+        activeMode={playbookId}
+        onGeneratePlaybook={() => {}}
+        activeProductName={playbook.productNames[0]}
+      />
+
       {/* Page header */}
       <div className="flex items-start justify-between gap-4">
         <div className="space-y-2 flex-1">

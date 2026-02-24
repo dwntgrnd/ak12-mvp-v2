@@ -1,7 +1,7 @@
 'use client';
 
 import { use, useEffect, useState, useCallback } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { RefreshCw } from 'lucide-react';
 import { useAppShell } from '@/components/layout/app-shell-context';
@@ -13,12 +13,12 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import {
   PersistentDataStrip,
+  ModeBar,
   ResearchTabs,
 } from '@/components/district-profile';
 import { GeneratePlaybookSheet } from '@/components/playbook/generate-playbook-sheet';
 import { useProductLens } from '@/hooks/use-product-lens';
 import { useLibraryReadiness } from '@/hooks/use-library-readiness';
-import { useDistrictPlaybookStatus } from '@/hooks/use-district-playbook-status';
 
 export default function DistrictProfilePage({
   params,
@@ -26,7 +26,6 @@ export default function DistrictProfilePage({
   params: Promise<{ districtId: string }>;
 }) {
   const { districtId } = use(params);
-  const router = useRouter();
   const searchParams = useSearchParams();
   const productId = searchParams.get('productId');
   const { setBreadcrumbs } = useAppShell();
@@ -40,7 +39,6 @@ export default function DistrictProfilePage({
 
   const { activeProduct, setProduct, isLensActive } = useProductLens();
   const readiness = useLibraryReadiness();
-  const { loading: playbookLoading, existingPlaybookId } = useDistrictPlaybookStatus(districtId);
 
   // Seed lens from URL param on mount (doesn't override existing lens)
   useEffect(() => {
@@ -157,11 +155,8 @@ export default function DistrictProfilePage({
           </div>
         </div>
 
-        {/* Temporary action row skeleton */}
-        <div className="flex gap-2">
-          <Skeleton className="h-9 w-40" />
-          <Skeleton className="h-9 w-36" />
-        </div>
+        {/* Mode bar skeleton */}
+        <Skeleton className="h-10 w-full rounded" />
 
         {/* Tab area skeleton */}
         <div className="space-y-4">
@@ -183,39 +178,16 @@ export default function DistrictProfilePage({
         activeProductName={activeProduct?.name}
       />
 
-      {/* Temporary action buttons (parked until CC03b builds mode bar) */}
-      <div className="flex items-center gap-2 mt-4">
-        <Button
-          variant="outlineBrand"
-          onClick={() => {
-            const searchTerm = district.county || district.name;
-            router.push(`/discovery?q=${encodeURIComponent(`districts in ${searchTerm} county`)}`);
-          }}
-        >
-          Find Similar Districts
-        </Button>
-        {playbookLoading ? (
-          <Skeleton className="h-9 w-32" />
-        ) : existingPlaybookId ? (
-          <Button
-            variant="outlineBrand"
-            onClick={() => router.push(`/districts/${districtId}/playbooks/${existingPlaybookId}`)}
-          >
-            View Playbook
-          </Button>
-        ) : (
-          <Button
-            onClick={() => setPlaybookOpen(true)}
-          >
-            {activeProduct?.name
-              ? `Generate ${activeProduct.name} Playbook`
-              : 'Generate Playbook'}
-          </Button>
-        )}
+      {/* Layer 2 — Mode Bar */}
+      <div className="mt-4">
+        <ModeBar
+          districtId={districtId}
+          districtName={district.name}
+          activeMode="district"
+          onGeneratePlaybook={() => setPlaybookOpen(true)}
+          activeProductName={activeProduct?.name}
+        />
       </div>
-
-      {/* Layer 2 — Mode Bar (CC03b placeholder) */}
-      <div id="mode-bar-slot" />
 
       {/* Layer 3 — Lens Control Bar (CC03c placeholder) */}
       <div id="lens-bar-slot" />
