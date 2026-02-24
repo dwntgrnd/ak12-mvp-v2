@@ -57,19 +57,27 @@ Determine the district's procurement posture before the meeting: active adoption
   stakeholder_map: {
     sectionLabel: 'Stakeholder Map',
     contentSource: 'constrained',
-    template: `Key stakeholders at {{districtName}} typically involved in curriculum adoption decisions, with approach guidance for each role.
+    template: `{{superintendentLine}} leads {{districtName}}. {{superintendentContact}}
 
-**Superintendent** — Sets district-wide strategic direction aligned with the LCAP and board priorities. *Approach:* You are unlikely to meet the superintendent early. Instead, mirror their publicly stated priorities in every touchpoint — when your message echoes what the superintendent says in board presentations, it gains credibility at every level below. Review recent public communications before the first meeting.
+**We don't yet have detailed stakeholder intelligence for {{districtName}}.** The contacts below will need to be identified through pre-meeting research. This section provides a framework for who to find and how to approach them once identified.
 
-**Chief Academic Officer / Assistant Superintendent of Instruction** — The primary decision-maker for instructional materials. Manages the adoption committee and determines which products advance to piloting. *Approach:* This is your highest-value first meeting. Lead with evidence of impact in comparable districts and alignment with the district's evaluation criteria. Ask what the evaluation rubric weights most heavily and tailor accordingly.
+**Pre-Meeting Research Checklist:**
+- Review {{districtName}}'s website for organizational directory and cabinet listings
+- Pull the most recent LCAP document — it names priorities and often identifies responsible administrators
+- Watch or read minutes from the last 2-3 board meetings — note who presents on curriculum, who asks about student outcomes, and which board members are most engaged on instructional materials
+- Check for an active adoption timeline or RFP — the procurement office or board agendas will surface this
+- Identify the EL program director by name — this role carries outsized influence in California districts and is often the gatekeeper for product evaluation
 
-**Subject Area Curriculum Directors** — Technical evaluators who assess standards alignment, pedagogy, teacher usability, and differentiation. *Approach:* Build this relationship early — these are long-cycle contacts who influence multiple adoption rounds. Come prepared for deep product walkthroughs, not high-level pitches. Ask what gaps they see in current materials; their frustrations signal your positioning.
+**Stakeholder Engagement Framework:**
+Once you've identified the individuals at {{districtName}}, use this approach hierarchy:
 
-**Chief Business Officer / Procurement Lead** — Controls budget allocation and vendor contracts. *Approach:* Come prepared with total cost of ownership, per-pupil pricing, and multi-year models. Ask about fiscal calendar and procurement thresholds early — timing a proposal to align with budget cycles matters more than the pitch itself.
-
-**School Board** — Final approval authority for major curriculum purchases. Meetings are public and votes are on record. *Approach:* Attend a board meeting before your sales conversation. Note which members ask about instructional materials, equity, or student outcomes — these are your likely champions or skeptics. Do not present to the board directly; arm the administration with talking points they can use.
-
-**Site Principals** — Influence adoption through pilot participation and teacher feedback. *Approach:* Identify principals known for instructional leadership or innovation. A principal who champions your product during a pilot becomes your strongest internal advocate — invest in these relationships during the evaluation period.`,
+- **Superintendent:** Do not request a direct meeting early. Study their public priorities and mirror that language in every touchpoint with their team. Your credibility with the superintendent is built indirectly — through alignment with their stated goals, not through a pitch.
+- **Chief Academic Officer / Asst. Superintendent of Instruction:** Your highest-value first meeting. Ask for the evaluation rubric or adoption criteria before presenting. Tailor everything to their stated weights.
+- **Curriculum Directors (Math/ELA):** Prepare for deep product walkthroughs. Ask what gaps exist in current materials — their frustrations are your positioning.
+- **EL Program Director:** Schedule a dedicated EL-focused session, separate from general presentations. Show designated and integrated ELD support at the lesson level. A generic demo won't earn this stakeholder's endorsement.
+- **Chief Business Officer:** Lead with total cost of ownership and per-pupil pricing. Ask about fiscal calendar and procurement thresholds before proposing timing.
+- **School Board:** Do not present directly. Arm the administration with board-ready talking points. Attend a meeting first to identify champions and skeptics.
+- **Site Principals:** Identify instructional leaders. A principal who champions {{productNames}} during a pilot becomes your strongest internal advocate.`,
   },
   objection_handling: {
     sectionLabel: 'Objection Handling',

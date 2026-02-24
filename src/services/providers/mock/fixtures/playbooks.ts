@@ -1,30 +1,60 @@
 import type { Playbook, PlaybookSection, PlaybookSectionType } from '../../../types/playbook';
 import type { ContentSource, SectionStatus, MatchSummary } from '../../../types/common';
 import { SECTION_ORDER, GENERIC_SECTION_TEMPLATES, DISTRICT_SPECIFIC_CONTENT } from './playbook-content';
+import { DISTRICT_FIXTURES } from './districts';
 
 // StoredPlaybook shape matches the in-memory store in mock-playbook-service.ts
 interface StoredPlaybook extends Playbook {
   overallStatus: 'generating' | 'complete' | 'partial' | 'failed';
 }
 
+// Resolve superintendent name from districtId using fixtures
+function resolveSuperintendentName(districtId: string): string | undefined {
+  const fixture = DISTRICT_FIXTURES.find((d) => d.district.id === districtId);
+  if (!fixture) return undefined;
+  const { superintendentFirstName, superintendentLastName } = fixture.district;
+  if (superintendentFirstName && superintendentLastName) {
+    return `${superintendentFirstName} ${superintendentLastName}`;
+  }
+  return undefined;
+}
+
+// Resolve superintendent contact info (phone/website) from districtId
+function resolveSuperintendentContact(districtId: string): string {
+  const fixture = DISTRICT_FIXTURES.find((d) => d.district.id === districtId);
+  if (!fixture) return '';
+  const parts: string[] = [];
+  if (fixture.district.phone) parts.push(`Phone: ${fixture.district.phone}`);
+  if (fixture.district.website) parts.push(`Website: ${fixture.district.website}`);
+  return parts.length > 0 ? parts.join(' · ') : '';
+}
+
 // Interpolate template placeholders with actual data
-function interpolateTemplate(template: string, districtName: string, productNames: string[]): string {
+function interpolateTemplate(template: string, districtName: string, productNames: string[], superintendentName?: string, superintendentContact?: string): string {
   const productNameStr = productNames.join(' and ');
   const productList = productNames
     .map((name) => `${name}: Aligns with district priorities in the subject area.`)
     .join('\n\n');
 
+  const superintendentLine = superintendentName
+    ? `**Superintendent ${superintendentName}**`
+    : '**Superintendent**';
+
   return template
     .replace(/\{\{districtName\}\}/g, districtName)
     .replace(/\{\{productNames\}\}/g, productNameStr)
-    .replace(/\{\{productList\}\}/g, productList);
+    .replace(/\{\{productList\}\}/g, productList)
+    .replace(/\{\{superintendentLine\}\}/g, superintendentLine)
+    .replace(/\{\{superintendentContact\}\}/g, superintendentContact || '');
 }
 
 function buildCompleteSections(
   playbookId: string,
   districtId: string,
   districtName: string,
-  productNames: string[]
+  productNames: string[],
+  superintendentName?: string,
+  superintendentContact?: string
 ): PlaybookSection[] {
   return SECTION_ORDER.map((sectionType, index) => {
     // Check for district-specific content first
@@ -45,7 +75,7 @@ function buildCompleteSections(
 
     // Fall back to generic template with interpolation
     const template = GENERIC_SECTION_TEMPLATES[sectionType];
-    const content = interpolateTemplate(template.template, districtName, productNames);
+    const content = interpolateTemplate(template.template, districtName, productNames, superintendentName, superintendentContact);
     return {
       sectionId: `${playbookId}-sec-${String(index + 1).padStart(3, '0')}`,
       sectionType,
@@ -73,7 +103,7 @@ function buildGeneratingSections(
     else status = 'pending';
 
     const content = status === 'complete'
-      ? interpolateTemplate(template.template, districtName, productNames)
+      ? interpolateTemplate(template.template, districtName, productNames, undefined)
       : undefined;
 
     return {
@@ -100,7 +130,7 @@ function buildErrorSections(
     const status: SectionStatus = index === 3 ? 'error' : 'complete';
 
     const content = status === 'complete'
-      ? interpolateTemplate(template.template, districtName, productNames)
+      ? interpolateTemplate(template.template, districtName, productNames, undefined)
       : undefined;
 
     return {
@@ -218,7 +248,7 @@ export const SEED_PLAYBOOKS: StoredPlaybook[] = [
       ],
     },
     generatedAt: new Date(now - 10 * DAY).toISOString(),
-    sections: buildCompleteSections('pb-seed-007', '7c2603bd-7cca-414f-8813-320d8ef2020b', 'Long Beach Unified', ['EnvisionMath', 'myPerspectives']),
+    sections: buildCompleteSections('pb-seed-007', '7c2603bd-7cca-414f-8813-320d8ef2020b', 'Long Beach Unified', ['EnvisionMath', 'myPerspectives'], resolveSuperintendentName('7c2603bd-7cca-414f-8813-320d8ef2020b'), resolveSuperintendentContact('7c2603bd-7cca-414f-8813-320d8ef2020b')),
     overallStatus: 'complete',
   },
 ];

@@ -53,8 +53,29 @@ function generateId(): string {
   return `pb-${String(store.idCounter).padStart(4, '0')}`;
 }
 
+// Resolve superintendent name from districtId using fixtures
+function resolveSuperintendentName(districtId: string): string | undefined {
+  const fixture = DISTRICT_FIXTURES.find((d) => d.district.id === districtId);
+  if (!fixture) return undefined;
+  const { superintendentFirstName, superintendentLastName } = fixture.district;
+  if (superintendentFirstName && superintendentLastName) {
+    return `${superintendentFirstName} ${superintendentLastName}`;
+  }
+  return undefined;
+}
+
+// Resolve superintendent contact info (phone/website) from districtId
+function resolveSuperintendentContact(districtId: string): string {
+  const fixture = DISTRICT_FIXTURES.find((d) => d.district.id === districtId);
+  if (!fixture) return '';
+  const parts: string[] = [];
+  if (fixture.district.phone) parts.push(`Phone: ${fixture.district.phone}`);
+  if (fixture.district.website) parts.push(`Website: ${fixture.district.website}`);
+  return parts.length > 0 ? parts.join(' · ') : '';
+}
+
 // Interpolate template placeholders with actual data
-function interpolateTemplate(template: string, districtName: string, productNames: string[]): string {
+function interpolateTemplate(template: string, districtName: string, productNames: string[], superintendentName?: string, superintendentContact?: string): string {
   const productNameStr = productNames.join(' and ');
   const productList = productNames
     .map((name) => {
@@ -64,10 +85,16 @@ function interpolateTemplate(template: string, districtName: string, productName
     })
     .join('\n\n');
 
+  const superintendentLine = superintendentName
+    ? `**Superintendent ${superintendentName}**`
+    : '**Superintendent**';
+
   return template
     .replace(/\{\{districtName\}\}/g, districtName)
     .replace(/\{\{productNames\}\}/g, productNameStr)
-    .replace(/\{\{productList\}\}/g, productList);
+    .replace(/\{\{productList\}\}/g, productList)
+    .replace(/\{\{superintendentLine\}\}/g, superintendentLine)
+    .replace(/\{\{superintendentContact\}\}/g, superintendentContact || '');
 }
 
 // Resolve content for a section — district-specific first, generic template fallback
@@ -75,14 +102,16 @@ function resolveContent(
   districtId: string,
   sectionType: typeof SECTION_ORDER[number],
   districtName: string,
-  productNames: string[]
+  productNames: string[],
+  superintendentName?: string,
+  superintendentContact?: string
 ): string {
   const districtContent = DISTRICT_SPECIFIC_CONTENT[districtId]?.[sectionType];
   if (districtContent) {
     return districtContent.content;
   }
   const template = GENERIC_SECTION_TEMPLATES[sectionType];
-  return interpolateTemplate(template.template, districtName, productNames);
+  return interpolateTemplate(template.template, districtName, productNames, superintendentName, superintendentContact);
 }
 
 // Resolve district name from districtId using fixtures
@@ -95,6 +124,9 @@ function resolveDistrictName(districtId: string): string {
 function simulateGeneration(playbookId: string): void {
   const playbook = getPlaybooks().get(playbookId);
   if (!playbook) return;
+
+  const superintendentName = resolveSuperintendentName(playbook.districtId);
+  const superintendentContact = resolveSuperintendentContact(playbook.districtId);
 
   SECTION_ORDER.forEach((sectionType, index) => {
     // Set to generating after a short delay
@@ -117,7 +149,9 @@ function simulateGeneration(playbookId: string): void {
           pb.districtId,
           sectionType,
           pb.districtName,
-          pb.productNames
+          pb.productNames,
+          superintendentName,
+          superintendentContact
         );
         section.status = 'complete';
       }
@@ -138,13 +172,19 @@ export const mockPlaybookService: IPlaybookService = {
   async generatePlaybook(request: PlaybookGenerationRequest): Promise<{ playbookId: string }> {
     await delay(300);
 
+    // Validate district exists in fixtures
+    const districtFixture = DISTRICT_FIXTURES.find((d) => d.district.id === request.districtId);
+    if (!districtFixture) {
+      throw { code: 'DISTRICT_NOT_FOUND', message: `District ${request.districtId} not found`, retryable: false };
+    }
+
     // Resolve product names from IDs
     const productNames = request.productIds.map((id) => {
       const product = MOCK_PRODUCTS.find((p) => p.productId === id);
       return product ? product.name : `Unknown Product (${id})`;
     });
 
-    const districtName = resolveDistrictName(request.districtId);
+    const districtName = districtFixture.district.name;
 
     const playbookId = generateId();
     const now = new Date().toISOString();
@@ -361,7 +401,9 @@ export const mockPlaybookService: IPlaybookService = {
         pb.districtId,
         sec.sectionType,
         pb.districtName,
-        pb.productNames
+        pb.productNames,
+        resolveSuperintendentName(pb.districtId),
+        resolveSuperintendentContact(pb.districtId)
       );
       sec.status = 'complete';
       const allComplete = pb.sections.every((s) => s.status === 'complete');
