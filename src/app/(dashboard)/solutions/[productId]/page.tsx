@@ -40,7 +40,7 @@ export default function ProductDetailPage({
   params: Promise<{ productId: string }>;
 }) {
   const { productId } = use(params);
-  const { setBreadcrumbOverride } = useAppShell();
+  const { setBreadcrumbs } = useAppShell();
 
   const [product, setProduct] = useState<Product | null>(null);
   const [playbooks, setPlaybooks] = useState<PlaybookSummary[]>([]);
@@ -86,10 +86,13 @@ export default function ProductDetailPage({
 
   useEffect(() => {
     if (product) {
-      setBreadcrumbOverride(product.name);
+      setBreadcrumbs([
+        { label: 'Solutions Library', href: '/solutions' },
+        { label: product.name },
+      ]);
     }
-    return () => setBreadcrumbOverride(null);
-  }, [product, setBreadcrumbOverride]);
+    return () => setBreadcrumbs(null);
+  }, [product, setBreadcrumbs]);
 
   if (loading) return <LoadingSkeleton />;
 
@@ -256,6 +259,7 @@ export default function ProductDetailPage({
                 key={pb.playbookId}
                 playbook={{
                   playbookId: pb.playbookId,
+                  districtId: pb.districtId,
                   districtName: pb.districtName,
                   fitAssessment: pb.fitAssessment,
                   productNames: pb.productNames,

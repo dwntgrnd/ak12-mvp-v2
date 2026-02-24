@@ -8,6 +8,7 @@ import { fitCategoryColors, type FitCategoryKey } from '@/lib/design-tokens';
 interface PlaybookCardProps {
   playbook: {
     playbookId: string;
+    districtId: string;
     districtName: string;
     fitAssessment: { fitScore: number; fitRationale: string };
     productNames: string[];
@@ -47,7 +48,7 @@ export function PlaybookCard({ playbook }: PlaybookCardProps) {
 
   return (
     <Link
-      href={`/playbooks/${playbook.playbookId}`}
+      href={`/districts/${playbook.districtId}/playbooks/${playbook.playbookId}`}
       className="relative block rounded-lg border bg-card p-5 hover:shadow-md transition-shadow cursor-pointer focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
       aria-label={ariaLabel}
     >

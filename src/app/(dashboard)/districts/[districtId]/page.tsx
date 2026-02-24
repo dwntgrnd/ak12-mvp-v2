@@ -27,7 +27,7 @@ export default function DistrictProfilePage({
   const { districtId } = use(params);
   const searchParams = useSearchParams();
   const productId = searchParams.get('productId');
-  const { setBreadcrumbOverride } = useAppShell();
+  const { setBreadcrumbs } = useAppShell();
 
   const [district, setDistrict] = useState<DistrictProfile | null>(null);
   const [yearData, setYearData] = useState<DistrictYearData[]>([]);
@@ -105,10 +105,13 @@ export default function DistrictProfilePage({
 
   useEffect(() => {
     if (district) {
-      setBreadcrumbOverride(district.name);
+      setBreadcrumbs([
+        { label: 'Discovery', href: '/discovery' },
+        { label: district.name },
+      ]);
     }
-    return () => setBreadcrumbOverride(null);
-  }, [district, setBreadcrumbOverride]);
+    return () => setBreadcrumbs(null);
+  }, [district, setBreadcrumbs]);
 
   // --- 404 state ---
   if (notFound) {

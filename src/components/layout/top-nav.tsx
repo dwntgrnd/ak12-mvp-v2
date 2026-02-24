@@ -2,7 +2,7 @@
 
 import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
 import { DiscoveryInput } from '@/components/discovery/discovery-input';
 import {
@@ -30,18 +30,18 @@ const navItems = [
   { href: '/solutions', label: 'Solutions' },
 ];
 
-function useBreadcrumbs(pathname: string, breadcrumbOverride: string | null) {
+function usePathnameBreadcrumbs(pathname: string) {
   if (pathname.startsWith('/districts/')) {
     return {
       parent: { label: 'Discovery', href: '/discovery' },
-      current: breadcrumbOverride ?? 'District',
+      current: 'District',
     };
   }
 
   if (pathname.startsWith('/solutions/') && pathname !== '/solutions') {
     return {
       parent: { label: 'Solutions Library', href: '/solutions' },
-      current: breadcrumbOverride ?? 'Product',
+      current: 'Product',
     };
   }
 
@@ -60,8 +60,8 @@ function useBreadcrumbs(pathname: string, breadcrumbOverride: string | null) {
 export function TopNav() {
   const pathname = usePathname();
   const router = useRouter();
-  const { pageActions, breadcrumbOverride, setTopbarHeight } = useAppShell();
-  const { parent, current } = useBreadcrumbs(pathname, breadcrumbOverride);
+  const { pageActions, breadcrumbs, setTopbarHeight } = useAppShell();
+  const pathnameFallback = usePathnameBreadcrumbs(pathname);
   const { activeProduct, isLensActive, clearProduct } = useProductLens();
   const [userRole, setUserRole] = useState<string | null>(null);
 
@@ -155,29 +155,57 @@ export function TopNav() {
           <div className="flex items-center gap-3">
             <Breadcrumb>
               <BreadcrumbList className="text-sm">
-                {parent ? (
+                {breadcrumbs ? (
+                  // Structured breadcrumbs from page via setBreadcrumbs()
+                  breadcrumbs.map((segment, i) => {
+                    const isLast = i === breadcrumbs.length - 1;
+                    return (
+                      <React.Fragment key={i}>
+                        {i > 0 && <BreadcrumbSeparator className="text-foreground-tertiary" />}
+                        <BreadcrumbItem>
+                          {segment.href && !isLast ? (
+                            <BreadcrumbLink asChild>
+                              <Link
+                                href={segment.href}
+                                className="text-foreground-secondary hover:text-foreground"
+                              >
+                                {segment.label}
+                              </Link>
+                            </BreadcrumbLink>
+                          ) : (
+                            <BreadcrumbPage className="font-medium text-foreground">
+                              {segment.label}
+                            </BreadcrumbPage>
+                          )}
+                        </BreadcrumbItem>
+                      </React.Fragment>
+                    );
+                  })
+                ) : pathnameFallback.parent ? (
+                  // Fallback: pathname-based breadcrumbs with parent
                   <>
                     <BreadcrumbItem>
                       <BreadcrumbLink asChild>
                         <Link
-                          href={parent.href}
+                          href={pathnameFallback.parent.href}
                           className="text-foreground-secondary hover:text-foreground"
                         >
-                          {parent.label}
+                          {pathnameFallback.parent.label}
                         </Link>
                       </BreadcrumbLink>
                     </BreadcrumbItem>
                     <BreadcrumbSeparator className="text-foreground-tertiary" />
                     <BreadcrumbItem>
                       <BreadcrumbPage className="font-medium text-foreground">
-                        {current}
+                        {pathnameFallback.current}
                       </BreadcrumbPage>
                     </BreadcrumbItem>
                   </>
                 ) : (
+                  // Fallback: pathname-based single segment
                   <BreadcrumbItem>
                     <BreadcrumbPage className="font-medium text-foreground">
-                      {current}
+                      {pathnameFallback.current}
                     </BreadcrumbPage>
                   </BreadcrumbItem>
                 )}

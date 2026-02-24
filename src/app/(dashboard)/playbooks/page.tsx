@@ -19,6 +19,7 @@ type SortOption = 'recent' | 'fit';
 
 interface PlaybookListItem {
   playbookId: string;
+  districtId: string;
   districtName: string;
   fitAssessment: { fitScore: number; fitRationale: string };
   productNames: string[];
@@ -80,6 +81,7 @@ export default function PlaybooksPage() {
         const items: PlaybookListItem[] = (data.items || []).map(
           (summary: {
             playbookId: string;
+            districtId: string;
             districtName: string;
             fitAssessment: { fitScore: number; fitRationale: string };
             productNames: string[];
@@ -87,6 +89,7 @@ export default function PlaybooksPage() {
             sectionStatuses: Record<string, string>;
           }) => ({
             playbookId: summary.playbookId,
+            districtId: summary.districtId,
             districtName: summary.districtName,
             fitAssessment: summary.fitAssessment,
             productNames: summary.productNames,

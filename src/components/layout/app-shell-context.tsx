@@ -2,11 +2,16 @@
 
 import React, { createContext, useContext, useState } from 'react';
 
+export interface BreadcrumbSegment {
+  label: string;
+  href?: string;
+}
+
 interface AppShellContextValue {
   pageActions: React.ReactNode | null;
   setPageActions: (node: React.ReactNode | null) => void;
-  breadcrumbOverride: string | null;
-  setBreadcrumbOverride: (label: string | null) => void;
+  breadcrumbs: BreadcrumbSegment[] | null;
+  setBreadcrumbs: (segments: BreadcrumbSegment[] | null) => void;
   topbarHeight: string;
   setTopbarHeight: (height: string) => void;
 }
@@ -15,7 +20,7 @@ const AppShellContext = createContext<AppShellContextValue | null>(null);
 
 export function AppShellProvider({ children }: { children: React.ReactNode }) {
   const [pageActions, setPageActions] = useState<React.ReactNode | null>(null);
-  const [breadcrumbOverride, setBreadcrumbOverride] = useState<string | null>(null);
+  const [breadcrumbs, setBreadcrumbs] = useState<BreadcrumbSegment[] | null>(null);
   const [topbarHeight, setTopbarHeight] = useState('5.5rem');
 
   return (
@@ -23,8 +28,8 @@ export function AppShellProvider({ children }: { children: React.ReactNode }) {
       value={{
         pageActions,
         setPageActions,
-        breadcrumbOverride,
-        setBreadcrumbOverride,
+        breadcrumbs,
+        setBreadcrumbs,
         topbarHeight,
         setTopbarHeight,
       }}
