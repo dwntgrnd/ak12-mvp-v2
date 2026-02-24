@@ -12,3 +12,4 @@ export { AcademicPerformanceTab } from './academic-performance-tab';
 export { CompetitiveIntelTab } from './competitive-intel-tab';
 export { NewsStubTab } from './news-stub-tab';
 export { SourceCitation } from './source-citation';
+export { LensAugmentationBlock } from './lens-augmentation-block';

@@ -10,14 +10,19 @@ import {
 import type { IntelligenceCategory } from '@/services/types/district-intelligence';
 import type { LucideIcon } from 'lucide-react';
 import type { DistrictYearData } from '@/services/providers/mock/fixtures/districts';
+import type { MatchSummary, AlignmentDimensionKey } from '@/services/types/common';
 import { GoalsFundingTab } from './goals-funding-tab';
 import { AcademicPerformanceTab } from './academic-performance-tab';
 import { DistrictChart } from './district-chart';
 import { NewsStubTab } from './news-stub-tab';
+import { LensAugmentationBlock } from './lens-augmentation-block';
 
 interface ResearchTabsProps {
   districtId: string;
   yearData?: DistrictYearData[];
+  isLensActive?: boolean;
+  matchSummary?: MatchSummary | null;
+  activeProductName?: string;
 }
 
 interface TabConfig {
@@ -26,6 +31,13 @@ interface TabConfig {
   icon: LucideIcon;
 }
 
+const TAB_DIMENSION_MAP: Record<string, AlignmentDimensionKey[]> = {
+  goalsFunding: ['goals_priorities', 'budget_capacity'],
+  academicPerformance: ['academic_need', 'student_population'],
+  districtTrends: ['student_population'],
+  news: [],
+};
+
 const TAB_CONFIG: TabConfig[] = [
   { key: 'goalsFunding', label: 'Goals & Funding', icon: Target },
   { key: 'academicPerformance', label: 'Academic Performance', icon: BarChart3 },
@@ -33,7 +45,7 @@ const TAB_CONFIG: TabConfig[] = [
   { key: 'news', label: 'News', icon: Newspaper },
 ];
 
-export function ResearchTabs({ districtId, yearData }: ResearchTabsProps) {
+export function ResearchTabs({ districtId, yearData, isLensActive, matchSummary, activeProductName }: ResearchTabsProps) {
   const { intel, availableTabs } = useMemo(() => {
     const data = getDistrictIntelligence(districtId);
     const categories = getAvailableCategories(districtId);
@@ -68,18 +80,34 @@ export function ResearchTabs({ districtId, yearData }: ResearchTabsProps) {
         ))}
       </TabsList>
 
-      {availableTabs.map((tab) => (
-        <TabsContent key={tab.key} value={tab.key}>
-          {tab.key === 'goalsFunding' && intel && <GoalsFundingTab intel={intel} />}
-          {tab.key === 'academicPerformance' && intel && <AcademicPerformanceTab intel={intel} />}
-          {tab.key === 'news' && <NewsStubTab />}
-          {tab.key === 'districtTrends' && yearData && (
-            <div className="pt-4">
-              <DistrictChart yearData={yearData} />
-            </div>
-          )}
-        </TabsContent>
-      ))}
+      {availableTabs.map((tab) => {
+        const dimensionKeys = TAB_DIMENSION_MAP[tab.key] ?? [];
+        const showAugmentation = isLensActive && activeProductName && dimensionKeys.length > 0;
+        const filteredDimensions = showAugmentation && matchSummary
+          ? matchSummary.dimensions.filter((d) => dimensionKeys.includes(d.key))
+          : [];
+
+        return (
+          <TabsContent key={tab.key} value={tab.key}>
+            {showAugmentation && (
+              <div className="pt-4">
+                <LensAugmentationBlock
+                  productName={activeProductName}
+                  dimensions={filteredDimensions}
+                />
+              </div>
+            )}
+            {tab.key === 'goalsFunding' && intel && <GoalsFundingTab intel={intel} />}
+            {tab.key === 'academicPerformance' && intel && <AcademicPerformanceTab intel={intel} />}
+            {tab.key === 'news' && <NewsStubTab />}
+            {tab.key === 'districtTrends' && yearData && (
+              <div className="pt-4">
+                <DistrictChart yearData={yearData} />
+              </div>
+            )}
+          </TabsContent>
+        );
+      })}
     </Tabs>
   );
 }

@@ -198,7 +198,13 @@ export default function DistrictProfilePage({
 
       {/* Layer 4 — Tab Area */}
       <div className="mt-8">
-        <ResearchTabs districtId={districtId} yearData={yearData} />
+        <ResearchTabs
+          districtId={districtId}
+          yearData={yearData}
+          isLensActive={isLensActive}
+          matchSummary={matchSummary}
+          activeProductName={activeProduct?.name}
+        />
       </div>
 
       {/* Generate Playbook Sheet */}
