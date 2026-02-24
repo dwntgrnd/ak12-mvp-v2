@@ -11,6 +11,7 @@ import type {
 } from '../../types/district';
 import { MOCK_DISTRICTS, getMockDistrictListItems, getMockCountyFilters } from './fixtures/districts';
 import { PRODUCT_RELEVANCE_MAPS, DISCOVERY_COVERAGE } from './fixtures/discovery';
+import { SEED_PLAYBOOKS } from './fixtures/playbooks';
 import { buildSnapshot } from './snapshot-builder';
 
 function delay(ms: number = 200): Promise<void> {
@@ -18,6 +19,18 @@ function delay(ms: number = 200): Promise<void> {
 }
 
 const savedDistricts: Map<string, SavedDistrict> = new Map();
+
+// Pre-seed saved districts from seed playbooks so fresh loads show realistic state
+for (const pb of SEED_PLAYBOOKS) {
+  const district = MOCK_DISTRICTS.find((d) => d.districtId === pb.districtId);
+  if (district) {
+    savedDistricts.set(pb.districtId, {
+      districtId: pb.districtId,
+      snapshot: buildSnapshot(district),
+      savedAt: pb.generatedAt,
+    });
+  }
+}
 
 export const mockDistrictService: IDistrictService = {
   async searchDistricts(request: DistrictSearchRequest): Promise<PaginatedResponse<DistrictSummary>> {
