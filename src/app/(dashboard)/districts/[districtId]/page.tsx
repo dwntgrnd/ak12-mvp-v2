@@ -14,6 +14,7 @@ import { Button } from '@/components/ui/button';
 import {
   PersistentDataStrip,
   ModeBar,
+  LensControlBar,
   ResearchTabs,
 } from '@/components/district-profile';
 import { GeneratePlaybookSheet } from '@/components/playbook/generate-playbook-sheet';
@@ -158,6 +159,9 @@ export default function DistrictProfilePage({
         {/* Mode bar skeleton */}
         <Skeleton className="h-10 w-full rounded" />
 
+        {/* Lens bar skeleton */}
+        <Skeleton className="h-9 w-72" />
+
         {/* Tab area skeleton */}
         <div className="space-y-4">
           <Skeleton className="h-9 w-full" />
@@ -189,8 +193,8 @@ export default function DistrictProfilePage({
         />
       </div>
 
-      {/* Layer 3 — Lens Control Bar (CC03c placeholder) */}
-      <div id="lens-bar-slot" />
+      {/* Layer 3 — Lens Control Bar */}
+      <LensControlBar districtId={districtId} matchSummary={matchSummary} />
 
       {/* Layer 4 — Tab Area */}
       <div className="mt-8">

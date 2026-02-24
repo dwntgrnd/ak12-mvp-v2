@@ -50,6 +50,19 @@ Combined height set via `--topbar-height` CSS variable. All content below uses `
 
 Do not import or reference these deprecated files. They will be removed in a future cleanup.
 
+### Unified View Layers (District Page)
+
+The district page renders four stacked layers:
+
+| Layer | Component | File | Purpose |
+|-------|-----------|------|---------|
+| 1 | `PersistentDataStrip` | `src/components/district-profile/persistent-data-strip.tsx` | District name, key metrics, fit badge |
+| 2 | `ModeBar` | `src/components/district-profile/mode-bar.tsx` | Tab switcher (District Intelligence / Playbook tabs) + actions |
+| 3 | `LensControlBar` | `src/components/district-profile/lens-control-bar.tsx` | Product selector + fit tier indicator |
+| 4 | `ResearchTabs` | `src/components/district-profile/research-tabs.tsx` | Tabbed research content area |
+
+Layer 3 (LensControlBar) is only rendered on the district page, not on the playbook page. It reads from `useProductLens()` and `useLibraryReadiness()` hooks internally.
+
 ### Route Structure (P2)
 
 ```
@@ -296,6 +309,7 @@ Do NOT apply brand-orange styling via className. Use the `default` or `outlineBr
 | Mock fixtures | `src/services/providers/mock/fixtures/` |
 | App shell context | `src/components/layout/app-shell-context.tsx` |
 | Top nav | `src/components/layout/top-nav.tsx` |
+| Lens control bar | `src/components/district-profile/lens-control-bar.tsx` |
 | Dashboard layout | `src/app/(dashboard)/layout.tsx` |
 | CC prompt references | `docs/cc-prompts/` |
 | P2 spec | `Specs/P2-Spec-01_Unified-View-Architecture.md` (in Obsidian vault) |
