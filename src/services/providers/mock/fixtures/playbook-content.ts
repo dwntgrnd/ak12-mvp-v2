@@ -7,12 +7,12 @@ import type { PlaybookSectionType } from '../../../types/playbook';
 
 // Canonical section ordering — all builders must use this order.
 export const SECTION_ORDER: PlaybookSectionType[] = [
-  'district_story',
   'key_themes',
-  'product_alignment',
-  'stakeholder_map',
-  'objection_handling',
-  'conversation_playbook',
+  'stakeholder_talking_points',
+  'product_fit_data',
+  'handling_objections',
+  'competition',
+  'news',
 ];
 
 // --- Generic Templates ---
@@ -23,127 +23,112 @@ export const GENERIC_SECTION_TEMPLATES: Record<PlaybookSectionType, {
   contentSource: ContentSource;
   template: string;
 }> = {
-  district_story: {
-    sectionLabel: 'District Story',
-    contentSource: 'constrained',
-    template: `{{districtName}} is a California public school district serving a diverse student population across multiple grade levels and school sites. The district's enrollment trajectory, academic performance trends, and demographic profile frame the context for this conversation.
-
-Post-pandemic academic recovery shapes the district's instructional priorities. Math proficiency rates across California have been slowest to rebound, and {{districtName}} is likely navigating the same pattern — making mathematics the probable area of greatest urgency and the strongest entry point for a curriculum conversation. ELA proficiency recovery has generally been stronger statewide, but writing skills and college readiness remain persistent concerns.
-
-The district's demographic profile — Free and Reduced Price Meal eligibility, English Learner concentration, and Special Education enrollment — directly shapes both instructional needs and procurement criteria. Districts with high-need populations prioritize materials that demonstrate built-in support for EL students, students with disabilities, and culturally responsive content. LCAP priorities, recent board actions, and current adoption timelines will sharpen this picture; review publicly available documents before the first meeting.`,
-  },
   key_themes: {
     sectionLabel: 'Key Themes',
     contentSource: 'constrained',
-    template: `Three California-wide trends connect directly to how {{productNames}} should be positioned at {{districtName}}.
+    template: `Three themes connect directly to how {{productNames}} should be positioned at {{districtName}}.
 
-**Post-pandemic math recovery is the dominant instructional priority.** Most California districts remain below pre-pandemic math baselines, and math proficiency gaps have proven more persistent than ELA. Districts evaluating new materials are prioritizing programs with embedded assessment, differentiation support, and documented evidence of impact in similar settings. If {{districtName}} follows this pattern, math is the likely entry point — and {{productNames}} should be anchored in specific proficiency data from the district's own trends.
+**Post-pandemic academic recovery remains the dominant instructional priority.** Most California districts remain below pre-pandemic baselines, particularly in mathematics. Districts evaluating new materials prioritize programs with embedded assessment, differentiation support, and documented evidence of impact. If {{districtName}} follows this pattern, anchor {{productNames}} in specific proficiency data from the district's own trends — not generic product capabilities.
 
-**Equity criteria are shaping every procurement decision.** California's new mathematics framework emphasizes conceptual understanding and access for all learners. Districts are requiring that instructional materials demonstrate robust support for English Learners, students with disabilities, and culturally responsive content. {{districtName}}'s demographic profile will determine which equity dimensions carry the most weight — lead with the ones most relevant to their student population.
+**Equity criteria shape every procurement decision.** California's instructional frameworks emphasize conceptual understanding and access for all learners. Districts require that materials demonstrate robust support for English Learners, students with disabilities, and culturally responsive content. {{districtName}}'s demographic profile determines which equity dimensions carry the most weight — lead with the ones most relevant to their student population.
 
-**Technology consolidation favors integrated platforms.** Districts prefer programs that work within existing ecosystems rather than adding standalone tools that increase teacher burden. Position {{productNames}} as a consolidation play — fewer platforms, less cognitive load for teachers, built-in assessment and practice.`,
+**Technology consolidation favors integrated platforms.** Districts prefer programs that work within existing ecosystems rather than adding standalone tools. Position {{productNames}} as reducing platform count and teacher cognitive load — fewer tools, built-in assessment and practice, less fragmentation.`,
   },
-  product_alignment: {
-    sectionLabel: 'Product Alignment',
+
+  stakeholder_talking_points: {
+    sectionLabel: 'Stakeholder Talking Points',
+    contentSource: 'constrained',
+    template: `{{superintendentLine}} leads {{districtName}}. {{superintendentContact}}
+
+**Detailed stakeholder intelligence for {{districtName}} is not yet available.** The framework below provides role-based talking points to use once you have identified key contacts through pre-meeting research.
+
+**Pre-Meeting Research:**
+Review {{districtName}}'s website for organizational directory and cabinet listings. Pull the most recent LCAP document — it names priorities and often identifies responsible administrators. Watch or read minutes from the last 2-3 board meetings.
+
+**By Role:**
+
+- **Superintendent:** Mirror their public priorities. Your credibility is built indirectly — through alignment with stated goals, not through a pitch. Do not request a direct meeting early.
+- **Chief Academic Officer / Asst. Superintendent of Instruction:** Your highest-value first meeting. Ask for evaluation criteria before presenting. Tailor everything to their stated weights.
+- **Curriculum Directors (Math/ELA):** Prepare for deep product walkthroughs. Ask what gaps exist in current materials — their frustrations are your positioning for {{productNames}}.
+- **EL Program Director:** Schedule a dedicated EL-focused session, separate from general presentations. Show designated and integrated ELD support at the lesson level.
+- **Chief Business Officer:** Lead with total cost of ownership and per-pupil pricing. Ask about fiscal calendar and procurement thresholds.
+- **School Board:** Do not present directly. Arm the administration with board-ready talking points. Attend a meeting first to identify champions and skeptics.
+- **Site Principals:** Identify instructional leaders who can champion {{productNames}} during a pilot.`,
+  },
+
+  product_fit_data: {
+    sectionLabel: 'Product Fit / Data',
     contentSource: 'synthesis',
     template: `{{productNames}} maps to {{districtName}}'s likely needs based on available district data and current California education trends.
 
 {{productList}}
 
-**Recommended Lead:** Lead with the product that addresses the district's most urgent documented need — typically mathematics if proficiency data shows significant gaps, or ELA if the district has signaled active interest in literacy or culturally responsive materials. Anchor every talking point in specific data from the district's own performance trends, not general product capabilities. The pattern that works: "Your data shows X → districts with similar profiles have seen Y → here's how {{productNames}} connects those dots."
+**Evidence Anchor:** Lead with the product that addresses the district's most urgent documented need — typically mathematics if proficiency data shows significant gaps, or ELA if the district has signaled active interest in literacy. Anchor every talking point in specific data from the district's own performance trends, not general product capabilities.
 
-Determine the district's procurement posture before the meeting: active adoption window, mid-cycle, or approaching end-of-contract. This changes the entire conversation — active adoption means compete on evaluation criteria; mid-cycle means build relationships and position for the next window.`,
+The pattern that works: "Your data shows X → districts with similar profiles have seen Y → here's how {{productNames}} connects those dots."
+
+**Procurement Posture:** Determine the district's position before the meeting: active adoption window, mid-cycle, or approaching end-of-contract. This changes the entire conversation. Active adoption means compete on evaluation criteria; mid-cycle means build relationships and position for the next window.`,
   },
-  stakeholder_map: {
-    sectionLabel: 'Stakeholder Map',
-    contentSource: 'constrained',
-    template: `{{superintendentLine}} leads {{districtName}}. {{superintendentContact}}
 
-**We don't yet have detailed stakeholder intelligence for {{districtName}}.** The contacts below will need to be identified through pre-meeting research. This section provides a framework for who to find and how to approach them once identified.
-
-**Pre-Meeting Research Checklist:**
-- Review {{districtName}}'s website for organizational directory and cabinet listings
-- Pull the most recent LCAP document — it names priorities and often identifies responsible administrators
-- Watch or read minutes from the last 2-3 board meetings — note who presents on curriculum, who asks about student outcomes, and which board members are most engaged on instructional materials
-- Check for an active adoption timeline or RFP — the procurement office or board agendas will surface this
-- Identify the EL program director by name — this role carries outsized influence in California districts and is often the gatekeeper for product evaluation
-
-**Stakeholder Engagement Framework:**
-Once you've identified the individuals at {{districtName}}, use this approach hierarchy:
-
-- **Superintendent:** Do not request a direct meeting early. Study their public priorities and mirror that language in every touchpoint with their team. Your credibility with the superintendent is built indirectly — through alignment with their stated goals, not through a pitch.
-- **Chief Academic Officer / Asst. Superintendent of Instruction:** Your highest-value first meeting. Ask for the evaluation rubric or adoption criteria before presenting. Tailor everything to their stated weights.
-- **Curriculum Directors (Math/ELA):** Prepare for deep product walkthroughs. Ask what gaps exist in current materials — their frustrations are your positioning.
-- **EL Program Director:** Schedule a dedicated EL-focused session, separate from general presentations. Show designated and integrated ELD support at the lesson level. A generic demo won't earn this stakeholder's endorsement.
-- **Chief Business Officer:** Lead with total cost of ownership and per-pupil pricing. Ask about fiscal calendar and procurement thresholds before proposing timing.
-- **School Board:** Do not present directly. Arm the administration with board-ready talking points. Attend a meeting first to identify champions and skeptics.
-- **Site Principals:** Identify instructional leaders. A principal who champions {{productNames}} during a pilot becomes your strongest internal advocate.`,
-  },
-  objection_handling: {
-    sectionLabel: 'Objection Handling',
+  handling_objections: {
+    sectionLabel: 'Handling Objections',
     contentSource: 'synthesis',
     template: `Anticipated objections for {{productNames}} at {{districtName}}, with response frameworks.
 
 **"We're already using a program in this subject area."**
-Acknowledge the investment, then pivot: "I'm not asking you to replace what's working. I'd like to understand what your team would want in the next adoption cycle — and make sure {{productNames}} is on your radar when that window opens." Ask about satisfaction levels and unmet teacher needs. The goal is intelligence and positioning, not displacement.
+Acknowledge the investment, then pivot: "I'm not asking you to replace what's working. I'd like to understand what your team would want in the next adoption cycle — and make sure {{productNames}} is on your radar when that window opens." Ask about satisfaction levels and unmet teacher needs.
 
 **"Our budget is committed for this year."**
-Validate, then reframe the timeline: "That makes sense. A no-cost pilot this year positions you to evaluate with real classroom data before the next budget cycle." Ask about LCAP funding, Title I allocations, or one-time state grants that could support a focused evaluation without general fund commitment.
+Validate, then reframe the timeline: "That makes sense. A no-cost pilot this year positions you to evaluate with real classroom data before the next budget cycle." Ask about LCAP funding, Title I allocations, or one-time state grants that could support a focused evaluation.
 
 **"Implementation and professional development are too disruptive."**
-Reframe from disruption to consolidation: "{{productNames}} is built to reduce the tool count, not add to it — embedded assessment, built-in scaffolding, and ready-to-use lessons mean less platform-switching for teachers." Reference successful implementations at similar-sized California districts and propose summer or intersession timing for initial training.
+Reframe from disruption to consolidation: "{{productNames}} is built to reduce the tool count, not add to it — embedded assessment, built-in scaffolding, and ready-to-use lessons mean less platform-switching for teachers." Reference successful implementations at similar-sized California districts.
 
 **"How does this support our English Learners and students with disabilities?"**
-This is an opportunity, not an objection. Lead with specifics: designated and integrated ELD support built into {{productNames}} at the lesson level, accessibility features, and scaffolding for diverse learners. Offer a focused demo for the EL coordinator and Special Education director — a targeted session carries more weight than a checkbox on a feature list.`,
+This is an opportunity, not an objection. Lead with specifics: designated and integrated ELD support built into {{productNames}} at the lesson level, accessibility features, and scaffolding for diverse learners. Offer a focused demo for the EL coordinator and Special Education director.`,
   },
-  conversation_playbook: {
-    sectionLabel: 'Conversation Playbook',
+
+  competition: {
+    sectionLabel: 'Competition',
+    contentSource: 'synthesis',
+    template: `**Competitive intelligence for {{districtName}} is limited.** The landscape below is based on general California market patterns. Update with district-specific intelligence from LCAP documents, board minutes, and stakeholder conversations.
+
+**Common Competitors in California K-12:**
+- **Mathematics:** McGraw-Hill (Reveal Math, Into Math), Amplify (Desmos), Curriculum Associates (i-Ready), Great Minds (Eureka Math)
+- **ELA:** Amplify (CKLA, Amplify ELA), HMH (Into Reading, Into Literature), McGraw-Hill (Wonders, StudySync)
+
+**Differentiation Framework for {{productNames}}:**
+- Against programs lacking integrated adaptive practice: emphasize built-in differentiation without requiring a separate platform
+- Against programs with limited EL support: emphasize native language integration at the lesson level, not bolted-on translation
+- Against programs with strong brand recognition but aging content: emphasize alignment with California's current frameworks and standards refresh
+
+**Intelligence to Gather:**
+Before the meeting, determine which programs {{districtName}} currently uses, when contracts expire, and where teacher satisfaction is lowest. LCAP documents often reference vendor names in funded actions. Board meeting minutes surface adoption discussions. This intelligence transforms a generic competitive pitch into a targeted displacement strategy.`,
+  },
+
+  news: {
+    sectionLabel: 'News',
     contentSource: 'constrained',
-    template: `**Recommended Opening:** "I've been following {{districtName}}'s work on [LCAP priority or recent board action], and I wanted to share how districts with a similar profile are approaching [specific challenge] with {{productNames}}." Substitute a real data point or public priority — the specificity signals preparation and earns the first five minutes of genuine attention.
+    template: `Product-relevant news and recent developments for {{districtName}} will appear here when data sources are connected.
 
-**Key Proof Points:** Anchor each point in district-specific data, not product features.
-- **If math proficiency is below state average:** Lead with efficacy data from comparable districts — proficiency gains, timeline, demographic match. "Districts with similar math gaps have seen X-point improvement in Y years" lands harder than a feature list.
-- **If the EL population is significant:** Lead with EL-specific outcomes and built-in support in {{productNames}} — designated and integrated ELD at the lesson level, not as a supplement.
-- **If budget pressure is visible:** Lead with total cost of ownership — how {{productNames}} consolidates assessment, practice, and core instruction into a single platform, reducing the number of licenses the district maintains.
-
-**Discovery Questions:**
-- "What's working well with your current [subject area] materials, and where are teachers telling you they need more support?"
-- "Where is [subject area] in your adoption cycle? Are you actively evaluating, or is this more of a future planning conversation?"
-- "How is the district approaching differentiation for English Learners and students with IEPs in [subject area]?"
-- "What would a successful pilot or evaluation look like for your team?"
-
-**Suggested Next Step:** Match the ask to the district's readiness:
-- **Active adoption:** Request a presentation slot with the evaluation committee. Offer a complete evaluation kit — samples, digital access, teacher guides — so review can begin immediately.
-- **Mid-cycle:** Propose a PD webinar or conference meeting that builds the relationship without requiring procurement commitment.
-- **Early exploration:** Offer a focused demo for the curriculum team built around the district's own student data, not a generic product walkthrough.`,
+This section will surface recent coverage, board decisions, and community developments that are relevant to {{productNames}} positioning at {{districtName}}.`,
   },
 };
 
-// --- Per-District Content Blocks ---
-// Rich, district-specific content for demo districts. Keyed by districtId from seed playbooks.
+// --- District-Specific Content ---
+// Keyed by districtId. Overrides generic templates per section. Not all sections need overrides.
 
-export const DISTRICT_SPECIFIC_CONTENT: Record<string, Record<PlaybookSectionType, {
+export const DISTRICT_SPECIFIC_CONTENT: Record<string, Partial<Record<PlaybookSectionType, {
   sectionLabel: string;
   contentSource: ContentSource;
   content: string;
-}>> = {
+}>>> = {
 
   // ============================================================
   // LOS ANGELES UNIFIED — Flagship demo, fit score 8
   // Products: EnvisionMath + myPerspectives
   // ============================================================
   'b8cd9b23-4f2f-470d-b1e5-126e7ff2a928': {
-    district_story: {
-      sectionLabel: 'District Story',
-      contentSource: 'verbatim',
-      content: `Los Angeles Unified is the largest school district in California and the second-largest in the nation, serving approximately 530,000 students across a K-12 system in Los Angeles County. The district has experienced a sustained enrollment decline — from 548,338 students in 2021-22 to 529,902 in 2023-24, a loss of roughly 18,400 students over three years. This decline creates both budget pressure (as LCFF funding follows enrollment) and an urgency to demonstrate instructional quality that retains families in the system.
-
-Academic performance tells a story of slow but measurable recovery. Math proficiency has climbed from 28.5% in 2021-22 to 32.8% in 2023-24 — encouraging momentum, but still meaning that roughly two-thirds of LAUSD students are not meeting grade-level math standards. ELA proficiency has been more stable, rising from 41.7% to 43.1% over the same period. The gap between ELA and math performance — over 10 percentage points — signals that math instruction is the more acute challenge and likely the more receptive entry point for a curriculum conversation.
-
-The district's demographic profile shapes every procurement decision. LAUSD serves approximately 106,000 English Learners (2023-24), making it the largest EL-serving district in the state. Over 427,000 students — more than 80% of enrollment — qualify for Free or Reduced Price Meals. The Special Education population stands at approximately 83,500 students. Chronic absenteeism at 25.1% adds another layer of complexity: any instructional program must work for students who aren't in the classroom every day, demanding strong digital access, flexible pacing, and robust re-engagement tools.
-
-Under Superintendent Alberto Carvalho, who took the helm in early 2022, LAUSD has pursued an aggressive modernization agenda. Carvalho has been publicly vocal about closing achievement gaps, expanding access to high-quality materials, and leveraging technology to personalize learning. The district's 2024-25 LCAP emphasizes math proficiency recovery, English Learner reclassification rates, and chronic absenteeism reduction — all areas where instructional materials play a direct role.`,
-    },
     key_themes: {
       sectionLabel: 'Key Themes',
       contentSource: 'synthesis',
@@ -155,21 +140,8 @@ Under Superintendent Alberto Carvalho, who took the helm in early 2022, LAUSD ha
 
 **Enrollment decline demands demonstrated ROI from every curriculum investment.** The loss of 18,000+ students over three years translates to significant per-pupil funding loss under LCFF. This means the district is under pressure to show that every dollar spent on instructional materials produces measurable outcomes. Vendors who can present evidence of impact — improved proficiency rates, higher student engagement metrics, successful implementations in comparable urban districts — will have a significant advantage over those pitching features alone.`,
     },
-    product_alignment: {
-      sectionLabel: 'Product Alignment',
-      contentSource: 'synthesis',
-      content: `EnvisionMath and myPerspectives each address distinct, documented needs at LAUSD, and together they offer a comprehensive K-12 instructional package that aligns with the district's dual focus on math recovery and literacy equity.
-
-**EnvisionMath (Mathematics, Grades 2-8):** LAUSD's math proficiency rate of 32.8% represents a massive instructional gap that affects over 350,000 students. EnvisionMath's problem-based learning approach and Visual Learning Bridge align with the conceptual emphasis in California's 2023 math framework — a framework LAUSD has publicly committed to implementing. The program's adaptive practice engine (powered by Knewton) addresses the differentiation challenge inherent in a district where student readiness spans multiple grade levels within a single classroom. Critically, EnvisionMath's Spanish language support serves a district where the majority of the 106K English Learners are Spanish-dominant, and the integrated formative assessment tools give teachers real-time data without requiring a separate assessment platform. EnvisionMath has documented results in large urban districts with similar demographics, which provides the evidence base LAUSD's evaluation committees expect.
-
-**myPerspectives (English Language Arts, Grades 6-12):** With ELA proficiency at 43.1% and a growing emphasis on culturally responsive curriculum across LAUSD, myPerspectives addresses two priorities simultaneously. The program's text anthology — the most diverse in secondary ELA — reflects the lived experiences of LAUSD's majority-Latino, multiethnic student body. The integrated Social-Emotional Learning framework supports the district's broader wellness initiatives, and student voice and choice built into every unit directly addresses the engagement challenges that contribute to LAUSD's 25.1% chronic absenteeism rate. For a district focused on preparing students for college-level literacy, myPerspectives' writing workshop model and performance-based assessments offer a clear pathway from secondary ELA to post-secondary readiness.
-
-**Recommended Lead:** Lead with EnvisionMath. Math proficiency is the more acute pain point (32.8% vs 43.1% in ELA), is a named LCAP priority, and is an area where Superintendent Carvalho has made public commitments. Once the math conversation establishes credibility and alignment, introduce myPerspectives as a complementary ELA solution that extends the same evidence-backed, equity-centered approach to literacy instruction. The combined package positions Savvas as a strategic instructional partner rather than a single-product vendor.
-
-**Competitive considerations:** LAUSD's scale means multiple vendors are likely pursuing the same opportunity. Identify which math and ELA programs are currently in use across the district's regions — LAUSD sometimes adopts different materials across its local districts. Timing is critical: determine whether the district is in an active adoption cycle for math or ELA, or whether this is a relationship-building conversation that positions for a future cycle.`,
-    },
-    stakeholder_map: {
-      sectionLabel: 'Stakeholder Map',
+    stakeholder_talking_points: {
+      sectionLabel: 'Stakeholder Talking Points',
       contentSource: 'constrained',
       content: `LAUSD's size and organizational structure create a complex stakeholder landscape. The district operates with a central office and multiple local district superintendents, meaning curriculum decisions involve both central and regional approval. Approach guidance for each stakeholder follows.
 
@@ -185,8 +157,21 @@ Under Superintendent Alberto Carvalho, who took the helm in early 2022, LAUSD ha
 
 **Board of Education** — Seven elected members with final approval authority. *Lead with:* Nothing directly — arm the administration with board-ready talking points instead. *Receptivity:* Board members respond to community support, teacher endorsement, and equity narratives. *Pushback risk:* Political dynamics — some members may have vendor relationships or community pressure on specific programs. *Tactical note:* Review recent board meeting recordings for which members ask about math performance, EL programs, or instructional materials. These are your likely champions or obstacles.`,
     },
-    objection_handling: {
-      sectionLabel: 'Objection Handling',
+    product_fit_data: {
+      sectionLabel: 'Product Fit / Data',
+      contentSource: 'synthesis',
+      content: `EnvisionMath and myPerspectives each address distinct, documented needs at LAUSD, and together they offer a comprehensive K-12 instructional package that aligns with the district's dual focus on math recovery and literacy equity.
+
+**EnvisionMath (Mathematics, Grades 2-8):** LAUSD's math proficiency rate of 32.8% represents a massive instructional gap that affects over 350,000 students. EnvisionMath's problem-based learning approach and Visual Learning Bridge align with the conceptual emphasis in California's 2023 math framework — a framework LAUSD has publicly committed to implementing. The program's adaptive practice engine (powered by Knewton) addresses the differentiation challenge inherent in a district where student readiness spans multiple grade levels within a single classroom. Critically, EnvisionMath's Spanish language support serves a district where the majority of the 106K English Learners are Spanish-dominant, and the integrated formative assessment tools give teachers real-time data without requiring a separate assessment platform. EnvisionMath has documented results in large urban districts with similar demographics, which provides the evidence base LAUSD's evaluation committees expect.
+
+**myPerspectives (English Language Arts, Grades 6-12):** With ELA proficiency at 43.1% and a growing emphasis on culturally responsive curriculum across LAUSD, myPerspectives addresses two priorities simultaneously. The program's text anthology — the most diverse in secondary ELA — reflects the lived experiences of LAUSD's majority-Latino, multiethnic student body. The integrated Social-Emotional Learning framework supports the district's broader wellness initiatives, and student voice and choice built into every unit directly addresses the engagement challenges that contribute to LAUSD's 25.1% chronic absenteeism rate. For a district focused on preparing students for college-level literacy, myPerspectives' writing workshop model and performance-based assessments offer a clear pathway from secondary ELA to post-secondary readiness.
+
+**Recommended Lead:** Lead with EnvisionMath. Math proficiency is the more acute pain point (32.8% vs 43.1% in ELA), is a named LCAP priority, and is an area where Superintendent Carvalho has made public commitments. Once the math conversation establishes credibility and alignment, introduce myPerspectives as a complementary ELA solution that extends the same evidence-backed, equity-centered approach to literacy instruction. The combined package positions Savvas as a strategic instructional partner rather than a single-product vendor.
+
+**Competitive considerations:** LAUSD's scale means multiple vendors are likely pursuing the same opportunity. Identify which math and ELA programs are currently in use across the district's regions — LAUSD sometimes adopts different materials across its local districts. Timing is critical: determine whether the district is in an active adoption cycle for math or ELA, or whether this is a relationship-building conversation that positions for a future cycle.`,
+    },
+    handling_objections: {
+      sectionLabel: 'Handling Objections',
       contentSource: 'synthesis',
       content: `These objection responses are tailored to LAUSD's specific context — a district of enormous scale, significant political visibility, and intense focus on measurable outcomes.
 
@@ -205,25 +190,35 @@ Validate the budget reality — declining enrollment from 548K to 530K represent
 **"How does this fit with our instructional technology infrastructure?"**
 LAUSD has invested significantly in 1:1 devices and digital infrastructure. Both EnvisionMath and myPerspectives are designed for hybrid digital/print environments and integrate with major LMS platforms. Offer a technical consultation with the district's IT team to demonstrate compatibility. Emphasize that these programs are designed to consolidate — not add — to the teacher's digital tool burden.`,
     },
-    conversation_playbook: {
-      sectionLabel: 'Conversation Playbook',
+    competition: {
+      sectionLabel: 'Competition',
       contentSource: 'synthesis',
-      content: `**Recommended Opening:** "I've been tracking LAUSD's progress on math proficiency — the improvement from 28.5% to 32.8% over the past two years shows real momentum, and I know that's been a priority for Superintendent Carvalho and the board. I'd love to share how some districts with a similar profile have been accelerating that trajectory with EnvisionMath, and also talk about what we're seeing on the ELA side with myPerspectives."
+      content: `LAUSD's scale makes it a target for every major publisher. Multiple vendors are actively pursuing math and ELA adoption opportunities across the district's regional structure.
 
-This opening works because it (1) demonstrates that you've done your homework with specific data, (2) leads with a genuine compliment about forward progress, (3) positions the conversation as acceleration of existing momentum rather than fixing a problem, and (4) naturally introduces both products.
+**Known Competitive Landscape:**
+LAUSD's size means the district sometimes maintains different adopted programs across its local districts, creating a fragmented competitive picture. The district has historically worked with major publishers including HMH, McGraw-Hill, and Amplify across different subject areas and grade bands.
 
-**Key Proof Points:**
-- **Math trajectory with a specific anchor:** "Districts comparable to LAUSD in size and demographics that have adopted EnvisionMath have seen math proficiency improvements of 4-6 points in the first two years. Given that you've already built 4.3 points of momentum from 28.5% to 32.8%, this could meaningfully accelerate the trajectory toward the LCAP targets."
-- **EL support as a differentiator:** "With 106,000 English Learners, your EL support requirements are among the most demanding in the country. EnvisionMath is the only K-8 math program with full Spanish language support integrated at the lesson level — not as a supplement — and myPerspectives' text anthology was specifically built to reflect multilingual, multicultural student experiences."
-- **Total cost of ownership:** "EnvisionMath includes adaptive practice and formative assessment built in, which districts your size typically purchase as separate platforms. For a 530K-student district, consolidating those tools into the core program can represent significant savings."
+**Mathematics Competition:**
+- **McGraw-Hill (Reveal Math / Into Math):** Strong presence in California urban districts. Likely incumbent or active competitor. Differentiate EnvisionMath on: Visual Learning Bridge for conceptual understanding (every lesson, not select lessons), integrated adaptive practice without separate license, and native Spanish language support built into lessons rather than translated supplements.
+- **Curriculum Associates (i-Ready):** Widely used as a diagnostic/intervention platform. Position EnvisionMath as a consolidation play — core instruction + adaptive practice + formative assessment in one platform vs. separate core + i-Ready licenses.
+- **Great Minds (Eureka Math):** Strong conceptual math reputation but limited digital/adaptive capabilities. Differentiate on technology integration, adaptive practice, and teacher usability.
 
-**Discovery Questions:**
-- "Where are you in the math adoption cycle? Is the district actively evaluating new materials, or is this more of a planning horizon conversation?"
-- "How is the current math program performing with your English Learner population specifically? Are teachers telling you they need more EL-integrated support at the lesson level?"
-- "What's the process for getting a new program into evaluation here — does it start at the central office or through local district superintendents?"
-- "Are there specific local districts or school sites that would be good candidates for a focused pilot?"
+**ELA Competition:**
+- **Amplify (CKLA, Amplify ELA):** Growing presence in California. Strong in knowledge-building literacy. Differentiate myPerspectives on: culturally diverse text anthology (purpose-built, not retrofitted), integrated SEL, and student voice/choice architecture.
+- **HMH (Into Reading / Into Literature):** Legacy presence in LAUSD. Differentiate myPerspectives on: contemporary, diverse text selections and the writing workshop model.
 
-**Suggested Next Step:** Propose a focused demo for the Division of Instruction mathematics team — not a generic product walkthrough, but a session specifically designed around LAUSD's student population data, showing how EnvisionMath addresses the proficiency gap for their EL and FRPM demographics. Offer to include a peer reference call with a curriculum leader from another large California urban district. If the district is not in active adoption, propose a PD webinar for math coaches as a value-add touchpoint that builds the relationship without requiring procurement commitment.`,
+**Strategic Advantage:**
+The combined EnvisionMath + myPerspectives offering positions Savvas as a comprehensive K-12 partner rather than a single-product vendor. At LAUSD's scale, procurement simplification has real value — one vendor relationship, one PD partnership, one implementation support team across math and ELA.
+
+**Intelligence to Gather:**
+Identify which programs are currently adopted in each of LAUSD's local districts. Determine contract expiration timelines by region. Ask curriculum directors about satisfaction with current materials — their frustrations reveal your competitive opening.`,
+    },
+    news: {
+      sectionLabel: 'News',
+      contentSource: 'constrained',
+      content: `Product-relevant news and recent developments for Los Angeles Unified will appear here when data sources are connected.
+
+This section will surface recent board decisions, community developments, and coverage relevant to EnvisionMath and myPerspectives positioning at LAUSD.`,
     },
   },
 
@@ -232,17 +227,6 @@ This opening works because it (1) demonstrates that you've done your homework wi
   // Products: EnvisionMath + myPerspectives
   // ============================================================
   '7f4e8dd1-9f32-4d87-92f3-3009800b88b0': {
-    district_story: {
-      sectionLabel: 'District Story',
-      contentSource: 'verbatim',
-      content: `Sacramento City Unified is a mid-size urban district serving approximately 40,000 students across a K-12 system in Sacramento County, the state capital. As the largest district in the Sacramento metropolitan area's urban core, SCUSD plays an outsized role in regional education policy and is frequently looked to as an early adopter of state-level instructional initiatives.
-
-The district's academic profile reflects both the challenges common to urban California districts and some distinctive characteristics that make this an especially promising prospect. Math proficiency has been trending upward but remains below the state average, with the most recent data showing approximately 26% of students meeting grade-level math standards. ELA proficiency sits near 38%, reflecting a similar pattern of post-pandemic recovery with significant room for growth. The district serves a substantial English Learner population — approximately 20% of enrollment — and over 70% of students qualify for Free or Reduced Price Meals, underscoring the need for materials that serve high-need populations effectively.
-
-What makes Sacramento City Unified a standout opportunity is timing: the district is in an active adoption cycle for both mathematics and ELA instructional materials. The current board-approved materials are approaching the end of their contract period, and the district's curriculum council has signaled that it is actively seeking new programs for evaluation in the upcoming academic year. The district's LCAP priorities for 2024-25 center on academic achievement gains in math and literacy, English Learner reclassification, and expanded access to culturally responsive curriculum — a set of priorities that maps almost perfectly to the combined EnvisionMath and myPerspectives offering.
-
-The superintendent has emphasized a commitment to evidence-based materials selection, with a transparent evaluation process that includes teacher input, pilot data, and community engagement. This process-driven approach, combined with the alignment between district priorities and product strengths, makes SCUSD one of the highest-potential opportunities in the California market.`,
-    },
     key_themes: {
       sectionLabel: 'Key Themes',
       contentSource: 'synthesis',
@@ -254,21 +238,8 @@ The superintendent has emphasized a commitment to evidence-based materials selec
 
 **Equity-driven procurement criteria favor comprehensive, inclusive programs.** With over 70% FRPM eligibility and 20% English Learners, SCUSD applies rigorous equity criteria to every materials evaluation. The district has been vocal about seeking programs that offer genuine cultural responsiveness — not superficial diversity — and that provide built-in differentiation for EL students and students with disabilities. myPerspectives' culturally diverse anthology and EnvisionMath's Spanish language support and adaptive learning pathways are precisely what this evaluation committee is looking for. Programs that can't demonstrate deep equity commitment at the product level won't survive the evaluation rubric.`,
     },
-    product_alignment: {
-      sectionLabel: 'Product Alignment',
-      contentSource: 'synthesis',
-      content: `EnvisionMath and myPerspectives are exceptionally well-positioned for SCUSD's active adoption cycle. The alignment between district priorities and product capabilities is among the strongest in the California pipeline.
-
-**EnvisionMath (Mathematics, Grades 2-8):** SCUSD's math proficiency rate of approximately 26% represents a clear, documented need that the district is actively seeking to address through new materials. EnvisionMath's problem-based learning model and Visual Learning Bridge are specifically designed for the kind of conceptual understanding emphasis that California's new math framework mandates and that SCUSD's curriculum council has identified as a priority. The adaptive practice engine addresses the reality of multi-level classrooms in a high-need urban district, and the integrated assessment tools give teachers formative data without adding another platform. For the district's Spanish-dominant English Learners, EnvisionMath's native Spanish language support — integrated at the lesson level, not bolted on — is a significant differentiator against competitors that offer translation-only EL support.
-
-**myPerspectives (English Language Arts, Grades 6-12):** With ELA proficiency near 38% and the district's stated priority of expanding culturally responsive curriculum, myPerspectives is uniquely positioned. The program's text anthology was built from the ground up to reflect diverse student experiences — this is not a legacy program with diversity additions; it's a curriculum designed around student voice and representation. The integrated SEL framework supports SCUSD's broader student wellness goals, and the student choice architecture directly addresses engagement challenges. For a district that has publicly committed to culturally responsive education, myPerspectives offers the most authentic expression of that commitment available in secondary ELA.
-
-**Recommended Lead:** Lead with both products simultaneously. SCUSD is in an active adoption cycle for both math and ELA, and presenting a comprehensive K-12 instructional partnership positions Savvas as a strategic vendor — not a single-product supplier that the district would need to supplement with a second vendor. The combined offering reduces procurement complexity and positions for a larger contract.
-
-**Competitive positioning:** This is an active evaluation with competitors. Identify which other publishers are presenting to the adoption committee. Come prepared with a head-to-head differentiation sheet for the most likely competitors (Amplify, HMH, McGraw-Hill). The evaluation rubric is likely to weight equity, EL support, and evidence of impact heavily — areas where this product portfolio has strong differentiation.`,
-    },
-    stakeholder_map: {
-      sectionLabel: 'Stakeholder Map',
+    stakeholder_talking_points: {
+      sectionLabel: 'Stakeholder Talking Points',
       contentSource: 'constrained',
       content: `SCUSD's adoption process is committee-driven with clear roles and a transparent evaluation structure. This is an active competitive evaluation — approach guidance focuses on winning the process.
 
@@ -286,8 +257,21 @@ The superintendent has emphasized a commitment to evidence-based materials selec
 
 **School Board (7 members)** — Final approval authority with public community comment periods during major adoption votes. *Lead with:* Nothing directly — arm the administration with board-ready materials. *Receptivity:* Board members respond to teacher endorsement and community support. *Pushback risk:* Political dynamics during community comment periods. *Tactical note:* Position pilot teachers as voices during the board approval process. Teachers who can speak authentically about classroom impact are the most persuasive testimony a board hears.`,
     },
-    objection_handling: {
-      sectionLabel: 'Objection Handling',
+    product_fit_data: {
+      sectionLabel: 'Product Fit / Data',
+      contentSource: 'synthesis',
+      content: `EnvisionMath and myPerspectives are exceptionally well-positioned for SCUSD's active adoption cycle. The alignment between district priorities and product capabilities is among the strongest in the California pipeline.
+
+**EnvisionMath (Mathematics, Grades 2-8):** SCUSD's math proficiency rate of approximately 26% represents a clear, documented need that the district is actively seeking to address through new materials. EnvisionMath's problem-based learning model and Visual Learning Bridge are specifically designed for the kind of conceptual understanding emphasis that California's new math framework mandates and that SCUSD's curriculum council has identified as a priority. The adaptive practice engine addresses the reality of multi-level classrooms in a high-need urban district, and the integrated assessment tools give teachers formative data without adding another platform. For the district's Spanish-dominant English Learners, EnvisionMath's native Spanish language support — integrated at the lesson level, not bolted on — is a significant differentiator against competitors that offer translation-only EL support.
+
+**myPerspectives (English Language Arts, Grades 6-12):** With ELA proficiency near 38% and the district's stated priority of expanding culturally responsive curriculum, myPerspectives is uniquely positioned. The program's text anthology was built from the ground up to reflect diverse student experiences — this is not a legacy program with diversity additions; it's a curriculum designed around student voice and representation. The integrated SEL framework supports SCUSD's broader student wellness goals, and the student choice architecture directly addresses engagement challenges. For a district that has publicly committed to culturally responsive education, myPerspectives offers the most authentic expression of that commitment available in secondary ELA.
+
+**Recommended Lead:** Lead with both products simultaneously. SCUSD is in an active adoption cycle for both math and ELA, and presenting a comprehensive K-12 instructional partnership positions Savvas as a strategic vendor — not a single-product supplier that the district would need to supplement with a second vendor. The combined offering reduces procurement complexity and positions for a larger contract.
+
+**Competitive positioning:** This is an active evaluation with competitors. Identify which other publishers are presenting to the adoption committee. Come prepared with a head-to-head differentiation sheet for the most likely competitors (Amplify, HMH, McGraw-Hill). The evaluation rubric is likely to weight equity, EL support, and evidence of impact heavily — areas where this product portfolio has strong differentiation.`,
+    },
+    handling_objections: {
+      sectionLabel: 'Handling Objections',
       contentSource: 'synthesis',
       content: `SCUSD is in active adoption, so the objections here are competitive and evaluative rather than fundamental. These are the concerns most likely to surface during the committee evaluation process.
 
@@ -303,25 +287,35 @@ Come prepared with implementation case studies from comparable districts — mid
 **"The budget for this adoption is significant. How do we justify the investment to the board and community?"**
 Help the district build the ROI narrative. Frame the investment in terms of per-student cost, compare to the cost of maintaining an expiring program that isn't producing desired outcomes, and highlight the consolidation benefit (integrated assessment, adaptive practice, PD — all included). Provide a board presentation template or talking points the administration can use. The easier you make it for the district to justify the adoption internally, the more likely it succeeds.`,
     },
-    conversation_playbook: {
-      sectionLabel: 'Conversation Playbook',
+    competition: {
+      sectionLabel: 'Competition',
       contentSource: 'synthesis',
-      content: `**Recommended Opening:** "I understand the district is in an active adoption cycle for math and ELA materials, and I'm excited to share how EnvisionMath and myPerspectives can meet the specific criteria your evaluation committee is applying. I've reviewed the district's LCAP priorities around math proficiency, EL reclassification, and culturally responsive curriculum — and I think you'll find the alignment is exceptionally strong."
+      content: `Sacramento City Unified is in an active adoption cycle, meaning this is a live competitive evaluation. Identifying and differentiating against specific competitors is critical.
 
-This opening signals that you understand the evaluation context, have done your homework on district priorities, and are here to compete on merit — not deliver a generic pitch.
+**Active Evaluation Context:**
+SCUSD's curriculum council has initiated formal evaluation for both math and ELA materials. Multiple publishers are presenting to the adoption committee. The evaluation rubric likely weights equity, EL support, evidence of impact, and California framework alignment heavily.
 
-**Key Proof Points:**
-- **Evaluation criteria alignment:** "We've mapped EnvisionMath and myPerspectives against the evaluation criteria that California districts in active adoption typically apply — standards alignment, EL support, cultural responsiveness, differentiation, digital integration, and evidence of effectiveness. I'd like to walk through how we score on each of those dimensions, especially the ones your committee is weighting most heavily."
-- **Comprehensive K-12 solution:** "Adopting EnvisionMath for math and myPerspectives for ELA from a single publisher gives the district a consistent pedagogical approach, a single vendor relationship for support and PD, and streamlined procurement. Districts that have adopted both programs report that the consistency in instructional design reduces the learning curve for teachers."
-- **EL-specific differentiation:** "With approximately 20% of your students being English Learners, EL support isn't a feature checkbox — it's a core requirement. EnvisionMath has full Spanish language support built into every lesson, and myPerspectives was designed from the ground up with multilingual, multicultural student experiences at its center."
+**Likely Competitors — Mathematics:**
+- **McGraw-Hill (Reveal Math):** Strong California presence. Differentiate EnvisionMath on: Visual Learning Bridge in every lesson (conceptual understanding is core, not supplemental), integrated adaptive practice engine, and native Spanish language support at the lesson level.
+- **Amplify (Desmos Math):** Growing reputation for engagement. Differentiate on: comprehensive K-8 scope (Desmos strength is secondary), print+digital flexibility, and deeper formative assessment integration.
+- **Great Minds (Eureka Math/Squared):** Respected for rigor. Differentiate on: adaptive technology, digital-first design, and teacher usability — Eureka's implementation burden is a known concern.
 
-**Discovery Questions:**
-- "What are the top 3 criteria your evaluation committee is weighting most heavily? I want to make sure our presentation addresses them directly."
-- "How is the teacher pilot structured? How many classrooms, which grade levels, and what feedback mechanism are you using?"
-- "What's the timeline from evaluation to board vote? And is there an opportunity to present directly to the adoption committee?"
-- "Are there specific gaps in your current materials that prompted this adoption cycle — areas where teachers have been most vocal about needing something different?"
+**Likely Competitors — ELA:**
+- **Amplify (CKLA / Amplify ELA):** Knowledge-building literacy approach. Differentiate myPerspectives on: the most diverse text anthology in secondary ELA (purpose-built), integrated SEL, and student choice architecture.
+- **HMH (Into Reading / Into Literature):** Legacy publisher with strong California history. Differentiate on: contemporary content, culturally responsive design, and performance-based assessments vs. traditional comprehension focus.
 
-**Suggested Next Step:** Request a formal presentation slot with the adoption committee. Come prepared with a presentation specifically structured around SCUSD's evaluation rubric (ask for the rubric in advance). Propose an accelerated pilot timeline that fits within the adoption cycle's decision window. Offer to provide a complete evaluation kit — sample materials, digital access, teacher guides, PD overview — so committee members can begin review immediately. This is a district that is ready to buy; the next step is making the evaluation process as easy as possible for them.`,
+**Winning the Evaluation:**
+- Request the evaluation rubric from Dr. Sandoval's office before presenting. Structure the entire presentation around their criteria, not your feature set.
+- Prepare head-to-head differentiation sheets for the 2-3 most likely competitors. The committee will be comparing side by side.
+- Secure teacher pilot slots in representative classrooms — teacher feedback during pilot is likely the highest-weighted input in the committee's decision.
+- Leverage the combined K-12 offering as a strategic differentiator: one vendor relationship simplifies procurement for a district adopting both math and ELA simultaneously.`,
+    },
+    news: {
+      sectionLabel: 'News',
+      contentSource: 'constrained',
+      content: `Product-relevant news and recent developments for Sacramento City Unified will appear here when data sources are connected.
+
+This section will surface recent board decisions, adoption timeline updates, and coverage relevant to EnvisionMath and myPerspectives positioning at SCUSD.`,
     },
   },
 
@@ -330,17 +324,6 @@ This opening signals that you understand the evaluation context, have done your 
   // Products: EnvisionMath only
   // ============================================================
   '75c04266-c622-4294-aa22-046245c95e51': {
-    district_story: {
-      sectionLabel: 'District Story',
-      contentSource: 'verbatim',
-      content: `Fresno Unified is the third-largest district in California, serving approximately 71,500 students across a K-Adult system in the Central Valley. Under Superintendent Misty Her, the district has maintained relatively stable enrollment — from 72,455 in 2021-22 to 71,480 in 2023-24 — avoiding the sharp declines seen in some coastal districts. Fresno Unified is a high-need district by every measure: over 62,000 students (87% of enrollment) qualify for Free or Reduced Price Meals, approximately 14,340 are English Learners, and about 10,100 receive special education services.
-
-Academic performance has been improving, though from a low base. Math proficiency has climbed from 20.8% in 2021-22 to 25.1% in 2023-24 — a meaningful 4.3-point gain, but still meaning that three-quarters of Fresno students are not meeting grade-level math standards. ELA proficiency has shown similar improvement, rising from 32.2% to 34.7%. Chronic absenteeism at 30.7% — nearly one-third of students — is a significant challenge that compounds every instructional intervention.
-
-The critical context for any sales conversation: Fresno Unified completed a competitive adoption process for K-8 mathematics materials in 2024 and selected a competing program under a multi-year contract. The district invested significant resources in teacher training, materials distribution, and implementation support for the new math program, which is now in its first full year of use. The adoption committee, teachers, and administrators are invested in making the current program succeed. This is not a district that is open to evaluating alternative math materials in the near term.
-
-This does not mean Fresno should be ignored — it means the conversation must be fundamentally different from a district in active adoption. The platform is surfacing this reality to save you time and help you approach Fresno strategically.`,
-    },
     key_themes: {
       sectionLabel: 'Key Themes',
       contentSource: 'synthesis',
@@ -352,21 +335,8 @@ This does not mean Fresno should be ignored — it means the conversation must b
 
 **High-need demographics create ongoing touchpoints beyond core adoption.** Even without a core math adoption opportunity, Fresno's demographics create needs that can be addressed through non-competitive channels. Supplemental materials, intervention programs, PD partnerships, and conference presence in the Central Valley all build relationships and brand familiarity. The 30.7% chronic absenteeism rate, 14,340 English Learners, and 87% FRPM population mean the district is constantly seeking solutions for its most challenged populations — some of which may not be fully addressed by the newly adopted program.`,
     },
-    product_alignment: {
-      sectionLabel: 'Product Alignment',
-      contentSource: 'synthesis',
-      content: `The honest assessment: EnvisionMath's alignment with Fresno Unified's current procurement posture is low. The district is not in market for K-8 math materials, and the recently adopted competitor program occupies the space EnvisionMath would fill. This section provides a candid evaluation of the gap and a strategic framework for the long game.
-
-**EnvisionMath (Mathematics, Grades 2-8):** The product capabilities are strong — EnvisionMath's problem-based learning, visual models, adaptive practice, and Spanish language support are well-suited to Fresno's demographics and academic needs. In a vacuum, the alignment would be excellent. But alignment isn't just about product-to-need fit; it's about timing and competitive position. Fresno has an active, recently signed contract with a competing math program. The district has invested in implementation, training, and rollout. EnvisionMath's value proposition — no matter how strong — cannot overcome the sunk cost, political commitment, and institutional inertia of a brand-new adoption.
-
-**Where the gap is real:** This is not a case where a creative pitch or a compelling demo can change the equation. The district is contractually, financially, and politically committed to their current math program for the next several years. Any attempt to position EnvisionMath as a near-term alternative will be perceived as disrespectful of the district's decision-making process and will damage the relationship.
-
-**Where opportunity exists — with patience:** The long-term alignment remains strong. Fresno's math proficiency at 25.1% means the current program will be measured against a clear baseline. If proficiency doesn't improve meaningfully over the next 2-3 years, dissatisfaction will build and the district will begin thinking about the next cycle early. Being a known, trusted, and helpful presence in the district before that moment arrives is the strategic goal. Additionally, supplemental and intervention programs that complement (rather than compete with) the core adoption may represent near-term opportunities worth exploring.
-
-**Recommended approach:** Do not lead with EnvisionMath as a core adoption play. Instead, approach Fresno as a relationship-building opportunity with a multi-year time horizon. The recommended actions are outlined in the Conversation Playbook section below.`,
-    },
-    stakeholder_map: {
-      sectionLabel: 'Stakeholder Map',
+    stakeholder_talking_points: {
+      sectionLabel: 'Stakeholder Talking Points',
       contentSource: 'constrained',
       content: `Fresno Unified's stakeholder map is oriented toward relationship-building, not adoption influence — there is no adoption decision to influence right now. The goal is to listen, learn, and position for the next cycle.
 
@@ -382,8 +352,21 @@ This does not mean Fresno should be ignored — it means the conversation must b
 
 **Site Principals in High-Need Schools** — *Approach:* Build relationships with principals leading schools with 90%+ FRPM and high EL concentrations. These leaders are the most candid about what's working and what isn't in the current adoption. *Receptivity:* High for genuine interest in their students' needs; low for vendor contact that feels transactional. *Timing:* These are long-cycle relationships. A principal who trusts you becomes an early warning system when dissatisfaction with the current program begins to surface — and an advocate when the next adoption cycle opens.`,
     },
-    objection_handling: {
-      sectionLabel: 'Objection Handling',
+    product_fit_data: {
+      sectionLabel: 'Product Fit / Data',
+      contentSource: 'synthesis',
+      content: `The honest assessment: EnvisionMath's alignment with Fresno Unified's current procurement posture is low. The district is not in market for K-8 math materials, and the recently adopted competitor program occupies the space EnvisionMath would fill. This section provides a candid evaluation of the gap and a strategic framework for the long game.
+
+**EnvisionMath (Mathematics, Grades 2-8):** The product capabilities are strong — EnvisionMath's problem-based learning, visual models, adaptive practice, and Spanish language support are well-suited to Fresno's demographics and academic needs. In a vacuum, the alignment would be excellent. But alignment isn't just about product-to-need fit; it's about timing and competitive position. Fresno has an active, recently signed contract with a competing math program. The district has invested in implementation, training, and rollout. EnvisionMath's value proposition — no matter how strong — cannot overcome the sunk cost, political commitment, and institutional inertia of a brand-new adoption.
+
+**Where the gap is real:** This is not a case where a creative pitch or a compelling demo can change the equation. The district is contractually, financially, and politically committed to their current math program for the next several years. Any attempt to position EnvisionMath as a near-term alternative will be perceived as disrespectful of the district's decision-making process and will damage the relationship.
+
+**Where opportunity exists — with patience:** The long-term alignment remains strong. Fresno's math proficiency at 25.1% means the current program will be measured against a clear baseline. If proficiency doesn't improve meaningfully over the next 2-3 years, dissatisfaction will build and the district will begin thinking about the next cycle early. Being a known, trusted, and helpful presence in the district before that moment arrives is the strategic goal. Additionally, supplemental and intervention programs that complement (rather than compete with) the core adoption may represent near-term opportunities worth exploring.
+
+**Recommended approach:** Do not lead with EnvisionMath as a core adoption play. Instead, approach Fresno as a relationship-building opportunity with a multi-year time horizon.`,
+    },
+    handling_objections: {
+      sectionLabel: 'Handling Objections',
       contentSource: 'synthesis',
       content: `The objection handling for Fresno is different — these are not objections to overcome but signals to respect. The goal is to demonstrate strategic maturity, not sales persistence.
 
@@ -399,25 +382,39 @@ The only correct response: "I completely understand, and I'm not here to second-
 **"We've committed budget to this program for the next five years."**
 "That makes sense given the scale of the investment. I want to make sure we're on your radar for when the next cycle approaches. What does that timeline typically look like for Fresno — do you start evaluation a year or two before contract expiration? Understanding your process now helps us be prepared to support the evaluation when the time comes." This accepts the reality, gathers intelligence, and establishes a long-term presence.`,
     },
-    conversation_playbook: {
-      sectionLabel: 'Conversation Playbook',
+    competition: {
+      sectionLabel: 'Competition',
       contentSource: 'synthesis',
-      content: `**Recommended Opening:** Do not open with a product pitch. This is a relationship-building conversation, not a sales meeting. "I know Fresno recently went through a math adoption, and I'm not here to revisit that decision. I wanted to introduce myself and learn more about the district's priorities so that we can be a helpful resource — whether that's supplemental materials, PD support, or just staying connected for the future. I've been impressed by the proficiency gains the district has been making, and I'd love to hear what's driving that progress."
+      content: `Fresno Unified recently completed a competitive math adoption and selected a competing program. Understanding the competitive landscape here is about long-term positioning, not near-term displacement.
 
-This opening immediately defuses the "I don't need another vendor pitch" reaction, demonstrates respect for the district's decision, and frames the conversation around learning rather than selling.
+**Current Adopted Program:**
+Fresno selected a competing K-8 mathematics program in 2024 under a multi-year contract. The district invested in teacher training, materials distribution, and implementation support. The program is in its first full year of use.
 
-**Key Proof Points (use sparingly — this is a listening conversation):**
-- **Credibility through humility:** "We know the platform shows a low fit score for Fresno right now, and that's honest — you've just adopted a math program and you're not in market. We think the fact that our platform tells you that, rather than encouraging a hard sell, is actually a demonstration of the kind of partner we are."
-- **Long-game value:** "Our goal in a district like Fresno isn't a near-term sale. It's being the first call you make when the next adoption cycle comes around — and earning that by being a genuinely useful presence in the meantime."
-- **Supplemental relevance:** "Even outside of core adoption, we have resources for English Learner math support, intervention pathways, and professional development that complement whatever core program a district is using. If any of those would be helpful, I'd love to explore that."
+**Why This Matters:**
+- The adoption committee, teachers, and administrators are invested in making the current program succeed.
+- Any attempt to position EnvisionMath as a near-term alternative will be perceived as disrespectful of the district's decision-making process.
+- The current contract likely runs 5-7 years, creating an adoption window around 2029-2031.
 
-**Discovery Questions (these are the real purpose of this meeting):**
-- "How is the first year of the new math program going? What's the teacher feedback been like?"
-- "Are there specific student populations — English Learners, students with IEPs, students impacted by chronic absenteeism — where you're finding the current program needs supplementing?"
-- "What does the district's adoption cycle look like — is it a fixed calendar, or does it depend on how the current materials are performing?"
-- "Are there professional development areas in math instruction where the district is looking for outside support?"
+**Long-Term Competitive Strategy:**
+- **Monitor performance:** Fresno's math proficiency baseline is 25.1%. If the adopted program doesn't produce measurable improvement over 2-3 years, dissatisfaction will build. Being a known, trusted presence before that moment is the strategic goal.
+- **Identify gaps:** Even strong core programs often have supplemental needs — intervention pathways, EL-specific math resources, or assessment tools that complement the core. These non-competitive offerings can maintain presence in the district.
+- **Build peer intelligence:** Connect with curriculum coordinators at conferences and PD events. Over time, they become informants about how the current program is performing and what the district will prioritize in the next cycle.
 
-**Suggested Next Step:** Do not propose a demo or pilot. Propose one of these low-commitment, value-add next steps: (1) An invitation to a regional math education event or PD webinar — positioning yourself as a professional resource, not a vendor. (2) A follow-up check-in in 6-12 months to see how the implementation is progressing. (3) A connection to a math education specialist who can support the district's professional development goals independent of any product. The metric for success here is not a sale — it's the foundation of a relationship that positions you for the next cycle in 4-5 years.`,
+**ELA Opportunity:**
+The recent adoption was mathematics-only. Determine whether Fresno has an active or upcoming ELA adoption cycle — myPerspectives could be positioned independently of the math situation. This requires separate stakeholder conversations with the ELA curriculum team.
+
+**Competitive Intelligence to Gather:**
+- Which specific program was adopted (publisher, product name, grade range)
+- Contract length and renewal terms (public record via board minutes)
+- Teacher satisfaction after first year of implementation
+- Whether supplemental or intervention needs exist that the core program doesn't address`,
+    },
+    news: {
+      sectionLabel: 'News',
+      contentSource: 'constrained',
+      content: `Product-relevant news and recent developments for Fresno Unified will appear here when data sources are connected.
+
+This section will surface implementation progress, board discussions, and community developments relevant to long-term positioning at Fresno Unified.`,
     },
   },
 };

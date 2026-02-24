@@ -126,7 +126,7 @@ function buildErrorSections(
 ): PlaybookSection[] {
   return SECTION_ORDER.map((sectionType, index) => {
     const template = GENERIC_SECTION_TEMPLATES[sectionType];
-    // Most sections complete, one has error (stakeholder_map at index 3)
+    // Most sections complete, one has error (stakeholder_talking_points at index 1)
     const status: SectionStatus = index === 3 ? 'error' : 'complete';
 
     const content = status === 'complete'

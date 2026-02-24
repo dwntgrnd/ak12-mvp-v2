@@ -3,12 +3,12 @@
 import type { FitAssessment, MatchSummary, ContentSource, SectionStatus } from './common';
 
 export type PlaybookSectionType =
-  | 'district_story'         // was 'district_data' — narrative lead with real metrics and trends
-  | 'key_themes'             // kept — strategic themes bridging district context to product relevance
-  | 'product_alignment'      // merged 'product_fit' + 'fit_assessment' — single alignment view with evidence
-  | 'stakeholder_map'        // was 'stakeholders' — named roles + what each cares about
-  | 'objection_handling'     // was 'objections' — conversation-ready objection/response pairs
-  | 'conversation_playbook'; // NEW — tactical prep: opening, proof points, questions, next steps
+  | 'key_themes'
+  | 'stakeholder_talking_points'
+  | 'product_fit_data'
+  | 'handling_objections'
+  | 'competition'
+  | 'news';
 
 export interface PlaybookSummary {
   playbookId: string;

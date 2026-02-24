@@ -30,12 +30,12 @@ import type { SectionStatus } from '@/services/types/common';
 
 // Tab config: maps sectionType → display label, in order
 const TAB_CONFIG = [
-  { sectionType: 'district_story', label: 'District Story' },
   { sectionType: 'key_themes', label: 'Key Themes' },
-  { sectionType: 'product_alignment', label: 'Product Alignment' },
-  { sectionType: 'stakeholder_map', label: 'Stakeholder Map' },
-  { sectionType: 'objection_handling', label: 'Objection Handling' },
-  { sectionType: 'conversation_playbook', label: 'Conversation Playbook' },
+  { sectionType: 'stakeholder_talking_points', label: 'Stakeholder Talking Points' },
+  { sectionType: 'product_fit_data', label: 'Product Fit / Data' },
+  { sectionType: 'handling_objections', label: 'Handling Objections' },
+  { sectionType: 'competition', label: 'Competition' },
+  { sectionType: 'news', label: 'News' },
 ] as const;
 
 function StatusDot({ status }: { status: SectionStatus }) {
