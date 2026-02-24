@@ -20,7 +20,7 @@ export function EmptyPlaybooksState({ onCreateClick }: EmptyPlaybooksStateProps)
         className="h-12 px-8 mt-6"
         onClick={onCreateClick}
       >
-        New Playbook
+        Generate Playbook
       </Button>
     </div>
   );

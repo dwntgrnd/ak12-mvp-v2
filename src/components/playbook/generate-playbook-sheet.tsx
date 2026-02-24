@@ -17,6 +17,7 @@ import { ProductSelectionCard } from './product-selection-card';
 import { DistrictSearchCombobox, type DistrictSearchResult } from './district-search-combobox';
 import { DistrictResolvedCard } from './district-resolved-card';
 import { cn } from '@/lib/utils';
+import { useSavedDistricts } from '@/hooks/use-saved-districts';
 
 interface ProductItem {
   productId: string;
@@ -50,6 +51,7 @@ export function GeneratePlaybookSheet({
   _demoEmptyCatalog,
 }: GeneratePlaybookSheetProps) {
   const router = useRouter();
+  const { isSaved, saveDistrict } = useSavedDistricts();
 
   // Product state
   const [products, setProducts] = useState<ProductItem[]>([]);
@@ -260,6 +262,9 @@ export function GeneratePlaybookSheet({
       if (!res.ok) throw new Error('Generation failed');
       const data = await res.json();
       const playbookId = data.playbookId;
+      if (selectedDistrict && !isSaved(selectedDistrict.districtId)) {
+        saveDistrict(selectedDistrict.districtId).catch(() => {});
+      }
       router.push(`/playbooks/${playbookId}`);
       onOpenChange(false);
     } catch {

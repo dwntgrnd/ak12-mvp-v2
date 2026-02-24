@@ -64,13 +64,25 @@ export function PlaybookContextCard({
             </div>
           </div>
           <div className="flex items-center gap-4">
-            <div className="hidden md:flex items-center gap-4 text-sm text-foreground-secondary mr-2">
+            <div className="hidden md:flex items-center gap-3 text-sm text-foreground-secondary mr-2">
               {districtEnrollment != null && (
                 <span>{formatNumber(districtEnrollment)} students</span>
               )}
+              {mathProficiency != null && (
+                <>
+                  <span className="text-foreground-tertiary">&middot;</span>
+                  <span>Math {mathProficiency}%</span>
+                </>
+              )}
+              {elaProficiency != null && (
+                <>
+                  <span className="text-foreground-tertiary">&middot;</span>
+                  <span>ELA {elaProficiency}%</span>
+                </>
+              )}
               {fitScore != null && (
                 <span className={cn(
-                  'font-medium',
+                  'font-medium ml-1',
                   fitScore >= 7 ? 'text-success' : fitScore >= 4 ? 'text-warning' : 'text-destructive'
                 )}>
                   {fitScore}/10 fit

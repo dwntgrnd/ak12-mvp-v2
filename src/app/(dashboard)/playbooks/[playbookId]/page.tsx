@@ -314,26 +314,6 @@ export default function PlaybookDetailPage({
     }
   }, [playbookId, router]);
 
-  // Demo: Generate a playbook (dev only)
-  const handleDemoGenerate = useCallback(async () => {
-    try {
-      const res = await fetch('/api/playbooks/generate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          districtId: 'dist-lausd-001',
-          productIds: ['prod-001', 'prod-002'],
-        }),
-      });
-      if (res.ok) {
-        const { playbookId: newId } = await res.json();
-        router.push(`/playbooks/${newId}`);
-      }
-    } catch {
-      // ignore
-    }
-  }, [router]);
-
   // Loading state
   if (loading) {
     return (
@@ -363,11 +343,6 @@ export default function PlaybookDetailPage({
           <p className="text-foreground-secondary mb-4">
             This playbook may not exist yet. Generate one to get started.
           </p>
-          {process.env.NODE_ENV === 'development' && (
-            <Button onClick={handleDemoGenerate}>
-              Demo: Generate Playbook
-            </Button>
-          )}
         </div>
       </div>
     );
@@ -417,11 +392,6 @@ export default function PlaybookDetailPage({
           </div>
         </div>
         <div className="flex items-center gap-2">
-          {process.env.NODE_ENV === 'development' && (
-            <Button variant="outline" size="sm" onClick={handleDemoGenerate}>
-              Demo: Generate
-            </Button>
-          )}
           <AlertDialog>
             <AlertDialogTrigger asChild>
               <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive">

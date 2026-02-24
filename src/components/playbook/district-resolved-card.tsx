@@ -35,7 +35,7 @@ export function DistrictResolvedCard({
         variant="ghost"
         size="sm"
         onClick={onChangeClick}
-        className="text-xs text-foreground-secondary shrink-0 h-auto py-1 px-2"
+        className="text-xs text-foreground-secondary shrink-0"
       >
         Change
       </Button>

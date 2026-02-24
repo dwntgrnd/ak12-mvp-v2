@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useRef, useCallback, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useRef, useCallback, useEffect, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { DiscoveryEntryState } from '@/components/discovery/discovery-entry-state';
 import { DiscoveryLoadingState } from '@/components/discovery/discovery-loading-state';
 import { DiscoveryResultsLayout } from '@/components/discovery/discovery-results-layout';
@@ -17,8 +17,9 @@ import type { MatchSummary } from '@/services/types/common';
 
 type DiscoveryPageState = 'entry' | 'loading' | 'results';
 
-export default function DiscoveryPage() {
+function DiscoveryPageInner() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [pageState, setPageState] = useState<DiscoveryPageState>('entry');
   const [activeQuery, setActiveQuery] = useState('');
   const [response, setResponse] = useState<DiscoveryQueryResponse | null>(null);
@@ -103,6 +104,17 @@ export default function DiscoveryPage() {
     }
   }
 
+  // Auto-execute pre-seeded query from URL param (e.g. ?q=districts+in+Los+Angeles+county)
+  const initialQueryHandled = useRef(false);
+  useEffect(() => {
+    if (initialQueryHandled.current) return;
+    const q = searchParams.get('q');
+    if (q && pageState === 'entry') {
+      initialQueryHandled.current = true;
+      handleQuerySubmit(q);
+    }
+  }, [searchParams, pageState]); // eslint-disable-line react-hooks/exhaustive-deps
+
   function handleDirectNavigation(districtId: string) {
     router.push(`/districts/${districtId}`);
   }
@@ -185,6 +197,14 @@ export default function DiscoveryPage() {
         onOpenChange={setShowLibraryDialog}
       />
     </>
+  );
+}
+
+export default function DiscoveryPage() {
+  return (
+    <Suspense>
+      <DiscoveryPageInner />
+    </Suspense>
   );
 }
 

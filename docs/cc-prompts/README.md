@@ -4,16 +4,16 @@ Handoff prompts written by the design partner (Claude Desktop) for execution by 
 
 ## Naming Convention
 
-`SS{session#}-{sequence#}-{descriptive-slug}.md`
+`P2-CC{sequence#}-{descriptive-slug}.md`
 
 Examples:
-- `SS42-01-playbook-seed-uuid-alignment.md`
-- `SS42-02-archive-cc-prompts.md`
-- `SS43-01-design-token-audit.md`
+- `P2-CC01-search-simplification.md`
+- `P2-CC02-district-playbook-merge.md`
+- `P2-CC03-product-lens-toggle.md`
 
 Rules:
-- Session number matches the session handoff document (SS-41, SS-42, etc.)
-- Sequence number is zero-padded two digits, ordered by execution priority
+- `P2-CC` prefix identifies Phase 2 prompts
+- Sequence number is zero-padded two digits, ordered by creation
 - Use lowercase kebab-case for the descriptive slug
 - Suffix letters (e.g., `03a`, `03b`) are acceptable for closely related sub-tasks
 
@@ -26,4 +26,4 @@ Rules:
 
 ## Archive
 
-`/docs/cc-prompts/archive/` contains all previously executed prompts, preserved for reference.
+`/docs/cc-prompts/archive/` contains all previously executed prompts from Phase 1, preserved for reference in git history. Archive directory was cleared at P2 kickoff — P1 prompts are recoverable from git.

@@ -199,9 +199,12 @@ export function DistrictIdentityBar({
         <div className="flex items-center gap-2">
           <Button
             variant="outlineBrand"
-            onClick={() => router.push('/discovery')}
+            onClick={() => {
+              const searchTerm = district.county || district.name;
+              router.push(`/discovery?q=${encodeURIComponent(`districts in ${searchTerm} county`)}`);
+            }}
           >
-            Find Similar
+            Find Similar Districts
           </Button>
           {playbookLoading ? (
             <Skeleton className="h-9 w-32" />
