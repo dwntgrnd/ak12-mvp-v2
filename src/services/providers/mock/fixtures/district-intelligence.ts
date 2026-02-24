@@ -62,7 +62,6 @@ export function getAvailableCategories(districtId: string): string[] {
   // New brief categories (Phase 6A)
   if (intel.goalsBrief || (intel.goals && intel.goals.length > 0)) categories.push('goalsFunding');
   if (intel.academicBrief || intel.academicDetail) categories.push('academicPerformance');
-  if (intel.competitiveBrief || (intel.programMentions && intel.programMentions.length > 0)) categories.push('competitiveIntel');
   return categories;
 }
 

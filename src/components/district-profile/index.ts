@@ -10,4 +10,5 @@ export { LensControlBar } from './lens-control-bar';
 export { GoalsFundingTab } from './goals-funding-tab';
 export { AcademicPerformanceTab } from './academic-performance-tab';
 export { CompetitiveIntelTab } from './competitive-intel-tab';
+export { NewsStubTab } from './news-stub-tab';
 export { SourceCitation } from './source-citation';

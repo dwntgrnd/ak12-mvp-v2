@@ -55,8 +55,7 @@ export interface DistrictIntelligence {
  */
 export type IntelligenceCategory =
   | 'goalsFunding'
-  | 'academicPerformance'
-  | 'competitiveIntel';
+  | 'academicPerformance';
 
 // ============================================================
 // Source Attribution

@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo } from 'react';
-import { Target, BarChart3, Shield, TrendingUp } from 'lucide-react';
+import { Target, BarChart3, TrendingUp, Newspaper } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import {
   getDistrictIntelligence,
@@ -12,8 +12,8 @@ import type { LucideIcon } from 'lucide-react';
 import type { DistrictYearData } from '@/services/providers/mock/fixtures/districts';
 import { GoalsFundingTab } from './goals-funding-tab';
 import { AcademicPerformanceTab } from './academic-performance-tab';
-import { CompetitiveIntelTab } from './competitive-intel-tab';
 import { DistrictChart } from './district-chart';
+import { NewsStubTab } from './news-stub-tab';
 
 interface ResearchTabsProps {
   districtId: string;
@@ -21,7 +21,7 @@ interface ResearchTabsProps {
 }
 
 interface TabConfig {
-  key: IntelligenceCategory | 'districtTrends';
+  key: IntelligenceCategory | 'districtTrends' | 'news';
   label: string;
   icon: LucideIcon;
 }
@@ -29,8 +29,8 @@ interface TabConfig {
 const TAB_CONFIG: TabConfig[] = [
   { key: 'goalsFunding', label: 'Goals & Funding', icon: Target },
   { key: 'academicPerformance', label: 'Academic Performance', icon: BarChart3 },
-  { key: 'competitiveIntel', label: 'Competitive Intel', icon: Shield },
   { key: 'districtTrends', label: 'District Trends', icon: TrendingUp },
+  { key: 'news', label: 'News', icon: Newspaper },
 ];
 
 export function ResearchTabs({ districtId, yearData }: ResearchTabsProps) {
@@ -40,16 +40,15 @@ export function ResearchTabs({ districtId, yearData }: ResearchTabsProps) {
 
     // Intelligence tabs filtered by available categories
     const intelligenceTabs = TAB_CONFIG.filter(
-      (t) => t.key !== 'districtTrends' && categories.includes(t.key as IntelligenceCategory)
+      (t) => t.key !== 'districtTrends' && t.key !== 'news' && categories.includes(t.key as IntelligenceCategory)
     );
 
     // District Trends tab appended conditionally based on yearData
     const hasTrendsData = yearData != null && yearData.length > 0;
-    const tabs = hasTrendsData
-      ? [...intelligenceTabs, TAB_CONFIG.find((t) => t.key === 'districtTrends')!]
-      : intelligenceTabs;
+    const trendTab = hasTrendsData ? [TAB_CONFIG.find((t) => t.key === 'districtTrends')!] : [];
+    const newsTab = [TAB_CONFIG.find((t) => t.key === 'news')!];
 
-    return { intel: data, availableTabs: tabs };
+    return { intel: data, availableTabs: [...intelligenceTabs, ...trendTab, ...newsTab] };
   }, [districtId, yearData]);
 
   if (availableTabs.length === 0) return null;
@@ -73,7 +72,7 @@ export function ResearchTabs({ districtId, yearData }: ResearchTabsProps) {
         <TabsContent key={tab.key} value={tab.key}>
           {tab.key === 'goalsFunding' && intel && <GoalsFundingTab intel={intel} />}
           {tab.key === 'academicPerformance' && intel && <AcademicPerformanceTab intel={intel} />}
-          {tab.key === 'competitiveIntel' && intel && <CompetitiveIntelTab intel={intel} />}
+          {tab.key === 'news' && <NewsStubTab />}
           {tab.key === 'districtTrends' && yearData && (
             <div className="pt-4">
               <DistrictChart yearData={yearData} />
