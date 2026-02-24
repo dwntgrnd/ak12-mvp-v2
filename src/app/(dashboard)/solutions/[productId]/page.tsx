@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { PlaybookCard } from '@/components/playbook/playbook-card';
-import { useSidebar } from '@/components/layout/sidebar-context';
+import { useAppShell } from '@/components/layout/app-shell-context';
 import { formatGradeRange } from '@/lib/utils/format';
 import type { Product } from '@/services/types/product';
 import type { PlaybookSummary } from '@/services/types/playbook';
@@ -40,7 +40,7 @@ export default function ProductDetailPage({
   params: Promise<{ productId: string }>;
 }) {
   const { productId } = use(params);
-  const { setBreadcrumbOverride } = useSidebar();
+  const { setBreadcrumbOverride } = useAppShell();
 
   const [product, setProduct] = useState<Product | null>(null);
   const [playbooks, setPlaybooks] = useState<PlaybookSummary[]>([]);

@@ -13,7 +13,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { PlaybookCard } from '@/components/playbook/playbook-card';
 import { EmptyPlaybooksState } from '@/components/playbook/empty-playbooks-state';
 import { GeneratePlaybookSheet } from '@/components/playbook/generate-playbook-sheet';
-import { useSidebar } from '@/components/layout/sidebar-context';
+import { useAppShell } from '@/components/layout/app-shell-context';
 
 type SortOption = 'recent' | 'fit';
 
@@ -70,7 +70,7 @@ export default function PlaybooksPage() {
   const [error, setError] = useState(false);
   const [sortOption, setSortOption] = useState<SortOption>('recent');
   const [sheetOpen, setSheetOpen] = useState(false);
-  const { setPageActions } = useSidebar();
+  const { setPageActions } = useAppShell();
 
   useEffect(() => {
     setLoading(true);

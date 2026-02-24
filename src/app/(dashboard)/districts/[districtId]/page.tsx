@@ -4,7 +4,7 @@ import { use, useEffect, useState, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { RefreshCw } from 'lucide-react';
-import { useSidebar } from '@/components/layout/sidebar-context';
+import { useAppShell } from '@/components/layout/app-shell-context';
 import type { DistrictProfile } from '@/services/types/district';
 import type { MatchSummary } from '@/services/types/common';
 import type { DistrictYearData } from '@/services/providers/mock/fixtures/districts';
@@ -27,7 +27,7 @@ export default function DistrictProfilePage({
   const { districtId } = use(params);
   const searchParams = useSearchParams();
   const productId = searchParams.get('productId');
-  const { setBreadcrumbOverride } = useSidebar();
+  const { setBreadcrumbOverride } = useAppShell();
 
   const [district, setDistrict] = useState<DistrictProfile | null>(null);
   const [yearData, setYearData] = useState<DistrictYearData[]>([]);
