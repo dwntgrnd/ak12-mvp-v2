@@ -14,7 +14,7 @@ export function UnifiedDistrictLayout({
   return (
     <div className="mt-8">
       {identityZone}
-      <div className="mt-4">{modeBarZone}</div>
+      <div>{modeBarZone}</div>
       <div className="mt-8">{children}</div>
     </div>
   );

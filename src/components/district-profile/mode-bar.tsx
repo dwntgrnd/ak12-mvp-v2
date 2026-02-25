@@ -116,6 +116,8 @@ export function ModeBar({
     mode = 'preview';
   } else if (isLensActive) {
     mode = 'lens';
+  } else if (isSubjectActive) {
+    mode = 'subject';
   } else {
     mode = 'neutral';
   }
@@ -125,16 +127,16 @@ export function ModeBar({
   return (
     <div
       className={cn(
-        'flex h-12 items-center gap-4 px-4',
-        mode === 'neutral' && 'border-b border-border-default',
-        mode === 'lens' && 'border-b-2 border-[#03C4D4]/40 bg-[#03C4D4]/5',
-        mode === 'playbook' && 'border-b-2 border-[#00DE9C]/40 bg-[#00DE9C]/5',
-        mode === 'preview' && 'border-b-2 border-dashed border-[#FFC205]/50 bg-[#FFC205]/5',
+        'flex items-center gap-4 px-4 py-3',
+        colors.bg,
+        colors.border,
+        mode === 'neutral' || mode === 'subject' ? 'border-b' : 'border-b-2',
+        mode === 'preview' && 'border-dashed',
       )}
     >
       {/* Left — Mode indicator */}
       <div className="flex items-center gap-2 shrink-0">
-        {mode === 'neutral' && (
+        {(mode === 'neutral' || mode === 'subject') && (
           <span className="text-sm font-semibold text-foreground flex items-center gap-1.5">
             District Intelligence
             {isSubjectActive && (
@@ -221,8 +223,8 @@ export function ModeBar({
         )}
       </div>
 
-      {/* Center — Subject picker + Lens picker (neutral + lens modes only) */}
-      {mode !== 'playbook' && mode !== 'preview' && (
+      {/* Center — Subject picker + Lens picker (neutral, subject, lens modes only) */}
+      {(mode === 'neutral' || mode === 'subject' || mode === 'lens') && (
         <div className="flex items-center gap-3 shrink-0">
           {readiness.loading ? (
             <Skeleton className="h-9 w-56" />
@@ -248,7 +250,7 @@ export function ModeBar({
 
       {/* Right — Actions */}
       <div className="flex items-center gap-2 shrink-0">
-        {mode === 'neutral' && (
+        {(mode === 'neutral' || mode === 'subject') && (
           <Button size="sm" disabled>
             Generate Playbook
           </Button>
