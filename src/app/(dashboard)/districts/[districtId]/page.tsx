@@ -20,6 +20,7 @@ import {
   UnifiedDistrictLayout,
 } from '@/components/district-profile';
 import { useProductLens } from '@/hooks/use-product-lens';
+import { useSubjectFilter } from '@/hooks/use-subject-filter';
 import { useLibraryReadiness } from '@/hooks/use-library-readiness';
 
 interface GenerationState {
@@ -75,6 +76,7 @@ export default function DistrictProfilePage({
   }, []);
 
   const { activeProduct, setProduct, clearProduct, isLensActive } = useProductLens();
+  const { activeSubject } = useSubjectFilter();
   const readiness = useLibraryReadiness();
 
   // Seed lens from URL param on mount (doesn't override existing lens)
@@ -325,6 +327,7 @@ export default function DistrictProfilePage({
             yearData={yearData}
             matchSummary={matchSummary}
             activeProductName={activeProduct?.name}
+            activeSubject={activeSubject}
           />
         }
         modeBarZone={

@@ -16,7 +16,13 @@ interface PersistentDataStripProps {
   yearData: DistrictYearData[];
   matchSummary?: MatchSummary | null;
   activeProductName?: string;
+  activeSubject?: string | null;
 }
+
+const SUBJECT_METRIC_MAP: Record<string, string[]> = {
+  'Mathematics': ['Math Proficiency'],
+  'English Language Arts': ['ELA Proficiency'],
+};
 
 const trendSentimentClasses = {
   positive: 'text-success',
@@ -29,13 +35,19 @@ export function PersistentDataStrip({
   yearData,
   matchSummary,
   activeProductName,
+  activeSubject,
 }: PersistentDataStripProps) {
   const { isSaved: checkIsSaved, saveDistrict, removeSavedDistrict } = useSavedDistricts();
   const isSaved = checkIsSaved(district.districtId);
 
+  const promotedMetrics = activeSubject
+    ? new Set(SUBJECT_METRIC_MAP[activeSubject] ?? [])
+    : new Set<string>();
+
   // --- Derived metric computations ---
   const enrollmentTrend = calculateTrend(yearData.map((y) => y.totalEnrollment));
   const elaTrend = calculateTrend(yearData.map((y) => y.elaProficiency));
+  const mathTrend = calculateTrend(yearData.map((y) => y.mathProficiency));
 
   const frpmPercentages = yearData.map((y) =>
     y.frpmCount != null && y.totalEnrollment != null && y.totalEnrollment > 0
@@ -138,6 +150,15 @@ export function PersistentDataStrip({
     });
   }
 
+  if (district.mathProficiency != null) {
+    metrics.push({
+      label: 'Math Proficiency',
+      value: `${district.mathProficiency}%`,
+      trendDisplay: getTrendDisplay(mathTrend, { format: 'points' }),
+      neutral: false,
+    });
+  }
+
   if (currentFrpmPct != null) {
     metrics.push({
       label: 'FRPM',
@@ -215,20 +236,29 @@ export function PersistentDataStrip({
         role="list"
         className="mt-3 pt-3 border-t border-border-subtle flex flex-col sm:grid sm:grid-cols-2 md:flex md:flex-row md:items-start"
       >
-        {metrics.map((metric, i) => (
+        {metrics.map((metric, i) => {
+          const isPromoted = promotedMetrics.has(metric.label);
+          return (
           <div
             key={metric.label}
             role="listitem"
             className={cn(
               'flex flex-col gap-0.5 py-2 sm:py-1.5 md:py-0 md:px-4 md:first:pl-0',
-              i < metrics.length - 1 && 'md:border-r md:border-border-subtle'
+              i < metrics.length - 1 && 'md:border-r md:border-border-subtle',
+              isPromoted && 'bg-primary/5 rounded-md md:py-1 md:-my-1'
             )}
           >
-            <span className="text-overline font-medium uppercase tracking-[0.05em] text-foreground-tertiary">
+            <span className={cn(
+              'text-overline font-medium uppercase tracking-[0.05em]',
+              isPromoted ? 'text-primary' : 'text-foreground-tertiary'
+            )}>
               {metric.label}
             </span>
             <div className="flex items-baseline gap-1">
-              <span className="text-[20px] font-bold leading-none text-foreground">
+              <span className={cn(
+                'text-[20px] font-bold leading-none',
+                isPromoted ? 'text-primary' : 'text-foreground'
+              )}>
                 {metric.value}
               </span>
               {metric.trendDisplay && (
@@ -245,7 +275,8 @@ export function PersistentDataStrip({
               )}
             </div>
           </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

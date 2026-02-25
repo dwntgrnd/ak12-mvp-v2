@@ -10,6 +10,7 @@ import { modeColors } from '@/lib/design-tokens';
 import type { ModeKey } from '@/lib/design-tokens';
 import type { ProductLensSummary } from '@/services/types/product';
 import { useProductLens } from '@/hooks/use-product-lens';
+import { useSubjectFilter } from '@/hooks/use-subject-filter';
 import { useLibraryReadiness } from '@/hooks/use-library-readiness';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
@@ -67,6 +68,7 @@ export function ModeBar({
   onRenamePlaybook,
 }: ModeBarProps) {
   const { activeProduct, clearProduct, isLensActive } = useProductLens();
+  const { activeSubject, isFilterActive: isSubjectActive, clearSubject } = useSubjectFilter();
   const readiness = useLibraryReadiness();
 
   // Delete confirmation dialog
@@ -133,8 +135,21 @@ export function ModeBar({
       {/* Left — Mode indicator */}
       <div className="flex items-center gap-2 shrink-0">
         {mode === 'neutral' && (
-          <span className="text-sm font-semibold text-foreground">
+          <span className="text-sm font-semibold text-foreground flex items-center gap-1.5">
             District Intelligence
+            {isSubjectActive && (
+              <>
+                <span className="text-foreground-secondary">·</span>
+                <span>{activeSubject}</span>
+                <button
+                  onClick={clearSubject}
+                  className="rounded p-0.5 hover:bg-surface-inset"
+                  aria-label="Clear subject filter"
+                >
+                  <X className="h-3.5 w-3.5 text-foreground-secondary" />
+                </button>
+              </>
+            )}
           </span>
         )}
         {mode === 'lens' && (
@@ -206,18 +221,24 @@ export function ModeBar({
         )}
       </div>
 
-      {/* Center — Lens picker (neutral + lens modes only) */}
+      {/* Center — Subject picker + Lens picker (neutral + lens modes only) */}
       {mode !== 'playbook' && mode !== 'preview' && (
-        <div className="shrink-0">
+        <div className="flex items-center gap-3 shrink-0">
           {readiness.loading ? (
             <Skeleton className="h-9 w-56" />
           ) : (
-            <LensPicker
-              products={readiness.products}
-              activeProductId={activeProduct?.productId ?? ''}
-              isLensActive={isLensActive}
-              disabled={isPreviewActive}
-            />
+            <>
+              <SubjectPicker
+                products={readiness.products}
+                disabled={isPreviewActive}
+              />
+              <LensPicker
+                products={readiness.products}
+                activeProductId={activeProduct?.productId ?? ''}
+                isLensActive={isLensActive}
+                disabled={isPreviewActive}
+              />
+            </>
           )}
         </div>
       )}
@@ -310,6 +331,47 @@ export function ModeBar({
   );
 }
 
+/** Subject filter picker */
+function SubjectPicker({
+  products,
+  disabled,
+}: {
+  products: ProductLensSummary[];
+  disabled?: boolean;
+}) {
+  const { activeSubject, setSubject, clearSubject } = useSubjectFilter();
+
+  const subjects = [...new Set(products.map((p) => p.category).filter(Boolean))].sort();
+
+  const handleValueChange = (value: string) => {
+    if (value === '__all__') {
+      clearSubject();
+    } else {
+      setSubject(value);
+    }
+  };
+
+  return (
+    <Select
+      value={activeSubject ?? '__all__'}
+      onValueChange={handleValueChange}
+      disabled={disabled}
+    >
+      <SelectTrigger className="w-44">
+        <SelectValue placeholder="All Subjects" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="__all__">All Subjects</SelectItem>
+        {subjects.map((s) => (
+          <SelectItem key={s} value={s}>
+            {s}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  );
+}
+
 /** Extracted lens picker to keep ModeBar clean */
 function LensPicker({
   products,
@@ -323,6 +385,7 @@ function LensPicker({
   disabled?: boolean;
 }) {
   const { setProduct, clearProduct } = useProductLens();
+  const { setSubject } = useSubjectFilter();
 
   const handleValueChange = (value: string) => {
     if (value === '__clear__') {
@@ -330,7 +393,12 @@ function LensPicker({
       return;
     }
     const product = products.find(p => p.productId === value);
-    if (product) setProduct(product);
+    if (product) {
+      setProduct(product);
+      if (product.category) {
+        setSubject(product.category);
+      }
+    }
   };
 
   return (
