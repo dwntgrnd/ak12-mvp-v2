@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useDistrictPlaybooks } from '@/hooks/use-district-playbooks';
 
@@ -13,6 +14,7 @@ interface ModeBarProps {
   activeMode: 'district' | string; // 'district' or a playbookId
   onGeneratePlaybook: () => void;
   activeProductName?: string;
+  isPreviewActive?: boolean;
 }
 
 const tabBase =
@@ -26,6 +28,7 @@ export function ModeBar({
   activeMode,
   onGeneratePlaybook,
   activeProductName,
+  isPreviewActive = false,
 }: ModeBarProps) {
   const router = useRouter();
   const { loading, playbooks } = useDistrictPlaybooks(districtId);
@@ -43,6 +46,12 @@ export function ModeBar({
           District Intelligence
         </Link>
 
+        {isPreviewActive && (
+          <Badge variant="secondary" className="ml-2 text-xs animate-pulse">
+            Preview
+          </Badge>
+        )}
+
         {loading ? (
           <>
             <Skeleton className="mx-2 h-5 w-28 rounded" />
@@ -56,7 +65,10 @@ export function ModeBar({
               className={cn(
                 tabBase,
                 activeMode === pb.playbookId ? tabActive : tabInactive,
+                isPreviewActive && 'opacity-50 pointer-events-none',
               )}
+              aria-disabled={isPreviewActive}
+              tabIndex={isPreviewActive ? -1 : undefined}
             >
               {pb.productNames.join(' \u00B7 ')}
             </Link>
@@ -69,6 +81,7 @@ export function ModeBar({
         <Button
           variant="outlineBrand"
           size="sm"
+          disabled={isPreviewActive}
           onClick={() => {
             const searchTerm = districtName;
             router.push(
@@ -82,13 +95,21 @@ export function ModeBar({
         {loading ? (
           <Skeleton className="h-8 w-32 rounded" />
         ) : mostRecent ? (
-          <Button variant="outlineBrand" size="sm" asChild>
-            <Link href={`/districts/${districtId}/playbooks/${mostRecent.playbookId}`}>
-              View Playbook
-            </Link>
+          <Button variant="outlineBrand" size="sm" disabled={isPreviewActive} asChild={!isPreviewActive}>
+            {isPreviewActive ? (
+              'View Playbook'
+            ) : (
+              <Link href={`/districts/${districtId}/playbooks/${mostRecent.playbookId}`}>
+                View Playbook
+              </Link>
+            )}
           </Button>
         ) : (
-          <Button size="sm" onClick={onGeneratePlaybook}>
+          <Button
+            size="sm"
+            onClick={onGeneratePlaybook}
+            disabled={isPreviewActive || !activeProductName}
+          >
             {activeProductName
               ? `Generate ${activeProductName} Playbook`
               : 'Generate Playbook'}

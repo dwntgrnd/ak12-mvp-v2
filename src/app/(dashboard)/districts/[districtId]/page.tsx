@@ -1,13 +1,14 @@
 'use client';
 
-import { use, useEffect, useState, useCallback } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { use, useEffect, useState, useCallback, useRef } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { RefreshCw } from 'lucide-react';
+import { RefreshCw, AlertCircle, X } from 'lucide-react';
 import { useAppShell } from '@/components/layout/app-shell-context';
 import type { DistrictProfile } from '@/services/types/district';
 import type { MatchSummary } from '@/services/types/common';
 import type { DistrictYearData } from '@/services/providers/mock/fixtures/districts';
+import type { Playbook } from '@/services/types/playbook';
 import { getDistrictService } from '@/services';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
@@ -16,10 +17,34 @@ import {
   ModeBar,
   LensControlBar,
   ResearchTabs,
+  PlaybookPreviewBanner,
+  PlaybookPreviewTabs,
 } from '@/components/district-profile';
-import { GeneratePlaybookSheet } from '@/components/playbook/generate-playbook-sheet';
 import { useProductLens } from '@/hooks/use-product-lens';
 import { useLibraryReadiness } from '@/hooks/use-library-readiness';
+
+interface GenerationState {
+  status: 'idle' | 'generating' | 'preview';
+  playbookId: string | null;
+  playbookData: Playbook | null;
+  defaultName: string;
+}
+
+const INITIAL_GENERATION_STATE: GenerationState = {
+  status: 'idle',
+  playbookId: null,
+  playbookData: null,
+  defaultName: '',
+};
+
+function formatDefaultName(districtName: string, productName: string): string {
+  const date = new Date().toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  });
+  return `${districtName} \u00B7 ${productName} \u00B7 ${date}`;
+}
 
 export default function DistrictProfilePage({
   params,
@@ -28,6 +53,7 @@ export default function DistrictProfilePage({
 }) {
   const { districtId } = use(params);
   const searchParams = useSearchParams();
+  const router = useRouter();
   const productId = searchParams.get('productId');
   const { setBreadcrumbs } = useAppShell();
 
@@ -36,9 +62,20 @@ export default function DistrictProfilePage({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [notFound, setNotFound] = useState(false);
-  const [playbookOpen, setPlaybookOpen] = useState(false);
 
-  const { activeProduct, setProduct, isLensActive } = useProductLens();
+  // Generation state machine
+  const [generationState, setGenerationState] = useState<GenerationState>(INITIAL_GENERATION_STATE);
+
+  // Transient error notification (replaces toast — no toast library installed)
+  const [generationError, setGenerationError] = useState<string | null>(null);
+  const errorTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const showError = useCallback((msg: string) => {
+    setGenerationError(msg);
+    if (errorTimerRef.current) clearTimeout(errorTimerRef.current);
+    errorTimerRef.current = setTimeout(() => setGenerationError(null), 6000);
+  }, []);
+
+  const { activeProduct, setProduct, clearProduct, isLensActive } = useProductLens();
   const readiness = useLibraryReadiness();
 
   // Seed lens from URL param on mount (doesn't override existing lens)
@@ -115,6 +152,105 @@ export default function DistrictProfilePage({
     return () => setBreadcrumbs(null);
   }, [district, setBreadcrumbs]);
 
+  // --- Generation flow ---
+  const handleGeneratePlaybook = useCallback(async () => {
+    if (!isLensActive || !activeProduct || !district) return;
+    if (generationState.status !== 'idle') return;
+
+    setGenerationState({
+      status: 'generating',
+      playbookId: null,
+      playbookData: null,
+      defaultName: '',
+    });
+
+    try {
+      // Step 1: Trigger generation
+      const genRes = await fetch('/api/playbooks/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          districtId,
+          productIds: [activeProduct.productId],
+        }),
+      });
+
+      if (!genRes.ok) {
+        throw new Error('Generation request failed');
+      }
+
+      const { playbookId } = await genRes.json();
+
+      // Step 2: Poll for completion
+      let complete = false;
+      while (!complete) {
+        await new Promise(resolve => setTimeout(resolve, 2000));
+
+        const statusRes = await fetch(`/api/playbooks/${playbookId}/status`);
+        if (!statusRes.ok) continue;
+
+        const statusData = await statusRes.json();
+
+        if (statusData.overallStatus === 'complete') {
+          // Step 3: Fetch full playbook
+          const pbRes = await fetch(`/api/playbooks/${playbookId}`);
+          if (!pbRes.ok) throw new Error('Failed to fetch generated playbook');
+
+          const playbookData: Playbook = await pbRes.json();
+          const defaultName = formatDefaultName(district.name, activeProduct.name);
+
+          setGenerationState({
+            status: 'preview',
+            playbookId,
+            playbookData,
+            defaultName,
+          });
+          complete = true;
+        } else if (statusData.overallStatus === 'failed') {
+          // Clean up failed playbook
+          fetch(`/api/playbooks/${playbookId}`, { method: 'DELETE' }).catch(() => {});
+          throw new Error('Playbook generation failed. Please try again.');
+        }
+        // 'generating' or 'partial' → keep polling
+      }
+    } catch (err) {
+      setGenerationState(INITIAL_GENERATION_STATE);
+      showError(err instanceof Error ? err.message : 'Playbook generation failed. Please try again.');
+    }
+  }, [isLensActive, activeProduct, district, districtId, generationState.status, showError]);
+
+  // --- Save flow ---
+  // TODO: P2 backend — separate preview generation from save.
+  // The MVP conflates generation with persistence. A real backend should have:
+  //   POST /api/playbooks/preview — generate temporary preview
+  //   POST /api/playbooks/[previewId]/save — commit with name to library
+  //   Preview auto-expires after N minutes if not saved.
+  const handleSavePlaybook = useCallback((name: string) => {
+    const { playbookId } = generationState;
+    if (!playbookId) return;
+
+    // In MVP, playbook is already persisted by generatePlaybook.
+    // Save = acknowledge + clear lens + navigate.
+    // `name` would be sent to a save API in a real backend (unused in MVP).
+    void name;
+    clearProduct();
+    setGenerationState(INITIAL_GENERATION_STATE);
+    router.push(`/districts/${districtId}/playbooks/${playbookId}`);
+  }, [generationState, clearProduct, districtId, router]);
+
+  // --- Discard flow ---
+  const handleDiscardPlaybook = useCallback(async () => {
+    const { playbookId } = generationState;
+    if (playbookId) {
+      // Fire-and-forget delete — still reset UI even if delete fails
+      fetch(`/api/playbooks/${playbookId}`, { method: 'DELETE' }).catch(() => {});
+    }
+    setGenerationState(INITIAL_GENERATION_STATE);
+    // Lens remains active — user returns to district-lens state
+  }, [generationState]);
+
+  const isPreviewActive = generationState.status !== 'idle';
+
   // --- 404 state ---
   if (notFound) {
     return (
@@ -174,6 +310,21 @@ export default function DistrictProfilePage({
   // --- Loaded state ---
   return (
     <div>
+      {/* Generation error notification */}
+      {generationError && (
+        <div className="mb-4 flex items-center gap-2 rounded-md bg-destructive/10 px-4 py-3 text-sm text-destructive">
+          <AlertCircle className="h-4 w-4 shrink-0" />
+          <span className="flex-1">{generationError}</span>
+          <button
+            onClick={() => setGenerationError(null)}
+            className="shrink-0 rounded p-0.5 hover:bg-destructive/10"
+            aria-label="Dismiss error"
+          >
+            <X className="h-3.5 w-3.5" />
+          </button>
+        </div>
+      )}
+
       {/* Layer 1 — Persistent Data Strip */}
       <PersistentDataStrip
         district={district}
@@ -188,37 +339,43 @@ export default function DistrictProfilePage({
           districtId={districtId}
           districtName={district.name}
           activeMode="district"
-          onGeneratePlaybook={() => setPlaybookOpen(true)}
+          onGeneratePlaybook={handleGeneratePlaybook}
           activeProductName={activeProduct?.name}
+          isPreviewActive={isPreviewActive}
         />
       </div>
 
-      {/* Layer 3 — Lens Control Bar */}
-      <LensControlBar districtId={districtId} matchSummary={matchSummary} />
+      {/* Layer 3 — Lens Control Bar (hidden during generating/preview) */}
+      {generationState.status === 'idle' && (
+        <LensControlBar districtId={districtId} matchSummary={matchSummary} />
+      )}
+
+      {/* Preview Banner (visible during preview only) */}
+      {generationState.status === 'preview' && (
+        <PlaybookPreviewBanner
+          defaultName={generationState.defaultName}
+          onSave={handleSavePlaybook}
+          onDiscard={handleDiscardPlaybook}
+        />
+      )}
 
       {/* Layer 4 — Tab Area */}
       <div className="mt-8">
-        <ResearchTabs
-          districtId={districtId}
-          yearData={yearData}
-          isLensActive={isLensActive}
-          matchSummary={matchSummary}
-          activeProductName={activeProduct?.name}
-        />
+        {generationState.status === 'idle' ? (
+          <ResearchTabs
+            districtId={districtId}
+            yearData={yearData}
+            isLensActive={isLensActive}
+            matchSummary={matchSummary}
+            activeProductName={activeProduct?.name}
+          />
+        ) : (
+          <PlaybookPreviewTabs
+            playbook={generationState.playbookData}
+            isGenerating={generationState.status === 'generating'}
+          />
+        )}
       </div>
-
-      {/* Generate Playbook Sheet */}
-      <GeneratePlaybookSheet
-        open={playbookOpen}
-        onOpenChange={setPlaybookOpen}
-        initialDistrict={{
-          districtId: district.districtId,
-          districtName: district.name,
-          location: district.location,
-          enrollment: district.totalEnrollment,
-        }}
-        initialProductIds={activeProductId ? [activeProductId] : undefined}
-      />
     </div>
   );
 }

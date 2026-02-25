@@ -13,3 +13,5 @@ export { CompetitiveIntelTab } from './competitive-intel-tab';
 export { NewsStubTab } from './news-stub-tab';
 export { SourceCitation } from './source-citation';
 export { LensAugmentationBlock } from './lens-augmentation-block';
+export { PlaybookPreviewBanner } from './playbook-preview-banner';
+export { PlaybookPreviewTabs } from './playbook-preview-tabs';
