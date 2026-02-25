@@ -81,7 +81,7 @@ export function TopNav() {
 
   const showAdmin = userRole === 'publisher-admin' || userRole === 'super-admin';
   const showBreadcrumbs = pathname !== '/discovery';
-  const showCompactSearch = pathname.startsWith('/districts/');
+  const showCompactSearch = pathname.startsWith('/districts/') || pathname === '/saved';
 
   useEffect(() => {
     setTopbarHeight('3.5rem');
