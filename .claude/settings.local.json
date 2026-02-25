@@ -59,7 +59,10 @@
       "Bash(wc -l /Users/dorenberge/WorkInProgress/VIBE/AK12-MVP-v2/src/components/discovery/renderers/*.tsx | tail -1)",
       "Bash(find /Users/dorenberge/WorkInProgress/VIBE/AK12-MVP-v2/src -name \"*hook*\" -o -name \"use*\" 2>/dev/null | head -2022)",
       "Bash(cd /Users/dorenberge/WorkInProgress/VIBE/AK12-MVP-v2/docs/cc-prompts && mv \\\\\n  Phase-10-1_Shared-District-Result-Card.md \\\\\n  Phase-10-2_Renderer-Integration.md \\\\\n  Phase-10-3_Single-Entity-Link-Affordances.md \\\\\n  Phase-10-4_Product-Lens-Selector.md \\\\\n  Phase-11-0_Code-Audit.md \\\\\n  Phase-11-1_Service-Contract-Updates.md \\\\\n  Phase-11-2_Mock-Provider-Updates.md \\\\\n  Phase-11-3_Card-Refactor.md \\\\\n  Phase-11-4_Column-Sort-and-Filters.md \\\\\n  Phase-11-5_Library-Readiness.md \\\\\n  R1_Fix-ProductLensSelector.md \\\\\n  R2_Create-FilterPopoverBar.md \\\\\n  R3_Rewire-DistrictListingsContainer.md \\\\\n  R3b_Remove-Local-Filter-From-Discovery-Configs.md \\\\\n  R4_Fix-ColumnHeaderBar.md \\\\\n  R4b_Align-Column-Headers-With-Card-Metrics.md \\\\\n  R4c_Fix-Column-Alignment-Structural.md \\\\\n  R4d_Column-Alignment-Complete-Code.md \\\\\n  R4e_Revert-Cards-Sort-Dropdown.md \\\\\n  R5_Fix-Stub-Snapshot-Data.md \\\\\n  relocate-product-lens-selector.md \\\\\n  SS41-01-data-quality-validation.md \\\\\n  SS41-02-add-scenario-districts.md \\\\\n  SS41-03a-decouple-trends-tab.md \\\\\n  SS41-03b-twin-rivers-intelligence.md \\\\\n  archive/)",
-      "Bash(find /Users/dorenberge/WorkInProgress/VIBE/AK12-MVP-v2/src/hooks -type f -name \"*.ts\" -o -name \"*.tsx\" 2>/dev/null | head -20)"
+      "Bash(find /Users/dorenberge/WorkInProgress/VIBE/AK12-MVP-v2/src/hooks -type f -name \"*.ts\" -o -name \"*.tsx\" 2>/dev/null | head -20)",
+      "Bash(npx tailwindcss --help 2>&1 | head -32)",
+      "Bash(find \"/Users/dorenberge/WorkInProgress/VIBE/AK12-MVP-v2/src/app/\\(dashboard\\)\" -type d -name \"playbooks\" | head -10)",
+      "Bash(git status -u)"
     ]
   }
 }

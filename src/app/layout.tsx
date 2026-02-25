@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Manrope, JetBrains_Mono } from 'next/font/google';
 import './globals.css';
+import { TokenEditorLoader } from '@/components/dev/token-editor/TokenEditorLoader';
 
 const manrope = Manrope({
   variable: '--font-manrope',
@@ -28,6 +29,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${manrope.variable} ${jetbrainsMono.variable} antialiased`}>
         {children}
+        {process.env.NODE_ENV === 'development' && <TokenEditorLoader />}
       </body>
     </html>
   );
