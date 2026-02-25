@@ -22,6 +22,9 @@ import {
 import { cn } from '@/lib/utils';
 import { useAppShell } from './app-shell-context';
 import { useProductLens } from '@/hooks/use-product-lens';
+import { useSavedDistricts } from '@/hooks/use-saved-districts';
+import { usePlaybookCount } from '@/hooks/use-playbook-count';
+import { useLibraryReadiness } from '@/hooks/use-library-readiness';
 
 const navItems = [
   { href: '/discovery', label: 'Discovery', icon: Search },
@@ -63,7 +66,17 @@ export function TopNav() {
   const { pageActions, breadcrumbs, setTopbarHeight } = useAppShell();
   const pathnameFallback = usePathnameBreadcrumbs(pathname);
   const { activeProduct, isLensActive, clearProduct } = useProductLens();
+  const { savedDistricts } = useSavedDistricts();
+  const { hasPlaybooks } = usePlaybookCount();
+  const { hasProducts } = useLibraryReadiness();
   const [userRole, setUserRole] = useState<string | null>(null);
+
+  // Map nav hrefs to whether they have content (for gold fill indicator)
+  const navContentMap: Record<string, boolean> = {
+    '/saved': savedDistricts.length > 0,
+    '/playbooks': hasPlaybooks,
+    '/solutions': hasProducts,
+  };
 
   useEffect(() => {
     fetch('/api/users/me')
@@ -106,18 +119,23 @@ export function TopNav() {
           {navItems.map((item) => {
             const active = isActive(item.href);
             const Icon = item.icon;
+            const hasContent = navContentMap[item.href] ?? false;
             return (
               <Link
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  'flex items-center gap-2 px-1 pt-1 text-lg font-semibold transition-colors border-b-4',
+                  'flex items-center gap-2 px-1 pt-1 text-base font-semibold transition-colors border-b-4',
                   active
                     ? 'border-[hsl(var(--brand-blue))] text-sidebar-foreground'
                     : 'border-transparent text-sidebar-foreground/70 hover:text-sidebar-foreground'
                 )}
               >
-                <Icon className="h-[18px] w-[18px]" />
+                <Icon
+                  className="h-4 w-4 transition-colors"
+                  fill={hasContent ? 'hsl(45 100% 51% / 0.25)' : 'none'}
+                  stroke={hasContent ? 'hsl(45 100% 51%)' : 'currentColor'}
+                />
                 {item.label}
               </Link>
             );
