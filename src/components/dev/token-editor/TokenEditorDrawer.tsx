@@ -172,6 +172,7 @@ export function TokenEditorDrawer() {
         <div className="te-content">
           {activeTab === 'tokens' ? (
             <TokenEditorControls
+              registry={editor.registry}
               getCurrentValue={editor.getCurrentValue}
               isModified={editor.isModified}
               updateToken={editor.updateToken}
@@ -766,6 +767,73 @@ export function TokenEditorDrawer() {
           font-family: monospace;
           width: 28px;
           text-align: right;
+        }
+
+        /* Managed-by-scale read-only rows */
+        .te-managed-row {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 6px 8px;
+          background: #181825;
+          border-radius: 6px;
+          border: 1px solid #313244;
+          opacity: 0.7;
+        }
+
+        .te-managed-meta {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+        }
+
+        .te-managed-value {
+          font-size: 11px;
+          font-family: monospace;
+          color: #a6adc8;
+        }
+
+        .te-managed-badge {
+          font-size: 9px;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+          padding: 1px 5px;
+          border-radius: 4px;
+          background: #313244;
+          color: #6c7086;
+        }
+
+        /* Usage hint tooltip */
+        .te-usage-hint {
+          position: relative;
+          display: inline-flex;
+          align-items: center;
+          color: #6c7086;
+          cursor: help;
+        }
+
+        .te-usage-hint-tooltip {
+          display: none;
+          position: absolute;
+          bottom: calc(100% + 6px);
+          left: 50%;
+          transform: translateX(-50%);
+          background: #313244;
+          color: #cdd6f4;
+          font-size: 10px;
+          font-weight: 400;
+          text-transform: none;
+          letter-spacing: normal;
+          padding: 4px 8px;
+          border-radius: 4px;
+          white-space: nowrap;
+          pointer-events: none;
+          z-index: 10;
+        }
+
+        .te-usage-hint:hover .te-usage-hint-tooltip {
+          display: block;
         }
       `}</style>
     </>

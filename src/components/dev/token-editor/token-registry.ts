@@ -1,14 +1,32 @@
 /**
- * Token registry — definitions for all CSS custom properties in globals.css.
+ * Token registry — definitions for all CSS custom properties.
+ * Static overrides + runtime auto-detection merge.
  */
 
-export type TokenType = 'hsl-color' | 'length' | 'shadow' | 'font-size';
+import type { AutoDetectedToken } from './auto-detect';
+
+export type TokenType = 'hsl-color' | 'length' | 'shadow' | 'font-size' | 'other';
 
 export interface TokenDefinition {
   cssVar: string;
   label: string;
   group: string;
   type: TokenType;
+  defaultValue: string;
+  hint?: string;
+  usedBy?: string[];
+  managedByScale?: boolean;
+  autoDetected?: boolean;
+}
+
+export interface TokenOverride {
+  label?: string;
+  group?: string;
+  type?: TokenType;
+  hint?: string;
+  usedBy?: string[];
+  hidden?: boolean;
+  managedByScale?: boolean;
 }
 
 export const TOKEN_GROUPS = [
@@ -26,92 +44,240 @@ export const TOKEN_GROUPS = [
 
 export type TokenGroup = (typeof TOKEN_GROUPS)[number];
 
-export const TOKEN_REGISTRY: TokenDefinition[] = [
+/**
+ * Manual overrides for auto-detected tokens.
+ * Used for human-friendly labels, usage hints, visibility control, and scale management.
+ */
+export const TOKEN_OVERRIDES: Record<string, TokenOverride> = {
   // Brand Colors
-  { cssVar: '--brand-orange', label: 'Brand Orange', group: 'Brand Colors', type: 'hsl-color' },
-  { cssVar: '--brand-blue', label: 'Brand Blue', group: 'Brand Colors', type: 'hsl-color' },
-  { cssVar: '--brand-green', label: 'Brand Green', group: 'Brand Colors', type: 'hsl-color' },
-  { cssVar: '--district-link', label: 'District Link', group: 'Brand Colors', type: 'hsl-color' },
+  '--brand-orange': {
+    label: 'Brand Orange',
+    group: 'Brand Colors',
+    usedBy: ['bg-brand-orange', 'text-brand-orange', 'Button default variant'],
+  },
+  '--brand-blue': { label: 'Brand Blue', group: 'Brand Colors' },
+  '--brand-green': { label: 'Brand Green', group: 'Brand Colors' },
+  '--district-link': { label: 'District Link', group: 'Brand Colors' },
 
   // Semantic Colors
-  { cssVar: '--background', label: 'Background', group: 'Semantic Colors', type: 'hsl-color' },
-  { cssVar: '--foreground', label: 'Foreground', group: 'Semantic Colors', type: 'hsl-color' },
-  { cssVar: '--primary', label: 'Primary', group: 'Semantic Colors', type: 'hsl-color' },
-  { cssVar: '--primary-foreground', label: 'Primary Foreground', group: 'Semantic Colors', type: 'hsl-color' },
-  { cssVar: '--secondary', label: 'Secondary', group: 'Semantic Colors', type: 'hsl-color' },
-  { cssVar: '--secondary-foreground', label: 'Secondary Foreground', group: 'Semantic Colors', type: 'hsl-color' },
-  { cssVar: '--muted', label: 'Muted', group: 'Semantic Colors', type: 'hsl-color' },
-  { cssVar: '--muted-foreground', label: 'Muted Foreground', group: 'Semantic Colors', type: 'hsl-color' },
-  { cssVar: '--accent', label: 'Accent', group: 'Semantic Colors', type: 'hsl-color' },
-  { cssVar: '--accent-foreground', label: 'Accent Foreground', group: 'Semantic Colors', type: 'hsl-color' },
-  { cssVar: '--destructive', label: 'Destructive', group: 'Semantic Colors', type: 'hsl-color' },
-  { cssVar: '--destructive-foreground', label: 'Destructive FG', group: 'Semantic Colors', type: 'hsl-color' },
-  { cssVar: '--success', label: 'Success', group: 'Semantic Colors', type: 'hsl-color' },
-  { cssVar: '--success-foreground', label: 'Success FG', group: 'Semantic Colors', type: 'hsl-color' },
-  { cssVar: '--warning', label: 'Warning', group: 'Semantic Colors', type: 'hsl-color' },
-  { cssVar: '--warning-foreground', label: 'Warning FG', group: 'Semantic Colors', type: 'hsl-color' },
-  { cssVar: '--card', label: 'Card', group: 'Semantic Colors', type: 'hsl-color' },
-  { cssVar: '--card-foreground', label: 'Card Foreground', group: 'Semantic Colors', type: 'hsl-color' },
-  { cssVar: '--popover', label: 'Popover', group: 'Semantic Colors', type: 'hsl-color' },
-  { cssVar: '--popover-foreground', label: 'Popover Foreground', group: 'Semantic Colors', type: 'hsl-color' },
-  { cssVar: '--ring', label: 'Ring', group: 'Semantic Colors', type: 'hsl-color' },
-  { cssVar: '--input', label: 'Input', group: 'Semantic Colors', type: 'hsl-color' },
+  '--background': { label: 'Background', group: 'Semantic Colors' },
+  '--foreground': {
+    label: 'Foreground',
+    group: 'Semantic Colors',
+    usedBy: ['text-foreground'],
+  },
+  '--primary': {
+    label: 'Primary',
+    group: 'Semantic Colors',
+    usedBy: ['text-primary', 'bg-primary'],
+  },
+  '--primary-foreground': { label: 'Primary Foreground', group: 'Semantic Colors' },
+  '--secondary': { label: 'Secondary', group: 'Semantic Colors' },
+  '--secondary-foreground': { label: 'Secondary Foreground', group: 'Semantic Colors' },
+  '--muted': { label: 'Muted', group: 'Semantic Colors' },
+  '--muted-foreground': { label: 'Muted Foreground', group: 'Semantic Colors' },
+  '--accent': { label: 'Accent', group: 'Semantic Colors' },
+  '--accent-foreground': { label: 'Accent Foreground', group: 'Semantic Colors' },
+  '--destructive': {
+    label: 'Destructive',
+    group: 'Semantic Colors',
+    usedBy: ['text-destructive', 'bg-destructive'],
+  },
+  '--destructive-foreground': { label: 'Destructive FG', group: 'Semantic Colors' },
+  '--success': {
+    label: 'Success',
+    group: 'Semantic Colors',
+    usedBy: ['text-success', 'bg-success'],
+  },
+  '--success-foreground': { label: 'Success FG', group: 'Semantic Colors' },
+  '--warning': {
+    label: 'Warning',
+    group: 'Semantic Colors',
+    usedBy: ['text-warning', 'bg-warning'],
+  },
+  '--warning-foreground': { label: 'Warning FG', group: 'Semantic Colors' },
+  '--card': { label: 'Card', group: 'Semantic Colors' },
+  '--card-foreground': { label: 'Card Foreground', group: 'Semantic Colors' },
+  '--popover': { label: 'Popover', group: 'Semantic Colors' },
+  '--popover-foreground': { label: 'Popover Foreground', group: 'Semantic Colors' },
+  '--ring': { label: 'Ring', group: 'Semantic Colors' },
+  '--input': { label: 'Input', group: 'Semantic Colors' },
 
   // Surfaces
-  { cssVar: '--surface-page', label: 'Surface Page', group: 'Surfaces', type: 'hsl-color' },
-  { cssVar: '--surface-raised', label: 'Surface Raised', group: 'Surfaces', type: 'hsl-color' },
-  { cssVar: '--surface-inset', label: 'Surface Inset', group: 'Surfaces', type: 'hsl-color' },
-  { cssVar: '--surface-emphasis', label: 'Surface Emphasis', group: 'Surfaces', type: 'hsl-color' },
-  { cssVar: '--surface-emphasis-neutral', label: 'Surface Emphasis Neutral', group: 'Surfaces', type: 'hsl-color' },
-  { cssVar: '--emphasis-surface', label: 'Emphasis Surface', group: 'Surfaces', type: 'hsl-color' },
-  { cssVar: '--emphasis-surface-neutral', label: 'Emphasis Surface Neutral', group: 'Surfaces', type: 'hsl-color' },
+  '--surface-page': {
+    label: 'Surface Page',
+    group: 'Surfaces',
+    usedBy: ['bg-surface-page'],
+  },
+  '--surface-raised': {
+    label: 'Surface Raised',
+    group: 'Surfaces',
+    usedBy: ['bg-surface-raised'],
+  },
+  '--surface-inset': {
+    label: 'Surface Inset',
+    group: 'Surfaces',
+    usedBy: ['bg-surface-inset'],
+  },
+  '--surface-emphasis': {
+    label: 'Surface Emphasis',
+    group: 'Surfaces',
+    usedBy: ['bg-surface-emphasis'],
+  },
+  '--surface-emphasis-neutral': {
+    label: 'Surface Emphasis Neutral',
+    group: 'Surfaces',
+    usedBy: ['bg-surface-emphasis-neutral'],
+  },
+  '--emphasis-surface': { label: 'Emphasis Surface', group: 'Surfaces' },
+  '--emphasis-surface-neutral': { label: 'Emphasis Surface Neutral', group: 'Surfaces' },
 
   // Text Colors
-  { cssVar: '--foreground-secondary', label: 'Foreground Secondary', group: 'Text Colors', type: 'hsl-color' },
-  { cssVar: '--foreground-tertiary', label: 'Foreground Tertiary', group: 'Text Colors', type: 'hsl-color' },
+  '--foreground-secondary': {
+    label: 'Foreground Secondary',
+    group: 'Text Colors',
+    usedBy: ['text-foreground-secondary'],
+  },
+  '--foreground-tertiary': {
+    label: 'Foreground Tertiary',
+    group: 'Text Colors',
+    usedBy: ['text-foreground-tertiary'],
+  },
 
   // Borders
-  { cssVar: '--border', label: 'Border', group: 'Borders', type: 'hsl-color' },
-  { cssVar: '--border-default', label: 'Border Default', group: 'Borders', type: 'hsl-color' },
-  { cssVar: '--border-subtle', label: 'Border Subtle', group: 'Borders', type: 'hsl-color' },
+  '--border': { label: 'Border', group: 'Borders' },
+  '--border-default': {
+    label: 'Border Default',
+    group: 'Borders',
+    usedBy: ['border-border-default'],
+  },
+  '--border-subtle': {
+    label: 'Border Subtle',
+    group: 'Borders',
+    usedBy: ['border-border-subtle'],
+  },
 
   // Navigation
-  { cssVar: '--sidebar-bg', label: 'Sidebar BG', group: 'Navigation', type: 'hsl-color' },
-  { cssVar: '--topbar-bg', label: 'Topbar BG', group: 'Navigation', type: 'hsl-color' },
-  { cssVar: '--sidebar-fg', label: 'Sidebar FG', group: 'Navigation', type: 'hsl-color' },
-  { cssVar: '--sidebar-hover', label: 'Sidebar Hover', group: 'Navigation', type: 'hsl-color' },
-  { cssVar: '--sidebar-active', label: 'Sidebar Active', group: 'Navigation', type: 'hsl-color' },
+  '--sidebar-bg': { label: 'Sidebar BG', group: 'Navigation' },
+  '--topbar-bg': { label: 'Topbar BG', group: 'Navigation' },
+  '--sidebar-fg': { label: 'Sidebar FG', group: 'Navigation' },
+  '--sidebar-hover': { label: 'Sidebar Hover', group: 'Navigation' },
+  '--sidebar-active': { label: 'Sidebar Active', group: 'Navigation' },
 
-  // Modular Type Scale
-  { cssVar: '--font-base', label: 'Font Base', group: 'Modular Type Scale', type: 'font-size' },
-  { cssVar: '--font-size-overline', label: 'Overline', group: 'Modular Type Scale', type: 'font-size' },
-  { cssVar: '--font-size-caption', label: 'Caption', group: 'Modular Type Scale', type: 'font-size' },
-  { cssVar: '--font-size-subsection-sm', label: 'Subsection Sm', group: 'Modular Type Scale', type: 'font-size' },
-  { cssVar: '--font-size-body', label: 'Body', group: 'Modular Type Scale', type: 'font-size' },
-  { cssVar: '--font-size-subsection-heading', label: 'Subsection Heading', group: 'Modular Type Scale', type: 'font-size' },
-  { cssVar: '--font-size-section-heading', label: 'Section Heading', group: 'Modular Type Scale', type: 'font-size' },
-  { cssVar: '--font-size-page-title', label: 'Page Title', group: 'Modular Type Scale', type: 'font-size' },
-
-  { cssVar: '--radius', label: 'Border Radius', group: 'Spacing & Layout', type: 'length' },
+  // Modular Type Scale — managed by ModularScaleControl
+  '--font-base': {
+    label: 'Font Base',
+    group: 'Modular Type Scale',
+    managedByScale: true,
+  },
+  '--font-size-overline': {
+    label: 'Overline',
+    group: 'Modular Type Scale',
+    managedByScale: true,
+  },
+  '--font-size-caption': {
+    label: 'Caption',
+    group: 'Modular Type Scale',
+    managedByScale: true,
+  },
+  '--font-size-subsection-sm': {
+    label: 'Subsection Sm',
+    group: 'Modular Type Scale',
+    managedByScale: true,
+  },
+  '--font-size-body': {
+    label: 'Body',
+    group: 'Modular Type Scale',
+    managedByScale: true,
+  },
+  '--font-size-subsection-heading': {
+    label: 'Subsection Heading',
+    group: 'Modular Type Scale',
+    managedByScale: true,
+  },
+  '--font-size-section-heading': {
+    label: 'Section Heading',
+    group: 'Modular Type Scale',
+    managedByScale: true,
+  },
+  '--font-size-page-title': {
+    label: 'Page Title',
+    group: 'Modular Type Scale',
+    managedByScale: true,
+  },
 
   // Spacing & Layout
-  { cssVar: '--topbar-height', label: 'Topbar Height', group: 'Spacing & Layout', type: 'length' },
-  { cssVar: '--content-max-width', label: 'Content Max Width', group: 'Spacing & Layout', type: 'length' },
+  '--radius': { label: 'Border Radius', group: 'Spacing & Layout' },
+  '--topbar-height': { label: 'Topbar Height', group: 'Spacing & Layout' },
+  '--content-max-width': { label: 'Content Max Width', group: 'Spacing & Layout' },
+
+  // Hidden / deprecated
+  '--content-width': { hidden: true },
 
   // Shadows
-  { cssVar: '--shadow-sm', label: 'Shadow SM', group: 'Shadows', type: 'shadow' },
-  { cssVar: '--shadow-md', label: 'Shadow MD', group: 'Shadows', type: 'shadow' },
-  { cssVar: '--shadow-lg', label: 'Shadow LG', group: 'Shadows', type: 'shadow' },
-];
+  '--shadow-sm': { label: 'Shadow SM', group: 'Shadows' },
+  '--shadow-md': { label: 'Shadow MD', group: 'Shadows' },
+  '--shadow-lg': { label: 'Shadow LG', group: 'Shadows' },
+};
 
-/** Get tokens grouped by their group name */
-export function getTokensByGroup(): Map<string, TokenDefinition[]> {
+/**
+ * Merge auto-detected tokens with manual overrides to produce the final registry.
+ */
+export function buildRegistry(
+  detected: Map<string, AutoDetectedToken>
+): TokenDefinition[] {
+  const registry: TokenDefinition[] = [];
+
+  for (const [cssVar, auto] of detected) {
+    const override = TOKEN_OVERRIDES[cssVar];
+
+    // Skip hidden tokens
+    if (override?.hidden) continue;
+
+    registry.push({
+      cssVar,
+      label: override?.label ?? auto.label,
+      group: override?.group ?? auto.group,
+      type: override?.type ?? auto.type,
+      defaultValue: auto.value,
+      hint: override?.hint,
+      usedBy: override?.usedBy,
+      managedByScale: override?.managedByScale,
+      autoDetected: !override,
+    });
+  }
+
+  return registry;
+}
+
+/** Get tokens grouped by their group name, with known groups ordered first. */
+export function getTokensByGroup(
+  registry: TokenDefinition[]
+): Map<string, TokenDefinition[]> {
   const map = new Map<string, TokenDefinition[]>();
+
+  // Known groups first, in order
   for (const group of TOKEN_GROUPS) {
-    const tokens = TOKEN_REGISTRY.filter((t) => t.group === group);
+    const tokens = registry.filter((t) => t.group === group);
     if (tokens.length > 0) {
       map.set(group, tokens);
     }
   }
+
+  // Unknown groups sorted alphabetically after
+  const knownSet = new Set<string>(TOKEN_GROUPS);
+  const unknownGroups = new Set<string>();
+  for (const t of registry) {
+    if (!knownSet.has(t.group)) {
+      unknownGroups.add(t.group);
+    }
+  }
+  for (const group of Array.from(unknownGroups).sort()) {
+    const tokens = registry.filter((t) => t.group === group);
+    if (tokens.length > 0) {
+      map.set(group, tokens);
+    }
+  }
+
   return map;
 }

@@ -11,8 +11,10 @@ import { HslColorControl } from './HslColorControl';
 import { LengthControl } from './LengthControl';
 import { ShadowControl } from './ShadowControl';
 import { ModularScaleControl, type ScaleMetadata } from './ModularScaleControl';
+import { Info } from 'lucide-react';
 
 interface TokenEditorControlsProps {
+  registry: TokenDefinition[];
   getCurrentValue: (cssVar: string) => string;
   isModified: (cssVar: string) => boolean;
   updateToken: (cssVar: string, value: string) => void;
@@ -21,7 +23,26 @@ interface TokenEditorControlsProps {
   setScaleMetadata: (meta: ScaleMetadata) => void;
 }
 
+function TokenLabel({ label, usedBy }: { label: string; usedBy?: string[] }) {
+  if (!usedBy || usedBy.length === 0) {
+    return <>{label}</>;
+  }
+
+  return (
+    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+      {label}
+      <span className="te-usage-hint">
+        <Info size={10} />
+        <span className="te-usage-hint-tooltip">
+          {usedBy.join(', ')}
+        </span>
+      </span>
+    </span>
+  );
+}
+
 export function TokenEditorControls({
+  registry,
   getCurrentValue,
   isModified,
   updateToken,
@@ -29,7 +50,7 @@ export function TokenEditorControls({
   getGroupChangeCount,
   setScaleMetadata,
 }: TokenEditorControlsProps) {
-  const groups = getTokensByGroup();
+  const groups = getTokensByGroup(registry);
 
   return (
     <Accordion type="single" collapsible className="te-accordion">
@@ -73,15 +94,34 @@ export function TokenEditorControls({
             <AccordionContent className="te-accordion-content">
               <div className="te-token-list">
                 {tokens.map((token) => {
+                  // Managed-by-scale tokens outside their group render as read-only
+                  if (token.managedByScale && groupName !== 'Modular Type Scale') {
+                    const value = getCurrentValue(token.cssVar);
+                    return (
+                      <div key={token.cssVar} className="te-managed-row">
+                        <span className="te-label">
+                          <TokenLabel label={token.label} usedBy={token.usedBy} />
+                        </span>
+                        <span className="te-managed-meta">
+                          <span className="te-managed-value">{value || token.defaultValue}</span>
+                          <span className="te-managed-badge">scale</span>
+                        </span>
+                      </div>
+                    );
+                  }
+
                   const value = getCurrentValue(token.cssVar);
                   const modified = isModified(token.cssVar);
+                  const labelNode = (
+                    <TokenLabel label={token.label} usedBy={token.usedBy} />
+                  );
 
                   switch (token.type) {
                     case 'hsl-color':
                       return (
                         <HslColorControl
                           key={token.cssVar}
-                          label={token.label}
+                          label={labelNode}
                           value={value}
                           isModified={modified}
                           onChange={(v) => updateToken(token.cssVar, v)}
@@ -92,7 +132,7 @@ export function TokenEditorControls({
                       return (
                         <LengthControl
                           key={token.cssVar}
-                          label={token.label}
+                          label={labelNode}
                           value={value}
                           isModified={modified}
                           onChange={(v) => updateToken(token.cssVar, v)}
@@ -103,7 +143,7 @@ export function TokenEditorControls({
                       return (
                         <LengthControl
                           key={token.cssVar}
-                          label={token.label}
+                          label={labelNode}
                           value={value}
                           isModified={modified}
                           onChange={(v) => updateToken(token.cssVar, v)}
@@ -115,7 +155,7 @@ export function TokenEditorControls({
                       return (
                         <ShadowControl
                           key={token.cssVar}
-                          label={token.label}
+                          label={labelNode}
                           value={value}
                           isModified={modified}
                           onChange={(v) => updateToken(token.cssVar, v)}

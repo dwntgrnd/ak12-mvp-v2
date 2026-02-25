@@ -1,7 +1,8 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { TOKEN_REGISTRY, type TokenDefinition } from './token-registry';
+import { buildRegistry, type TokenDefinition } from './token-registry';
+import { autoDetectTokens } from './auto-detect';
 
 const CHANNEL_NAME = 'ak12-token-editor';
 
@@ -16,28 +17,32 @@ interface TokenState {
   changes: Map<string, string>;
   /** Map of cssVar → original computed value */
   defaults: Map<string, string>;
+  /** Dynamic token registry built from auto-detection + overrides */
+  registry: TokenDefinition[];
 }
 
 export function useTokenEditor() {
   const [state, setState] = useState<TokenState>({
     changes: new Map(),
     defaults: new Map(),
+    registry: [],
   });
   const channelRef = useRef<BroadcastChannel | null>(null);
   const scaleMetadataRef = useRef<ScaleMetadata | null>(null);
+  const registryRef = useRef<TokenDefinition[]>([]);
 
-  // Read all computed defaults on mount
+  // Auto-detect tokens and build registry on mount
   useEffect(() => {
-    const defaults = new Map<string, string>();
-    const root = document.documentElement;
-    const computed = getComputedStyle(root);
+    const detected = autoDetectTokens();
+    const registry = buildRegistry(detected);
+    registryRef.current = registry;
 
-    for (const token of TOKEN_REGISTRY) {
-      const value = computed.getPropertyValue(token.cssVar).trim();
-      defaults.set(token.cssVar, value);
+    const defaults = new Map<string, string>();
+    for (const token of registry) {
+      defaults.set(token.cssVar, token.defaultValue);
     }
 
-    setState((prev) => ({ ...prev, defaults }));
+    setState((prev) => ({ ...prev, defaults, registry }));
   }, []);
 
   // Set up BroadcastChannel listener
@@ -62,7 +67,7 @@ export function useTokenEditor() {
           return { ...prev, changes };
         });
       } else if (type === 'reset-all') {
-        for (const token of TOKEN_REGISTRY) {
+        for (const token of registryRef.current) {
           document.documentElement.style.removeProperty(token.cssVar);
         }
         setState((prev) => ({ ...prev, changes: new Map() }));
@@ -109,7 +114,7 @@ export function useTokenEditor() {
   );
 
   const resetAll = useCallback(() => {
-    for (const token of TOKEN_REGISTRY) {
+    for (const token of registryRef.current) {
       document.documentElement.style.removeProperty(token.cssVar);
     }
     setState((prev) => ({ ...prev, changes: new Map() }));
@@ -195,5 +200,6 @@ export function useTokenEditor() {
     generateDiff,
     setScaleMetadata,
     changes: state.changes,
+    registry: state.registry,
   };
 }

@@ -86,6 +86,7 @@ function DetachedContent() {
       <div style={{ padding: '8px', overflow: 'auto' }}>
         {tab === 'tokens' ? (
           <TokenEditorControls
+            registry={editor.registry}
             getCurrentValue={editor.getCurrentValue}
             isModified={editor.isModified}
             updateToken={editor.updateToken}
