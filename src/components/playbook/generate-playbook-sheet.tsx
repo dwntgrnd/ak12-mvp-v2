@@ -137,16 +137,14 @@ export function GeneratePlaybookSheet({
     if (!open || productsLoading || productsError) return;
 
     const timer = setTimeout(() => {
-      // If district is pre-filled, focus first product card
-      // If products are pre-filled, district search will auto-focus via prop
-      // If neither (cold start), focus first product card
-      if (initialDistrict || !initialProductIds?.length) {
+      if (initialDistrict) {
         firstCardRef.current?.focus();
       }
+      // Otherwise district combobox auto-focuses via autoFocus prop
     }, 100);
 
     return () => clearTimeout(timer);
-  }, [open, productsLoading, productsError, initialDistrict, initialProductIds]);
+  }, [open, productsLoading, productsError, initialDistrict]);
 
   // Duplicate detection
   useEffect(() => {
@@ -265,7 +263,7 @@ export function GeneratePlaybookSheet({
       if (selectedDistrict && !isSaved(selectedDistrict.districtId)) {
         saveDistrict(selectedDistrict.districtId).catch(() => {});
       }
-      router.push(`/playbooks/${playbookId}`);
+      router.push(`/districts/${selectedDistrict.districtId}/playbooks/${playbookId}`);
       onOpenChange(false);
     } catch {
       setGenerateError(true);
@@ -284,13 +282,13 @@ export function GeneratePlaybookSheet({
       .map((p) => p.name);
 
     if (productNames.length === 0 && !selectedDistrict) {
-      return { text: 'Pick your products and district to get started', complete: false };
+      return { text: 'Search for a district to get started', complete: false };
     }
     if (productNames.length === 0) {
-      return { text: 'Choose at least one product', complete: false };
+      return { text: 'Now choose at least one product', complete: false };
     }
     if (!selectedDistrict) {
-      return { text: 'Now choose a district', complete: false };
+      return { text: 'Search for a district first', complete: false };
     }
 
     const productStr =
@@ -312,7 +310,7 @@ export function GeneratePlaybookSheet({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="max-w-lg max-h-[85vh] flex flex-col p-0 gap-0 top-[10vh] translate-y-0"
+        className="max-w-xl max-h-[85vh] flex flex-col p-0 gap-0 top-[10vh] translate-y-0"
       >
         {/* Header */}
         <DialogHeader className="px-6 pt-6 pb-5 shrink-0">
@@ -320,15 +318,37 @@ export function GeneratePlaybookSheet({
             Generate Sales Playbook
           </DialogTitle>
           <DialogDescription className="text-sm text-foreground-secondary mt-1">
-            Choose your products and target district — we&apos;ll generate a conversation-ready playbook with district context, evidence, and talking points.
+            Find your target district, then choose your products — we&apos;ll generate a conversation-ready playbook with district context, evidence, and talking points.
           </DialogDescription>
         </DialogHeader>
 
         {/* Scrollable content */}
         <div ref={contentRef} className="flex-1 overflow-y-auto px-6 pb-4">
          <div className="space-y-10">
-          {/* Section A: Products */}
+          {/* Section A: District */}
           <div>
+            <p className="text-sm font-medium text-foreground-secondary mb-3">
+              Which district are you meeting with?
+            </p>
+
+            {districtMode === 'search' ? (
+              <DistrictSearchCombobox
+                onSelect={handleDistrictSelect}
+                autoFocus={!initialDistrict}
+              />
+            ) : selectedDistrict ? (
+              <DistrictResolvedCard
+                district={selectedDistrict}
+                onChangeClick={handleDistrictChange}
+              />
+            ) : null}
+          </div>
+
+          {/* Section B: Products */}
+          <div className={cn(
+            'transition-opacity duration-200',
+            !selectedDistrict && products.length > 0 && 'opacity-40 pointer-events-none'
+          )}>
             <p className="text-sm font-medium text-foreground-secondary mb-3">
               Which products are you presenting?
             </p>
@@ -385,27 +405,6 @@ export function GeneratePlaybookSheet({
                 ))}
               </div>
             )}
-          </div>
-
-          {/* Section B: District */}
-          <div className={cn(
-            products.length === 0 && !productsLoading && 'opacity-50 pointer-events-none'
-          )}>
-            <p className="text-sm font-medium text-foreground-secondary mb-3">
-              Which district are you visiting?
-            </p>
-
-            {districtMode === 'search' ? (
-              <DistrictSearchCombobox
-                onSelect={handleDistrictSelect}
-                autoFocus={!!initialProductIds?.length && !initialDistrict}
-              />
-            ) : selectedDistrict ? (
-              <DistrictResolvedCard
-                district={selectedDistrict}
-                onChangeClick={handleDistrictChange}
-              />
-            ) : null}
           </div>
          </div>
         </div>
