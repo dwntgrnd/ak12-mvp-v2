@@ -11,25 +11,34 @@ import type {
 } from '../../types/district';
 import { MOCK_DISTRICTS, getMockDistrictListItems, getMockCountyFilters } from './fixtures/districts';
 import { PRODUCT_RELEVANCE_MAPS, DISCOVERY_COVERAGE } from './fixtures/discovery';
-import { SEED_PLAYBOOKS } from './fixtures/playbooks';
 import { buildSnapshot } from './snapshot-builder';
 
 function delay(ms: number = 200): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-const savedDistricts: Map<string, SavedDistrict> = new Map();
+// === In-memory store (globalThis singleton survives HMR) ===
 
-// Pre-seed saved districts from seed playbooks so fresh loads show realistic state
-for (const pb of SEED_PLAYBOOKS) {
-  const district = MOCK_DISTRICTS.find((d) => d.districtId === pb.districtId);
-  if (district) {
-    savedDistricts.set(pb.districtId, {
-      districtId: pb.districtId,
-      snapshot: buildSnapshot(district),
-      savedAt: pb.generatedAt,
-    });
+interface SavedDistrictStore {
+  districts: Map<string, SavedDistrict>;
+}
+
+declare global {
+  // eslint-disable-next-line no-var
+  var __ak12_mock_saved_districts__: SavedDistrictStore | undefined;
+}
+
+function getSavedDistrictStore(): SavedDistrictStore {
+  if (!globalThis.__ak12_mock_saved_districts__) {
+    globalThis.__ak12_mock_saved_districts__ = {
+      districts: new Map(),
+    };
   }
+  return globalThis.__ak12_mock_saved_districts__;
+}
+
+function getSavedDistrictMap(): Map<string, SavedDistrict> {
+  return getSavedDistrictStore().districts;
 }
 
 export const mockDistrictService: IDistrictService = {
@@ -218,22 +227,22 @@ export const mockDistrictService: IDistrictService = {
       snapshot: buildSnapshot(district),
       savedAt: new Date().toISOString(),
     };
-    savedDistricts.set(districtId, saved);
+    getSavedDistrictMap().set(districtId, saved);
     return saved;
   },
 
   async getSavedDistricts(_pagination?: PaginatedRequest): Promise<PaginatedResponse<SavedDistrict>> {
     await delay(100);
-    const items = Array.from(savedDistricts.values());
+    const items = Array.from(getSavedDistrictMap().values());
     return { items, totalCount: items.length, page: 1, pageSize: items.length, totalPages: 1 };
   },
 
   async removeSavedDistrict(districtId: string): Promise<void> {
     await delay(100);
-    if (!savedDistricts.has(districtId)) {
+    if (!getSavedDistrictMap().has(districtId)) {
       throw { code: 'NOT_SAVED', message: `District ${districtId} is not saved`, retryable: false };
     }
-    savedDistricts.delete(districtId);
+    getSavedDistrictMap().delete(districtId);
   },
 
   async excludeDistrict(_districtId: string, _reason: ExclusionReason): Promise<ExcludedDistrict> {

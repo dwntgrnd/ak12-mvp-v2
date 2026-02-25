@@ -10,7 +10,6 @@ import type {
 } from '../../types/playbook';
 import { SECTION_ORDER, GENERIC_SECTION_TEMPLATES, DISTRICT_SPECIFIC_CONTENT } from './fixtures/playbook-content';
 import { MOCK_PRODUCTS } from './fixtures/products';
-import { SEED_PLAYBOOKS } from './fixtures/playbooks';
 import { DISTRICT_FIXTURES } from './fixtures/districts';
 
 // === In-memory store (globalThis singleton survives HMR) ===
@@ -32,8 +31,8 @@ declare global {
 function getStore(): PlaybookStore {
   if (!globalThis.__ak12_mock_playbooks__) {
     globalThis.__ak12_mock_playbooks__ = {
-      playbooks: new Map(SEED_PLAYBOOKS.map(pb => [pb.playbookId, pb])),
-      idCounter: SEED_PLAYBOOKS.length,
+      playbooks: new Map(),
+      idCounter: 0,
     };
   }
   return globalThis.__ak12_mock_playbooks__;
