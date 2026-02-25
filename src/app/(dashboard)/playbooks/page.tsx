@@ -13,7 +13,6 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { PlaybookCard } from '@/components/playbook/playbook-card';
 import { EmptyPlaybooksState } from '@/components/playbook/empty-playbooks-state';
 import { GeneratePlaybookSheet } from '@/components/playbook/generate-playbook-sheet';
-import { useAppShell } from '@/components/layout/app-shell-context';
 
 type SortOption = 'recent' | 'fit';
 
@@ -71,7 +70,6 @@ export default function PlaybooksPage() {
   const [error, setError] = useState(false);
   const [sortOption, setSortOption] = useState<SortOption>('recent');
   const [sheetOpen, setSheetOpen] = useState(false);
-  const { setPageActions } = useAppShell();
 
   useEffect(() => {
     setLoading(true);
@@ -106,20 +104,6 @@ export default function PlaybooksPage() {
       });
   }, []);
 
-  useEffect(() => {
-    if (!loading && !error && playbooks.length > 0) {
-      setPageActions(
-        <Button
-          onClick={() => setSheetOpen(true)}
-          className="bg-brand-orange hover:bg-brand-orange/90 text-white"
-        >
-          New Playbook
-        </Button>
-      );
-    }
-    return () => setPageActions(null);
-  }, [loading, error, playbooks.length, setPageActions]);
-
   const sorted = sortPlaybooks(playbooks, sortOption);
 
   let content: React.ReactNode;
@@ -150,7 +134,7 @@ export default function PlaybooksPage() {
   } else {
     content = (
       <>
-        <div className="mb-6">
+        <div className="flex items-center justify-between mb-6">
           <Select
             value={sortOption}
             onValueChange={(v) => setSortOption(v as SortOption)}
@@ -163,6 +147,11 @@ export default function PlaybooksPage() {
               <SelectItem value="fit">Fit Assessment</SelectItem>
             </SelectContent>
           </Select>
+          <Button
+            onClick={() => setSheetOpen(true)}
+          >
+            New Playbook
+          </Button>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
