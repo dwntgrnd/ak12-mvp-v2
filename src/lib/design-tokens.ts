@@ -62,6 +62,30 @@ export const fitCategoryColors = {
 /** @deprecated Use MatchTierKey instead */
 export type FitCategoryKey = keyof typeof fitCategoryColors;
 
+// Mode bar visual treatments
+export const modeColors = {
+  neutral: {
+    bg: '',
+    border: 'border-border-default',
+    text: 'text-foreground',
+    label: 'District Intelligence',
+  },
+  lens: {
+    bg: 'bg-[#03C4D4]/5',
+    border: 'border-[#03C4D4]/40',
+    text: 'text-[#1E698F]',
+    label: 'Lens',
+  },
+  playbook: {
+    bg: 'bg-[#00DE9C]/5',
+    border: 'border-[#00DE9C]/40',
+    text: 'text-[#0A7A5A]',
+    label: 'Playbook',
+  },
+} as const;
+
+export type ModeKey = keyof typeof modeColors;
+
 // Elevation shadow scale
 export const shadowTokens = {
   sm: 'shadow-sm',   // subtle lift — cards, context panels

@@ -15,7 +15,6 @@ import { Button } from '@/components/ui/button';
 import {
   PersistentDataStrip,
   ModeBar,
-  LensControlBar,
   ResearchTabs,
   PlaybookPreviewBanner,
   PlaybookPreviewTabs,
@@ -336,14 +335,10 @@ export default function DistrictProfilePage({
             <ModeBar
               districtId={districtId}
               districtName={district.name}
-              activeMode="district"
+              matchSummary={matchSummary}
               onGeneratePlaybook={handleGeneratePlaybook}
-              activeProductName={activeProduct?.name}
               isPreviewActive={isPreviewActive}
             />
-            {generationState.status === 'idle' && (
-              <LensControlBar districtId={districtId} matchSummary={matchSummary} />
-            )}
             {generationState.status === 'preview' && (
               <PlaybookPreviewBanner
                 defaultName={generationState.defaultName}

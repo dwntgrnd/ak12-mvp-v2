@@ -353,9 +353,9 @@ export default function NestedPlaybookDetailPage({
         <ModeBar
           districtId={districtId}
           districtName={district?.name ?? playbook.districtName}
-          activeMode={playbookId}
-          onGeneratePlaybook={() => {}}
-          activeProductName={playbook.productNames[0]}
+          activePlaybookId={playbookId}
+          activePlaybookName={playbook.productNames.join(' · ')}
+          activePlaybookStatus={overallStatus}
         />
       }
     >
