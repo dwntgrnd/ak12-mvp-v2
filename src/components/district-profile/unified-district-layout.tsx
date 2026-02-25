@@ -12,7 +12,7 @@ export function UnifiedDistrictLayout({
   children,
 }: UnifiedDistrictLayoutProps) {
   return (
-    <div>
+    <div className="mt-8">
       {identityZone}
       <div className="mt-4">{modeBarZone}</div>
       <div className="mt-8">{children}</div>
