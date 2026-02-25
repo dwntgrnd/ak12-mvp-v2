@@ -3,7 +3,7 @@
 import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import React, { useState, useEffect } from 'react';
-import { X } from 'lucide-react';
+import { X, Search, Bookmark, BookOpen, Package } from 'lucide-react';
 import { DiscoveryInput } from '@/components/discovery/discovery-input';
 import {
   Breadcrumb,
@@ -24,10 +24,10 @@ import { useAppShell } from './app-shell-context';
 import { useProductLens } from '@/hooks/use-product-lens';
 
 const navItems = [
-  { href: '/discovery', label: 'Discovery' },
-  { href: '/saved', label: 'Saved Districts' },
-  { href: '/playbooks', label: 'Playbooks' },
-  { href: '/solutions', label: 'Solutions' },
+  { href: '/discovery', label: 'Discovery', icon: Search },
+  { href: '/saved', label: 'Saved Districts', icon: Bookmark },
+  { href: '/playbooks', label: 'Playbooks', icon: BookOpen },
+  { href: '/solutions', label: 'Solutions', icon: Package },
 ];
 
 function usePathnameBreadcrumbs(pathname: string) {
@@ -80,8 +80,8 @@ export function TopNav() {
   };
 
   const showAdmin = userRole === 'publisher-admin' || userRole === 'super-admin';
-  const showBreadcrumbs = pathname !== '/discovery';
-  const showCompactSearch = pathname.startsWith('/districts/') || pathname === '/saved';
+  const showBreadcrumbs = false;
+  const showCompactSearch = pathname === '/saved' || pathname === '/playbooks' || pathname.startsWith('/solutions');
 
   useEffect(() => {
     setTopbarHeight('3.5rem');
@@ -105,17 +105,19 @@ export function TopNav() {
         <nav className="flex items-stretch gap-8 h-full">
           {navItems.map((item) => {
             const active = isActive(item.href);
+            const Icon = item.icon;
             return (
               <Link
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  'flex items-center px-1 pt-1 text-lg font-semibold transition-colors border-b-4',
+                  'flex items-center gap-2 px-1 pt-1 text-lg font-semibold transition-colors border-b-4',
                   active
                     ? 'border-[hsl(var(--brand-blue))] text-sidebar-foreground'
                     : 'border-transparent text-sidebar-foreground/70 hover:text-sidebar-foreground'
                 )}
               >
+                <Icon className="h-[18px] w-[18px]" />
                 {item.label}
               </Link>
             );
