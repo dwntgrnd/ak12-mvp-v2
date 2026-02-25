@@ -6,9 +6,8 @@ import { X, Loader2, MoreHorizontal, Pencil } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { modeColors, matchTierColors } from '@/lib/design-tokens';
+import { modeColors } from '@/lib/design-tokens';
 import type { ModeKey } from '@/lib/design-tokens';
-import type { MatchSummary } from '@/services/types/common';
 import type { ProductLensSummary } from '@/services/types/product';
 import { useProductLens } from '@/hooks/use-product-lens';
 import { useLibraryReadiness } from '@/hooks/use-library-readiness';
@@ -49,7 +48,6 @@ interface ModeBarProps {
   onGeneratePlaybook?: () => void;
   onSavePlaybook?: () => void;
   onDiscardPlaybook?: () => void;
-  matchSummary?: MatchSummary | null;
   onDeletePlaybook?: () => void;
   onRegenerateAll?: () => void;
   onRenamePlaybook?: (newName: string) => void;
@@ -64,7 +62,6 @@ export function ModeBar({
   onGeneratePlaybook,
   onSavePlaybook,
   onDiscardPlaybook,
-  matchSummary,
   onDeletePlaybook,
   onRegenerateAll,
   onRenamePlaybook,
@@ -222,24 +219,6 @@ export function ModeBar({
               disabled={isPreviewActive}
             />
           )}
-        </div>
-      )}
-
-      {/* Center-right — Fit indicator (lens mode only) */}
-      {mode === 'lens' && matchSummary && (
-        <div className="flex items-center gap-2 shrink-0">
-          <span
-            className={cn(
-              'inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium',
-              matchTierColors[matchSummary.overallTier].bg,
-              matchTierColors[matchSummary.overallTier].text,
-            )}
-          >
-            {matchTierColors[matchSummary.overallTier].label}
-          </span>
-          <span className="text-sm text-foreground-secondary">
-            {matchSummary.headline}
-          </span>
         </div>
       )}
 

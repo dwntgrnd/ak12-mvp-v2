@@ -331,7 +331,6 @@ export default function DistrictProfilePage({
           <ModeBar
             districtId={districtId}
             districtName={district.name}
-            matchSummary={matchSummary}
             onGeneratePlaybook={handleGeneratePlaybook}
             isPreviewActive={isPreviewActive}
             generationStatus={generationState.status}

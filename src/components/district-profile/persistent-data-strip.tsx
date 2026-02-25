@@ -158,50 +158,57 @@ export function PersistentDataStrip({
 
   return (
     <div className="pb-5 border-b border-border-default">
-      {/* Row A — Name + Save Toggle + Match Badge */}
-      <div className="flex flex-wrap items-center gap-3">
-        <h1 className="text-2xl font-bold tracking-[-0.01em] text-foreground leading-[1.2]">
-          {district.name}
-        </h1>
-        <button
-          onClick={() => isSaved ? removeSavedDistrict(district.districtId) : saveDistrict(district.districtId)}
-          aria-pressed={isSaved}
-          aria-label={isSaved ? 'Remove saved district' : 'Save district'}
-          className={cn(
-            'flex shrink-0 items-center gap-1.5 rounded-md px-2 py-1 text-sm font-medium transition-colors',
-            'hover:bg-surface-inset',
-            isSaved ? 'text-foreground' : 'text-foreground-secondary'
+      {/* Two-column upper region */}
+      <div className="flex items-start justify-between gap-6">
+        {/* Left column — identity */}
+        <div className="min-w-0 flex-1">
+          {/* Row A — Name + Save Toggle */}
+          <div className="flex flex-wrap items-center gap-3">
+            <h1 className="text-2xl font-bold tracking-[-0.01em] text-foreground leading-[1.2]">
+              {district.name}
+            </h1>
+            <button
+              onClick={() => isSaved ? removeSavedDistrict(district.districtId) : saveDistrict(district.districtId)}
+              aria-pressed={isSaved}
+              aria-label={isSaved ? 'Remove saved district' : 'Save district'}
+              className={cn(
+                'flex shrink-0 items-center gap-1.5 rounded-md px-2 py-1 text-sm font-medium transition-colors',
+                'hover:bg-surface-inset',
+                isSaved ? 'text-foreground' : 'text-foreground-secondary'
+              )}
+            >
+              <Bookmark className={cn('h-5 w-5', isSaved && 'fill-current text-brand-orange')} />
+              <span>{isSaved ? 'Saved' : 'Save'}</span>
+            </button>
+          </div>
+          {/* Row B — Contact Info */}
+          {hasContactInfo && (
+            <p className="mt-1.5 text-caption font-medium text-foreground-secondary tracking-[0.025em]">
+              {contactSegments.map((seg, i) => (
+                <span key={seg.key}>
+                  {i > 0 && <span className="mx-1.5 select-none">·</span>}
+                  {seg.node}
+                </span>
+              ))}
+            </p>
           )}
-        >
-          <Bookmark className={cn('h-5 w-5', isSaved && 'fill-current text-brand-orange')} />
-          <span>{isSaved ? 'Saved' : 'Save'}</span>
-        </button>
+        </div>
+
+        {/* Right column — mode context */}
         {matchSummary && (
-          <Badge
-            className={`${matchTierColors[matchSummary.overallTier].bg} ${matchTierColors[matchSummary.overallTier].text} ${matchTierColors[matchSummary.overallTier].border} border`}
-            variant="outline"
-          >
-            {matchTierColors[matchSummary.overallTier].label}
-          </Badge>
+          <div className="shrink-0 text-right">
+            <Badge
+              className={`${matchTierColors[matchSummary.overallTier].bg} ${matchTierColors[matchSummary.overallTier].text} ${matchTierColors[matchSummary.overallTier].border} border`}
+              variant="outline"
+            >
+              {matchTierColors[matchSummary.overallTier].label}
+            </Badge>
+            <p className="mt-1 text-sm text-foreground-secondary truncate max-w-[300px]">
+              {matchSummary.headline}
+            </p>
+          </div>
         )}
       </div>
-
-      {/* Row B — Contact Info */}
-      {hasContactInfo && (
-        <p className="mt-1.5 text-caption font-medium text-foreground-secondary tracking-[0.025em]">
-          {contactSegments.map((seg, i) => (
-            <span key={seg.key}>
-              {i > 0 && <span className="mx-1.5 select-none">·</span>}
-              {seg.node}
-            </span>
-          ))}
-        </p>
-      )}
-      {matchSummary && (
-        <p className="mt-1 text-sm text-foreground-secondary">
-          {matchSummary.headline}
-        </p>
-      )}
 
       {/* Row C — Metrics Strip */}
       <div
