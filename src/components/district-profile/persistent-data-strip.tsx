@@ -203,7 +203,7 @@ export function PersistentDataStrip({
             >
               {matchTierColors[matchSummary.overallTier].label}
             </Badge>
-            <p className="mt-1 text-sm text-foreground-secondary truncate max-w-[300px]">
+            <p className="mt-1 text-sm text-foreground-secondary">
               {matchSummary.headline}
             </p>
           </div>
