@@ -19,6 +19,7 @@ import {
   ResearchTabs,
   PlaybookPreviewBanner,
   PlaybookPreviewTabs,
+  UnifiedDistrictLayout,
 } from '@/components/district-profile';
 import { useProductLens } from '@/hooks/use-product-lens';
 import { useLibraryReadiness } from '@/hooks/use-library-readiness';
@@ -281,35 +282,31 @@ export default function DistrictProfilePage({
   // --- Loading state ---
   if (loading || !district) {
     return (
-      <div className="space-y-6">
-        {/* Data strip skeleton */}
-        <div className="space-y-3">
-          <Skeleton className="h-7 w-64" />
-          <div className="pt-3 border-t border-border-subtle flex gap-4">
-            {Array.from({ length: 5 }).map((_, i) => (
-              <Skeleton key={i} className="h-12 w-24" />
-            ))}
+      <UnifiedDistrictLayout
+        identityZone={
+          <div className="space-y-3">
+            <Skeleton className="h-7 w-64" />
+            <div className="pt-3 border-t border-border-subtle flex gap-4">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <Skeleton key={i} className="h-12 w-24" />
+              ))}
+            </div>
           </div>
-        </div>
-
-        {/* Mode bar skeleton */}
-        <Skeleton className="h-10 w-full rounded" />
-
-        {/* Lens bar skeleton */}
-        <Skeleton className="h-9 w-72" />
-
-        {/* Tab area skeleton */}
+        }
+        modeBarZone={<Skeleton className="h-10 w-full rounded" />}
+      >
+        <Skeleton className="h-9 w-72 mb-4" />
         <div className="space-y-4">
           <Skeleton className="h-9 w-full" />
           <Skeleton className="h-64 w-full" />
         </div>
-      </div>
+      </UnifiedDistrictLayout>
     );
   }
 
   // --- Loaded state ---
   return (
-    <div>
+    <>
       {/* Generation error notification */}
       {generationError && (
         <div className="mb-4 flex items-center gap-2 rounded-md bg-destructive/10 px-4 py-3 text-sm text-destructive">
@@ -325,42 +322,38 @@ export default function DistrictProfilePage({
         </div>
       )}
 
-      {/* Layer 1 — Persistent Data Strip */}
-      <PersistentDataStrip
-        district={district}
-        yearData={yearData}
-        matchSummary={matchSummary}
-        activeProductName={activeProduct?.name}
-      />
-
-      {/* Layer 2 — Mode Bar */}
-      <div className="mt-4">
-        <ModeBar
-          districtId={districtId}
-          districtName={district.name}
-          activeMode="district"
-          onGeneratePlaybook={handleGeneratePlaybook}
-          activeProductName={activeProduct?.name}
-          isPreviewActive={isPreviewActive}
-        />
-      </div>
-
-      {/* Layer 3 — Lens Control Bar (hidden during generating/preview) */}
-      {generationState.status === 'idle' && (
-        <LensControlBar districtId={districtId} matchSummary={matchSummary} />
-      )}
-
-      {/* Preview Banner (visible during preview only) */}
-      {generationState.status === 'preview' && (
-        <PlaybookPreviewBanner
-          defaultName={generationState.defaultName}
-          onSave={handleSavePlaybook}
-          onDiscard={handleDiscardPlaybook}
-        />
-      )}
-
-      {/* Layer 4 — Tab Area */}
-      <div className="mt-8">
+      <UnifiedDistrictLayout
+        identityZone={
+          <PersistentDataStrip
+            district={district}
+            yearData={yearData}
+            matchSummary={matchSummary}
+            activeProductName={activeProduct?.name}
+          />
+        }
+        modeBarZone={
+          <>
+            <ModeBar
+              districtId={districtId}
+              districtName={district.name}
+              activeMode="district"
+              onGeneratePlaybook={handleGeneratePlaybook}
+              activeProductName={activeProduct?.name}
+              isPreviewActive={isPreviewActive}
+            />
+            {generationState.status === 'idle' && (
+              <LensControlBar districtId={districtId} matchSummary={matchSummary} />
+            )}
+            {generationState.status === 'preview' && (
+              <PlaybookPreviewBanner
+                defaultName={generationState.defaultName}
+                onSave={handleSavePlaybook}
+                onDiscard={handleDiscardPlaybook}
+              />
+            )}
+          </>
+        }
+      >
         {generationState.status === 'idle' ? (
           <ResearchTabs
             districtId={districtId}
@@ -375,7 +368,7 @@ export default function DistrictProfilePage({
             isGenerating={generationState.status === 'generating'}
           />
         )}
-      </div>
-    </div>
+      </UnifiedDistrictLayout>
+    </>
   );
 }

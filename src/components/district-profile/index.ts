@@ -15,3 +15,4 @@ export { SourceCitation } from './source-citation';
 export { LensAugmentationBlock } from './lens-augmentation-block';
 export { PlaybookPreviewBanner } from './playbook-preview-banner';
 export { PlaybookPreviewTabs } from './playbook-preview-tabs';
+export { UnifiedDistrictLayout } from './unified-district-layout';

@@ -2,30 +2,16 @@
 
 import { useEffect, useState, useCallback, use } from 'react';
 import { useRouter } from 'next/navigation';
-import { Trash2 } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
 import { InlineEditableBlock } from '@/components/shared/inline-editable-block';
-import { PlaybookContextCard } from '@/components/shared/playbook-context-card';
 import { PlaybookSection } from '@/components/shared/playbook-section';
-import { ModeBar } from '@/components/district-profile';
+import { PersistentDataStrip, ModeBar, UnifiedDistrictLayout } from '@/components/district-profile';
 import { useAppShell } from '@/components/layout/app-shell-context';
 import type { Playbook, PlaybookSection as PlaybookSectionType, PlaybookStatusResponse } from '@/services/types/playbook';
-import type { Product } from '@/services/types/product';
 import type { DistrictProfile } from '@/services/types/district';
+import type { DistrictYearData } from '@/services/providers/mock/fixtures/districts';
 import type { SectionStatus } from '@/services/types/common';
 
 // Tab config: maps sectionType → display label, in order
@@ -52,31 +38,6 @@ function StatusDot({ status }: { status: SectionStatus }) {
   }
 }
 
-function OverallStatusBadge({ status }: { status: string }) {
-  switch (status) {
-    case 'generating':
-      return <Badge variant="secondary" className="animate-pulse">Generating</Badge>;
-    case 'complete':
-      return <Badge className="bg-success text-success-foreground">Complete</Badge>;
-    case 'partial':
-      return <Badge variant="secondary" className="border-warning text-warning">Partial</Badge>;
-    case 'failed':
-      return <Badge variant="destructive">Failed</Badge>;
-    default:
-      return null;
-  }
-}
-
-function formatTimestamp(iso: string): string {
-  return new Date(iso).toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-    hour: 'numeric',
-    minute: '2-digit',
-  });
-}
-
 export default function NestedPlaybookDetailPage({
   params,
 }: {
@@ -90,7 +51,7 @@ export default function NestedPlaybookDetailPage({
   const [playbook, setPlaybook] = useState<Playbook | null>(null);
   const [overallStatus, setOverallStatus] = useState<string>('complete');
   const [district, setDistrict] = useState<DistrictProfile | null>(null);
-  const [products, setProducts] = useState<Product[]>([]);
+  const [yearData, setYearData] = useState<DistrictYearData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -149,23 +110,20 @@ export default function NestedPlaybookDetailPage({
           }
         }
 
-        // Fetch district and product details for context card
-        const [districtRes, ...productResponses] = await Promise.all([
+        // Fetch district and year-over-year data
+        const [districtRes, yearsRes] = await Promise.all([
           fetch(`/api/districts/${pb.districtId}`),
-          ...pb.productIds.map((pid) => fetch(`/api/products/${pid}`)),
+          fetch(`/api/districts/${pb.districtId}/years`),
         ]);
 
         if (!cancelled) {
           if (districtRes.ok) {
             setDistrict(await districtRes.json());
           }
-          const loadedProducts: Product[] = [];
-          for (const pRes of productResponses) {
-            if (pRes.ok) {
-              loadedProducts.push(await pRes.json());
-            }
+          if (yearsRes.ok) {
+            const years: DistrictYearData[] = await yearsRes.json();
+            setYearData(years);
           }
-          setProducts(loadedProducts);
         }
       } catch (err) {
         if (!cancelled) {
@@ -324,24 +282,27 @@ export default function NestedPlaybookDetailPage({
     [playbookId]
   );
 
-  // Handle delete playbook — navigate to district page
-  const handleDelete = useCallback(async () => {
-    try {
-      await fetch(`/api/playbooks/${playbookId}`, { method: 'DELETE' });
-      router.push(`/districts/${districtId}`);
-    } catch {
-      // Stay on page if delete fails
-    }
-  }, [playbookId, districtId, router]);
-
   // Loading state
   if (loading) {
     return (
-      <div className="space-y-6">
-        <Skeleton className="h-8 w-64" />
-        <Skeleton className="h-12 w-full" />
-        <Skeleton className="h-64 w-full" />
-      </div>
+      <UnifiedDistrictLayout
+        identityZone={
+          <div className="space-y-3">
+            <Skeleton className="h-7 w-64" />
+            <div className="pt-3 border-t border-border-subtle flex gap-4">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <Skeleton key={i} className="h-12 w-24" />
+              ))}
+            </div>
+          </div>
+        }
+        modeBarZone={<Skeleton className="h-10 w-full rounded" />}
+      >
+        <div className="space-y-4">
+          <Skeleton className="h-9 w-full" />
+          <Skeleton className="h-64 w-full" />
+        </div>
+      </UnifiedDistrictLayout>
     );
   }
 
@@ -367,97 +328,37 @@ export default function NestedPlaybookDetailPage({
     );
   }
 
-  // Build context card products
-  const contextProducts = products.map((p) => ({
-    productId: p.productId,
-    name: p.name,
-    subjectArea: p.subjectArea,
-    gradeRange: p.gradeRange,
-    description: p.description,
-  }));
-
-  // Fallback to playbook product names if products haven't loaded
-  const contextProductsFallback = playbook.productNames.map((name, i) => ({
-    productId: playbook.productIds[i] || `unknown-${i}`,
-    name,
-    subjectArea: '',
-    gradeRange: { gradeFrom: 0, gradeTo: 0 },
-  }));
-
-  const displayProducts = contextProducts.length > 0 ? contextProducts : contextProductsFallback;
-
   return (
-    <div className="space-y-6 max-w-content">
-      {/* Mode Bar */}
-      <ModeBar
-        districtId={districtId}
-        districtName={district?.name ?? playbook.districtName}
-        activeMode={playbookId}
-        onGeneratePlaybook={() => {}}
-        activeProductName={playbook.productNames[0]}
-      />
-
-      {/* Page header */}
-      <div className="flex items-start justify-between gap-4">
-        <div className="space-y-2 flex-1">
-          <h1 className="text-2xl font-semibold text-foreground">
-            {playbook.districtName} &mdash; {playbook.productNames.join(', ')}
-          </h1>
-          <div className="flex items-center gap-3 flex-wrap">
-            <OverallStatusBadge status={overallStatus} />
-            <span className="text-xs text-foreground-tertiary">
-              Generated {formatTimestamp(playbook.generatedAt)}
-            </span>
+    <UnifiedDistrictLayout
+      identityZone={
+        district ? (
+          <PersistentDataStrip
+            district={district}
+            yearData={yearData}
+            matchSummary={null}
+            activeProductName={playbook.productNames[0]}
+          />
+        ) : (
+          <div className="space-y-3">
+            <Skeleton className="h-7 w-64" />
+            <div className="pt-3 border-t border-border-subtle flex gap-4">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <Skeleton key={i} className="h-12 w-24" />
+              ))}
+            </div>
           </div>
-        </div>
-        <div className="flex items-center gap-2">
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive">
-                <Trash2 className="h-4 w-4" />
-                Delete
-              </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Delete this playbook?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  This can&apos;t be undone. The playbook and all its sections will be
-                  permanently removed.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction
-                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                  onClick={handleDelete}
-                >
-                  Delete
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-        </div>
-      </div>
-
-      {/* Context card */}
-      <PlaybookContextCard
-        districtName={district?.name || playbook.districtName}
-        districtLocation={district?.location}
-        districtEnrollment={district?.totalEnrollment}
-        elaProficiency={district?.elaProficiency}
-        mathProficiency={district?.mathProficiency}
-        frpmRate={
-          district?.frpmCount != null && district?.totalEnrollment
-            ? Math.round((district.frpmCount / district.totalEnrollment) * 100 * 10) / 10
-            : undefined
-        }
-        fitScore={playbook.fitAssessment?.fitScore}
-        fitRationale={playbook.fitAssessment?.fitRationale}
-        products={displayProducts}
-      />
-
-      {/* Tabbed sections */}
+        )
+      }
+      modeBarZone={
+        <ModeBar
+          districtId={districtId}
+          districtName={district?.name ?? playbook.districtName}
+          activeMode={playbookId}
+          onGeneratePlaybook={() => {}}
+          activeProductName={playbook.productNames[0]}
+        />
+      }
+    >
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="h-auto w-full justify-start gap-0 rounded-none border-b border-border bg-transparent p-0 overflow-x-auto">
           {TAB_CONFIG.map(({ sectionType, label }) => {
@@ -514,6 +415,6 @@ export default function NestedPlaybookDetailPage({
           );
         })}
       </Tabs>
-    </div>
+    </UnifiedDistrictLayout>
   );
 }
