@@ -42,7 +42,7 @@ Combined height set via `--topbar-height` CSS variable. All content below uses `
 
 **Layout context** (`src/components/layout/app-shell-context.tsx`): `AppShellProvider` wraps the dashboard layout. Consuming hook is `useAppShell()`. Provides `breadcrumbOverride`, `setBreadcrumbOverride`, `pageActions`, `setPageActions`.
 
-**Content containment:** Dashboard layout wraps all page content in a centered container with `max-w-layout` (1400px via `--content-max-width`), `px-6`, `py-6`. Pages do not set their own max-width unless they have a specific reason to override.
+**Content containment:** Dashboard layout wraps all page content in a centered container with `max-w-layout` (1200px via `--content-max-width`), `px-6`, `py-6`. Pages do not set their own max-width unless they have a specific reason to override.
 
 **Deprecated (files exist but are not imported):**
 - `sidebar.tsx`, `sidebar-context.tsx`, `sidebar-nav-item.tsx`, `content-utility-bar.tsx`
@@ -165,11 +165,11 @@ Do NOT use `text-slate-*` utilities for text color. Do NOT use `text-muted-foreg
 
 ### Layout & Content Width
 
-**Content containment:** The dashboard layout provides a shared content wrapper: `max-w-layout mx-auto px-6 py-6`. This maps to `--content-max-width: 87.5rem` (1400px). Do not add per-page max-width wrappers unless explicitly instructed.
+**Content containment:** The dashboard layout provides a shared content wrapper: `max-w-layout mx-auto px-6 py-6`. This maps to `--content-max-width: 75rem` (1200px). Do not add per-page max-width wrappers unless explicitly instructed.
 
 **Layout tokens (CSS variables):**
 - `--topbar-height` — combined height of both top nav rows. Used for content padding-top.
-- `--content-max-width` — 87.5rem (1400px). Layout-level content container width.
+- `--content-max-width` — 75rem (1200px). Layout-level content container width.
 
 **Deprecated layout tokens (do not use):**
 - `--content-width` — old P1 narrow column token (900px). Still in CSS but unreferenced. Will be removed.
