@@ -94,6 +94,8 @@ export type {
   PlaybookSummary,
   Playbook,
   PlaybookSection,
+  PlaybookNote,
+  PlaybookAttachment,
   PlaybookFilters,
   PlaybookGenerationRequest,
   PlaybookStatusResponse

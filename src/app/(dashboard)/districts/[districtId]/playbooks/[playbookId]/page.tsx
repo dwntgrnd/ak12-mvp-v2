@@ -7,8 +7,10 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { InlineEditableBlock } from '@/components/shared/inline-editable-block';
 import { PlaybookSection } from '@/components/shared/playbook-section';
+import { PlaybookNotesTab } from '@/components/playbook';
 import { PersistentDataStrip, ModeBar, UnifiedDistrictLayout } from '@/components/district-profile';
 import { useAppShell } from '@/components/layout/app-shell-context';
+import { NotebookPen } from 'lucide-react';
 import type { Playbook, PlaybookSection as PlaybookSectionType, PlaybookStatusResponse } from '@/services/types/playbook';
 import type { DistrictProfile } from '@/services/types/district';
 import type { DistrictYearData } from '@/services/providers/mock/fixtures/districts';
@@ -292,6 +294,50 @@ export default function NestedPlaybookDetailPage({
     [playbookId]
   );
 
+  // --- Notes & Files handlers ---
+  const handleAddNote = useCallback(async (content: string) => {
+    await fetch(`/api/playbooks/${playbookId}/notes`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ content }),
+    });
+    const pb = await fetchPlaybook(playbookId);
+    setPlaybook(pb);
+  }, [playbookId, fetchPlaybook]);
+
+  const handleUpdateNote = useCallback(async (noteId: string, content: string) => {
+    await fetch(`/api/playbooks/${playbookId}/notes/${noteId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ content }),
+    });
+    const pb = await fetchPlaybook(playbookId);
+    setPlaybook(pb);
+  }, [playbookId, fetchPlaybook]);
+
+  const handleDeleteNote = useCallback(async (noteId: string) => {
+    await fetch(`/api/playbooks/${playbookId}/notes/${noteId}`, { method: 'DELETE' });
+    const pb = await fetchPlaybook(playbookId);
+    setPlaybook(pb);
+  }, [playbookId, fetchPlaybook]);
+
+  const handleAddAttachment = useCallback(async (file: File) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    await fetch(`/api/playbooks/${playbookId}/attachments`, {
+      method: 'POST',
+      body: formData,
+    });
+    const pb = await fetchPlaybook(playbookId);
+    setPlaybook(pb);
+  }, [playbookId, fetchPlaybook]);
+
+  const handleRemoveAttachment = useCallback(async (attachmentId: string) => {
+    await fetch(`/api/playbooks/${playbookId}/attachments/${attachmentId}`, { method: 'DELETE' });
+    const pb = await fetchPlaybook(playbookId);
+    setPlaybook(pb);
+  }, [playbookId, fetchPlaybook]);
+
   // Loading state
   if (loading) {
     return (
@@ -386,6 +432,14 @@ export default function NestedPlaybookDetailPage({
               </TabsTrigger>
             );
           })}
+          <div className="ml-4 border-l border-border-subtle" />
+          <TabsTrigger
+            value="notes_files"
+            className="-mb-px gap-1.5 rounded-none border-b-2 border-transparent bg-transparent px-4 py-2.5 text-sm font-medium text-foreground-secondary shadow-none transition-colors hover:text-foreground data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:font-semibold data-[state=active]:text-foreground data-[state=active]:shadow-none"
+          >
+            <NotebookPen className="h-4 w-4" />
+            Notes & Files
+          </TabsTrigger>
         </TabsList>
 
         {TAB_CONFIG.map(({ sectionType, label }) => {
@@ -425,6 +479,19 @@ export default function NestedPlaybookDetailPage({
             </TabsContent>
           );
         })}
+
+        <TabsContent value="notes_files" className="pt-4">
+          <PlaybookNotesTab
+            playbookId={playbookId}
+            notes={playbook.notes ?? []}
+            attachments={playbook.attachments ?? []}
+            onAddNote={handleAddNote}
+            onUpdateNote={handleUpdateNote}
+            onDeleteNote={handleDeleteNote}
+            onAddAttachment={handleAddAttachment}
+            onRemoveAttachment={handleRemoveAttachment}
+          />
+        </TabsContent>
       </Tabs>
     </UnifiedDistrictLayout>
   );

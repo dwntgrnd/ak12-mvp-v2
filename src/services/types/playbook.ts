@@ -22,6 +22,8 @@ export interface PlaybookSummary {
   generatedAt: string;          // ISO 8601
   hasEditedSections: boolean;
   sectionStatuses: Record<string, SectionStatus>;
+  noteCount: number;
+  attachmentCount: number;
 }
 
 export interface Playbook {
@@ -35,6 +37,24 @@ export interface Playbook {
   matchSummary?: MatchSummary;
   generatedAt: string;          // ISO 8601
   sections: PlaybookSection[];
+  notes: PlaybookNote[];
+  attachments: PlaybookAttachment[];
+}
+
+export interface PlaybookNote {
+  noteId: string;
+  content: string;
+  createdAt: string;   // ISO 8601
+  updatedAt: string;   // ISO 8601
+}
+
+export interface PlaybookAttachment {
+  attachmentId: string;
+  fileName: string;
+  fileType: string;     // MIME type
+  fileSize: number;     // bytes
+  uploadedAt: string;   // ISO 8601
+  dataUrl?: string;     // base64 data URL for in-session display
 }
 
 export interface PlaybookSection {

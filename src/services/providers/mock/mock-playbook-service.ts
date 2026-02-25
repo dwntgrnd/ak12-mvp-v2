@@ -4,6 +4,8 @@ import type {
   PlaybookSummary,
   Playbook,
   PlaybookSection,
+  PlaybookNote,
+  PlaybookAttachment,
   PlaybookFilters,
   PlaybookGenerationRequest,
   PlaybookStatusResponse,
@@ -229,6 +231,8 @@ export const mockPlaybookService: IPlaybookService = {
       matchSummary,
       generatedAt: now,
       sections,
+      notes: [],
+      attachments: [],
       overallStatus: 'generating',
     };
 
@@ -321,6 +325,8 @@ export const mockPlaybookService: IPlaybookService = {
       generatedAt: p.generatedAt,
       hasEditedSections: p.sections.some((s) => s.isEdited),
       sectionStatuses: Object.fromEntries(p.sections.map((s) => [s.sectionType, s.status])),
+      noteCount: p.notes?.length ?? 0,
+      attachmentCount: p.attachments?.length ?? 0,
     }));
 
     return {
@@ -346,6 +352,8 @@ export const mockPlaybookService: IPlaybookService = {
       generatedAt: p.generatedAt,
       hasEditedSections: p.sections.some((s) => s.isEdited),
       sectionStatuses: Object.fromEntries(p.sections.map((s) => [s.sectionType, s.status])),
+      noteCount: p.notes?.length ?? 0,
+      attachmentCount: p.attachments?.length ?? 0,
     }));
   },
 
@@ -418,5 +426,86 @@ export const mockPlaybookService: IPlaybookService = {
       throw { code: 'PLAYBOOK_NOT_FOUND', message: `Playbook ${playbookId} not found`, retryable: false };
     }
     getPlaybooks().delete(playbookId);
+  },
+
+  async addNote(playbookId: string, content: string): Promise<PlaybookNote> {
+    await delay(100);
+    const playbook = getPlaybooks().get(playbookId);
+    if (!playbook) {
+      throw { code: 'PLAYBOOK_NOT_FOUND', message: `Playbook ${playbookId} not found`, retryable: false };
+    }
+    if (!playbook.notes) playbook.notes = [];
+    const now = new Date().toISOString();
+    const note: PlaybookNote = {
+      noteId: `note-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+      content,
+      createdAt: now,
+      updatedAt: now,
+    };
+    playbook.notes.unshift(note);
+    return JSON.parse(JSON.stringify(note));
+  },
+
+  async updateNote(playbookId: string, noteId: string, content: string): Promise<PlaybookNote> {
+    await delay(100);
+    const playbook = getPlaybooks().get(playbookId);
+    if (!playbook) {
+      throw { code: 'PLAYBOOK_NOT_FOUND', message: `Playbook ${playbookId} not found`, retryable: false };
+    }
+    const note = playbook.notes?.find((n) => n.noteId === noteId);
+    if (!note) {
+      throw { code: 'NOTE_NOT_FOUND', message: `Note ${noteId} not found`, retryable: false };
+    }
+    note.content = content;
+    note.updatedAt = new Date().toISOString();
+    return JSON.parse(JSON.stringify(note));
+  },
+
+  async deleteNote(playbookId: string, noteId: string): Promise<void> {
+    await delay(100);
+    const playbook = getPlaybooks().get(playbookId);
+    if (!playbook) {
+      throw { code: 'PLAYBOOK_NOT_FOUND', message: `Playbook ${playbookId} not found`, retryable: false };
+    }
+    const idx = playbook.notes?.findIndex((n) => n.noteId === noteId) ?? -1;
+    if (idx === -1) {
+      throw { code: 'NOTE_NOT_FOUND', message: `Note ${noteId} not found`, retryable: false };
+    }
+    playbook.notes.splice(idx, 1);
+  },
+
+  async addAttachment(
+    playbookId: string,
+    file: { fileName: string; fileType: string; fileSize: number; dataUrl: string }
+  ): Promise<PlaybookAttachment> {
+    await delay(100);
+    const playbook = getPlaybooks().get(playbookId);
+    if (!playbook) {
+      throw { code: 'PLAYBOOK_NOT_FOUND', message: `Playbook ${playbookId} not found`, retryable: false };
+    }
+    if (!playbook.attachments) playbook.attachments = [];
+    const attachment: PlaybookAttachment = {
+      attachmentId: `att-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+      fileName: file.fileName,
+      fileType: file.fileType,
+      fileSize: file.fileSize,
+      uploadedAt: new Date().toISOString(),
+      dataUrl: file.dataUrl,
+    };
+    playbook.attachments.push(attachment);
+    return JSON.parse(JSON.stringify(attachment));
+  },
+
+  async removeAttachment(playbookId: string, attachmentId: string): Promise<void> {
+    await delay(100);
+    const playbook = getPlaybooks().get(playbookId);
+    if (!playbook) {
+      throw { code: 'PLAYBOOK_NOT_FOUND', message: `Playbook ${playbookId} not found`, retryable: false };
+    }
+    const idx = playbook.attachments?.findIndex((a) => a.attachmentId === attachmentId) ?? -1;
+    if (idx === -1) {
+      throw { code: 'ATTACHMENT_NOT_FOUND', message: `Attachment ${attachmentId} not found`, retryable: false };
+    }
+    playbook.attachments.splice(idx, 1);
   },
 };

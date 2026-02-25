@@ -5,6 +5,8 @@ import type {
   PlaybookSummary,
   Playbook,
   PlaybookSection,
+  PlaybookNote,
+  PlaybookAttachment,
   PlaybookFilters,
   PlaybookGenerationRequest,
   PlaybookStatusResponse
@@ -47,4 +49,11 @@ export interface IPlaybookService {
   // Authorization: publisher-admin, publisher-rep (own playbooks, soft delete)
   // Errors: PLAYBOOK_NOT_FOUND
   deletePlaybook(playbookId: string): Promise<void>;
+
+  // Notes & Attachments
+  addNote(playbookId: string, content: string): Promise<PlaybookNote>;
+  updateNote(playbookId: string, noteId: string, content: string): Promise<PlaybookNote>;
+  deleteNote(playbookId: string, noteId: string): Promise<void>;
+  addAttachment(playbookId: string, file: { fileName: string; fileType: string; fileSize: number; dataUrl: string }): Promise<PlaybookAttachment>;
+  removeAttachment(playbookId: string, attachmentId: string): Promise<void>;
 }
