@@ -1,9 +1,11 @@
 'use client';
 
+import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
-import { X, Loader2 } from 'lucide-react';
+import { X, Loader2, MoreHorizontal, Pencil } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { modeColors, matchTierColors } from '@/lib/design-tokens';
 import type { ModeKey } from '@/lib/design-tokens';
 import type { MatchSummary } from '@/services/types/common';
@@ -18,6 +20,23 @@ import {
   SelectContent,
   SelectItem,
 } from '@/components/ui/select';
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+} from '@/components/ui/dropdown-menu';
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogFooter,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogAction,
+  AlertDialogCancel,
+} from '@/components/ui/alert-dialog';
 
 interface ModeBarProps {
   districtId: string;
@@ -31,7 +50,9 @@ interface ModeBarProps {
   onSavePlaybook?: () => void;
   onDiscardPlaybook?: () => void;
   matchSummary?: MatchSummary | null;
-  onManagePlaybook?: () => void;
+  onDeletePlaybook?: () => void;
+  onRegenerateAll?: () => void;
+  onRenamePlaybook?: (newName: string) => void;
 }
 
 export function ModeBar({
@@ -44,10 +65,50 @@ export function ModeBar({
   onSavePlaybook,
   onDiscardPlaybook,
   matchSummary,
-  onManagePlaybook,
+  onDeletePlaybook,
+  onRegenerateAll,
+  onRenamePlaybook,
 }: ModeBarProps) {
   const { activeProduct, clearProduct, isLensActive } = useProductLens();
   const readiness = useLibraryReadiness();
+
+  // Delete confirmation dialog
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+
+  // Inline rename state
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [editValue, setEditValue] = useState(activePlaybookName ?? '');
+  const renameInputRef = useRef<HTMLInputElement>(null);
+
+  // Sync editValue when activePlaybookName changes externally
+  useEffect(() => {
+    if (!isEditingName) {
+      setEditValue(activePlaybookName ?? '');
+    }
+  }, [activePlaybookName, isEditingName]);
+
+  // Focus the input when entering edit mode
+  useEffect(() => {
+    if (isEditingName) {
+      renameInputRef.current?.focus();
+      renameInputRef.current?.select();
+    }
+  }, [isEditingName]);
+
+  const commitRename = () => {
+    const trimmed = editValue.trim();
+    if (trimmed && trimmed !== activePlaybookName) {
+      onRenamePlaybook?.(trimmed);
+    } else {
+      setEditValue(activePlaybookName ?? '');
+    }
+    setIsEditingName(false);
+  };
+
+  const cancelRename = () => {
+    setEditValue(activePlaybookName ?? '');
+    setIsEditingName(false);
+  };
 
   let mode: ModeKey;
   if (activePlaybookId) {
@@ -96,8 +157,32 @@ export function ModeBar({
         {mode === 'playbook' && (
           <>
             <span className={cn('text-sm font-semibold', colors.text)}>
-              Playbook: {activePlaybookName}
+              Playbook:{' '}
             </span>
+            {isEditingName ? (
+              <Input
+                ref={renameInputRef}
+                value={editValue}
+                onChange={(e) => setEditValue(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') commitRename();
+                  if (e.key === 'Escape') cancelRename();
+                }}
+                onBlur={commitRename}
+                className="h-7 w-48 text-sm font-semibold"
+              />
+            ) : (
+              <button
+                type="button"
+                className="group/rename inline-flex items-center gap-1"
+                onClick={() => setIsEditingName(true)}
+              >
+                <span className={cn('text-sm font-semibold', colors.text)}>
+                  {activePlaybookName}
+                </span>
+                <Pencil className="h-3 w-3 text-foreground-tertiary opacity-0 group-hover/rename:opacity-100 transition-opacity" />
+              </button>
+            )}
             <Link
               href={`/districts/${districtId}`}
               className="text-xs text-foreground-secondary underline decoration-foreground-tertiary underline-offset-2 hover:text-foreground"
@@ -178,13 +263,26 @@ export function ModeBar({
           </Button>
         )}
         {mode === 'playbook' && (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={onManagePlaybook}
-          >
-            Manage Playbook
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" className="h-8 w-8">
+                <MoreHorizontal className="h-4 w-4" />
+                <span className="sr-only">Playbook actions</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => onRegenerateAll?.()}>
+                Regenerate All Sections
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                className="text-destructive focus:text-destructive"
+                onClick={() => setDeleteDialogOpen(true)}
+              >
+                Delete Playbook
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         )}
         {mode === 'preview' && (
           <>
@@ -205,6 +303,30 @@ export function ModeBar({
           </>
         )}
       </div>
+
+      {/* Delete confirmation dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete this playbook?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This can&apos;t be undone. The playbook and all its sections will be permanently removed.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={() => {
+                onDeletePlaybook?.();
+                setDeleteDialogOpen(false);
+              }}
+            >
+              Continue
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

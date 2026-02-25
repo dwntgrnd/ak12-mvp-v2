@@ -63,6 +63,16 @@ export default function NestedPlaybookDetailPage({
   // Active tab
   const [activeTab, setActiveTab] = useState<string>(TAB_CONFIG[0].sectionType);
 
+  // Delete handler
+  const handleDelete = useCallback(async () => {
+    try {
+      await fetch(`/api/playbooks/${playbookId}`, { method: 'DELETE' });
+      router.push(`/districts/${districtId}`);
+    } catch {
+      /* stay on page */
+    }
+  }, [playbookId, districtId, router]);
+
   // Polling ref
   const [isPolling, setIsPolling] = useState(false);
 
@@ -356,6 +366,7 @@ export default function NestedPlaybookDetailPage({
           activePlaybookId={playbookId}
           activePlaybookName={playbook.productNames.join(' · ')}
           activePlaybookStatus={overallStatus}
+          onDeletePlaybook={handleDelete}
         />
       }
     >
