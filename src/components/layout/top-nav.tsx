@@ -84,18 +84,18 @@ export function TopNav() {
   const showCompactSearch = pathname === '/saved' || pathname === '/playbooks' || pathname.startsWith('/solutions');
 
   useEffect(() => {
-    setTopbarHeight('3.5rem');
+    setTopbarHeight('3.875rem');
   }, [setTopbarHeight]);
 
   return (
     <>
     {/* Row 1 — Primary nav bar (fixed) */}
     <header className="fixed top-0 left-0 right-0 z-50">
-      <div className="h-14 bg-topbar grid grid-cols-[1fr_auto_1fr] items-center px-6">
+      <div className="h-[62px] bg-topbar grid grid-cols-[1fr_auto_1fr] items-center px-6">
         {/* Left: Logo */}
         <div className="justify-self-start">
           <Link href="/discovery" className="shrink-0">
-            <span className="font-heading text-2xl font-bold text-sidebar-foreground">
+            <span className="font-heading text-[26.4px] font-bold text-sidebar-foreground">
               Alchemy<span className="text-brand-orange">K12</span>
             </span>
           </Link>

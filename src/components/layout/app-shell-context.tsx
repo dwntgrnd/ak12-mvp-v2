@@ -21,7 +21,7 @@ const AppShellContext = createContext<AppShellContextValue | null>(null);
 export function AppShellProvider({ children }: { children: React.ReactNode }) {
   const [pageActions, setPageActions] = useState<React.ReactNode | null>(null);
   const [breadcrumbs, setBreadcrumbs] = useState<BreadcrumbSegment[] | null>(null);
-  const [topbarHeight, setTopbarHeight] = useState('5.5rem');
+  const [topbarHeight, setTopbarHeight] = useState('3.875rem');
 
   return (
     <AppShellContext.Provider

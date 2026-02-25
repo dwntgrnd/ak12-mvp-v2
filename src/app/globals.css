@@ -90,7 +90,7 @@
   --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.07), 0 4px 6px -4px rgb(0 0 0 / 0.05);
 
   /* Layout tokens */
-  --topbar-height: 5.5rem;
+  --topbar-height: 3.875rem;
   --content-max-width: 75rem; /* 1200px */
 
   /* Typography scale tokens */
