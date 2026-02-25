@@ -62,7 +62,8 @@
       "Bash(find /Users/dorenberge/WorkInProgress/VIBE/AK12-MVP-v2/src/hooks -type f -name \"*.ts\" -o -name \"*.tsx\" 2>/dev/null | head -20)",
       "Bash(npx tailwindcss --help 2>&1 | head -32)",
       "Bash(find \"/Users/dorenberge/WorkInProgress/VIBE/AK12-MVP-v2/src/app/\\(dashboard\\)\" -type d -name \"playbooks\" | head -10)",
-      "Bash(git status -u)"
+      "Bash(git status -u)",
+      "Bash(rtk gain)"
     ]
   }
 }
