@@ -167,9 +167,9 @@ export function PlaybookNotesTab({
   }, []);
 
   return (
-    <div className="space-y-0">
-      {/* Notes Section */}
-      <div>
+    <div className="grid grid-cols-1 md:grid-cols-5 gap-8">
+      {/* Notes Section — 3/5 width */}
+      <div className="md:col-span-3">
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-subsection-heading font-semibold text-foreground">Notes</h3>
           {!isAdding && (
@@ -319,8 +319,8 @@ export function PlaybookNotesTab({
         ) : null}
       </div>
 
-      {/* Files Section */}
-      <div className="border-t border-border-default pt-6 mt-6">
+      {/* Files Section — 2/5 width */}
+      <div className="md:col-span-2">
         <h3 className="text-subsection-heading font-semibold text-foreground mb-3">Files</h3>
 
         {/* Drop zone */}
