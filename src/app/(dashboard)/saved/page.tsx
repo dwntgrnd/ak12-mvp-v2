@@ -1,9 +1,7 @@
 'use client';
 
 import { useState, useMemo, useCallback, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import { Bookmark } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { useSavedDistricts } from '@/hooks/use-saved-districts';
 import { useLibraryReadiness } from '@/hooks/use-library-readiness';
 import { useProductLens } from '@/hooks/use-product-lens';
@@ -22,8 +20,6 @@ import { getDistrictService } from '@/services';
 import type { MatchSummary } from '@/services/types/common';
 
 export default function SavedDistrictsPage() {
-  const router = useRouter();
-
   // Search, sort, filter state
   const [searchQuery, setSearchQuery] = useState('');
   const [activeSort, setActiveSort] = useState<ActiveSort | null>({ key: 'savedAt', direction: 'desc' });
@@ -168,25 +164,22 @@ export default function SavedDistrictsPage() {
   if (loading) {
     return (
       <div className="mx-auto max-w-content px-6 py-8">
-        <h1 className="text-2xl font-bold tracking-[-0.01em] text-foreground">Saved Districts</h1>
-        <div className="mt-6">
-          <DistrictListingsContainer
-            config={listConfig}
-            resultCount={0}
-            searchQuery=""
-            onSearchChange={() => {}}
-            activeSort={null}
-            onSortChange={() => {}}
-            filterValues={{}}
-            onFilterChange={() => {}}
-            onClearAllFilters={() => {}}
-            productLensSlot={productLensSlot}
-            loading
-            skeletonRows={4}
-          >
-            {null}
-          </DistrictListingsContainer>
-        </div>
+        <DistrictListingsContainer
+          config={listConfig}
+          resultCount={0}
+          searchQuery=""
+          onSearchChange={() => {}}
+          activeSort={null}
+          onSortChange={() => {}}
+          filterValues={{}}
+          onFilterChange={() => {}}
+          onClearAllFilters={() => {}}
+          productLensSlot={productLensSlot}
+          loading
+          skeletonRows={4}
+        >
+          {null}
+        </DistrictListingsContainer>
       </div>
     );
   }
@@ -195,16 +188,12 @@ export default function SavedDistrictsPage() {
   if (savedDistricts.length === 0 && !hasActiveFilters) {
     return (
       <div className="mx-auto max-w-content px-6 py-8">
-        <h1 className="text-2xl font-bold tracking-[-0.01em] text-foreground">Saved Districts</h1>
         <div className="mt-8 flex flex-col items-center justify-center gap-3 py-16">
           <Bookmark className="h-12 w-12 text-foreground-tertiary" />
           <h2 className="text-lg font-semibold tracking-[-0.01em] text-foreground">No saved districts yet</h2>
           <p className="text-sm text-foreground-secondary">
             Save districts from Discovery or district profiles to track them here.
           </p>
-          <Button variant="outline" className="mt-3" onClick={() => router.push('/discovery')}>
-            Go to Discovery
-          </Button>
         </div>
       </div>
     );
