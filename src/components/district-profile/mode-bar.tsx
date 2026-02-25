@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { X } from 'lucide-react';
+import { X, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { modeColors, matchTierColors } from '@/lib/design-tokens';
@@ -26,7 +26,10 @@ interface ModeBarProps {
   activePlaybookName?: string;
   activePlaybookStatus?: string;
   isPreviewActive?: boolean;
+  generationStatus?: 'idle' | 'generating' | 'preview';
   onGeneratePlaybook?: () => void;
+  onSavePlaybook?: () => void;
+  onDiscardPlaybook?: () => void;
   matchSummary?: MatchSummary | null;
   onManagePlaybook?: () => void;
 }
@@ -36,7 +39,10 @@ export function ModeBar({
   activePlaybookId,
   activePlaybookName,
   isPreviewActive = false,
+  generationStatus,
   onGeneratePlaybook,
+  onSavePlaybook,
+  onDiscardPlaybook,
   matchSummary,
   onManagePlaybook,
 }: ModeBarProps) {
@@ -46,6 +52,8 @@ export function ModeBar({
   let mode: ModeKey;
   if (activePlaybookId) {
     mode = 'playbook';
+  } else if (isPreviewActive && (generationStatus === 'generating' || generationStatus === 'preview')) {
+    mode = 'preview';
   } else if (isLensActive) {
     mode = 'lens';
   } else {
@@ -61,6 +69,7 @@ export function ModeBar({
         mode === 'neutral' && 'border-b border-border-default',
         mode === 'lens' && 'border-b-2 border-[#03C4D4]/40 bg-[#03C4D4]/5',
         mode === 'playbook' && 'border-b-2 border-[#00DE9C]/40 bg-[#00DE9C]/5',
+        mode === 'preview' && 'border-b-2 border-dashed border-[#FFC205]/50 bg-[#FFC205]/5',
       )}
     >
       {/* Left — Mode indicator */}
@@ -97,10 +106,26 @@ export function ModeBar({
             </Link>
           </>
         )}
+        {mode === 'preview' && generationStatus === 'generating' && (
+          <span className={cn('flex items-center gap-2 text-sm font-semibold', colors.text)}>
+            <Loader2 className="h-4 w-4 animate-spin" />
+            Generating Preview…
+          </span>
+        )}
+        {mode === 'preview' && generationStatus === 'preview' && (
+          <>
+            <span className={cn('text-sm font-semibold', colors.text)}>
+              Preview: {activeProduct?.name}
+            </span>
+            <span className="inline-flex items-center rounded-md bg-[#FFC205]/15 px-2 py-0.5 text-xs font-medium text-[#92710A]">
+              Unsaved
+            </span>
+          </>
+        )}
       </div>
 
       {/* Center — Lens picker (neutral + lens modes only) */}
-      {mode !== 'playbook' && (
+      {mode !== 'playbook' && mode !== 'preview' && (
         <div className="shrink-0">
           {readiness.loading ? (
             <Skeleton className="h-9 w-56" />
@@ -161,6 +186,24 @@ export function ModeBar({
             Manage Playbook
           </Button>
         )}
+        {mode === 'preview' && (
+          <>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onDiscardPlaybook}
+            >
+              Discard
+            </Button>
+            <Button
+              size="sm"
+              onClick={onSavePlaybook}
+              disabled={generationStatus === 'generating'}
+            >
+              Save Playbook
+            </Button>
+          </>
+        )}
       </div>
     </div>
   );
@@ -196,7 +239,7 @@ function LensPicker({
       disabled={disabled}
     >
       <SelectTrigger className="w-56">
-        <SelectValue placeholder="Select a product lens\u2026" />
+        <SelectValue placeholder="Select a product lens…" />
       </SelectTrigger>
       <SelectContent>
         {isLensActive && (

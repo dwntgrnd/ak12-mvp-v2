@@ -82,6 +82,12 @@ export const modeColors = {
     text: 'text-[#0A7A5A]',
     label: 'Playbook',
   },
+  preview: {
+    bg: 'bg-[#FFC205]/5',
+    border: 'border-[#FFC205]/50',
+    text: 'text-[#92710A]',
+    label: 'Preview',
+  },
 } as const;
 
 export type ModeKey = keyof typeof modeColors;

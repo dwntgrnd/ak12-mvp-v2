@@ -16,7 +16,6 @@ import {
   PersistentDataStrip,
   ModeBar,
   ResearchTabs,
-  PlaybookPreviewBanner,
   PlaybookPreviewTabs,
   UnifiedDistrictLayout,
 } from '@/components/district-profile';
@@ -225,14 +224,12 @@ export default function DistrictProfilePage({
   //   POST /api/playbooks/preview — generate temporary preview
   //   POST /api/playbooks/[previewId]/save — commit with name to library
   //   Preview auto-expires after N minutes if not saved.
-  const handleSavePlaybook = useCallback((name: string) => {
+  const handleSavePlaybook = useCallback(() => {
     const { playbookId } = generationState;
     if (!playbookId) return;
 
     // In MVP, playbook is already persisted by generatePlaybook.
     // Save = acknowledge + clear lens + navigate.
-    // `name` would be sent to a save API in a real backend (unused in MVP).
-    void name;
     clearProduct();
     setGenerationState(INITIAL_GENERATION_STATE);
     router.push(`/districts/${districtId}/playbooks/${playbookId}`);
@@ -331,22 +328,16 @@ export default function DistrictProfilePage({
           />
         }
         modeBarZone={
-          <>
-            <ModeBar
-              districtId={districtId}
-              districtName={district.name}
-              matchSummary={matchSummary}
-              onGeneratePlaybook={handleGeneratePlaybook}
-              isPreviewActive={isPreviewActive}
-            />
-            {generationState.status === 'preview' && (
-              <PlaybookPreviewBanner
-                defaultName={generationState.defaultName}
-                onSave={handleSavePlaybook}
-                onDiscard={handleDiscardPlaybook}
-              />
-            )}
-          </>
+          <ModeBar
+            districtId={districtId}
+            districtName={district.name}
+            matchSummary={matchSummary}
+            onGeneratePlaybook={handleGeneratePlaybook}
+            isPreviewActive={isPreviewActive}
+            generationStatus={generationState.status}
+            onSavePlaybook={handleSavePlaybook}
+            onDiscardPlaybook={handleDiscardPlaybook}
+          />
         }
       >
         {generationState.status === 'idle' ? (
