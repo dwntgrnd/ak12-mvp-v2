@@ -1,12 +1,10 @@
 import { DiscoveryInput } from './discovery-input';
 
 interface DiscoveryEntryStateProps {
-  onQuerySubmit: (query: string) => void;
   onDirectNavigation: (districtId: string) => void;
 }
 
 export function DiscoveryEntryState({
-  onQuerySubmit,
   onDirectNavigation,
 }: DiscoveryEntryStateProps) {
   return (
@@ -29,15 +27,14 @@ export function DiscoveryEntryState({
         <div className="mt-6">
           <DiscoveryInput
             variant="full"
-            onSubmit={onQuerySubmit}
             onDirectNavigation={onDirectNavigation}
           />
         </div>
 
         {/* Helper text */}
         <p className="mt-3 text-xs font-medium text-foreground-tertiary max-w-[480px] mx-auto">
-          Search by district name for direct navigation, or ask a natural language question to
-          explore trends, compare districts, and surface sales intelligence.
+          Search by district name to explore profiles, view intelligence data, and generate sales
+          playbooks.
         </p>
       </div>
     </div>

@@ -1,7 +1,5 @@
 import type { IDiscoveryService } from '../../interfaces/discovery-service';
 import type {
-  DiscoveryQueryRequest,
-  DiscoveryQueryResponse,
   DirectorySearchRequest,
   DirectorySearchResponse,
   DistrictCoverage,
@@ -9,60 +7,13 @@ import type {
 import {
   DISCOVERY_DIRECTORY,
   DISCOVERY_COVERAGE,
-  DISCOVERY_SCENARIOS,
-  DISCOVERY_FALLBACK_RESPONSE,
-  PRODUCT_RELEVANCE_MAPS,
 } from './fixtures/discovery';
 
 function delay(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-let queryCounter = 0;
-
-function freshQueryId(): string {
-  queryCounter += 1;
-  return `mock-query-${Date.now()}-${queryCounter}`;
-}
-
 export const mockDiscoveryService: IDiscoveryService = {
-  async query(request: DiscoveryQueryRequest): Promise<DiscoveryQueryResponse> {
-    if (!request.query || !request.query.trim()) {
-      throw { code: 'QUERY_EMPTY', message: 'Query must not be empty', retryable: false };
-    }
-
-    await delay(1200 + Math.random() * 800);
-
-    const lowerQuery = request.query.toLowerCase();
-
-    let bestMatch: (typeof DISCOVERY_SCENARIOS)[number] | null = null;
-    let bestMatchCount = 0;
-
-    for (const scenario of DISCOVERY_SCENARIOS) {
-      const matchCount = scenario.keywords.filter((kw) =>
-        lowerQuery.includes(kw.toLowerCase())
-      ).length;
-      if (matchCount > bestMatchCount) {
-        bestMatchCount = matchCount;
-        bestMatch = scenario;
-      }
-    }
-
-    const baseResponse = (!bestMatch || bestMatchCount < 1)
-      ? { ...DISCOVERY_FALLBACK_RESPONSE, queryId: freshQueryId(), originalQuery: request.query }
-      : { ...bestMatch.response, queryId: freshQueryId(), originalQuery: request.query };
-
-    // Augment with product relevance if lens is active
-    if (request.productLensId && PRODUCT_RELEVANCE_MAPS[request.productLensId]) {
-      return {
-        ...baseResponse,
-        productRelevanceMap: PRODUCT_RELEVANCE_MAPS[request.productLensId],
-      };
-    }
-
-    return baseResponse;
-  },
-
   async searchDirectory(request: DirectorySearchRequest): Promise<DirectorySearchResponse> {
     if (!request.query || !request.query.trim()) {
       throw { code: 'QUERY_EMPTY', message: 'Search query must not be empty', retryable: false };

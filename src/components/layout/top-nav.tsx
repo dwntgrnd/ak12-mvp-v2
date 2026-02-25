@@ -249,7 +249,6 @@ export function TopNav() {
           <DiscoveryInput
             variant="compact"
             placeholder="Search for a district..."
-            onSubmit={(query) => router.push(`/discovery?q=${encodeURIComponent(query)}`)}
             onDirectNavigation={(districtId) => router.push(`/districts/${districtId}`)}
           />
         </div>

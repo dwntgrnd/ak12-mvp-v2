@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { Search, X, ArrowRight } from 'lucide-react';
+import { Search } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { getDiscoveryService } from '@/services';
 import type { IDiscoveryService, DirectoryEntry } from '@/services';
@@ -10,10 +10,9 @@ import { DiscoveryAutocompleteDropdown } from './discovery-autocomplete-dropdown
 const TYPEWRITER_CONFIG = {
   phrases: [
     'Search for a district by name...',
-    "What's the math curriculum landscape in the Bay Area?",
-    'Show me large districts with active adoption cycles',
-    'Compare Oakland and Fresno on EL support',
-    'Districts in my territory with declining math scores',
+    'Los Angeles Unified',
+    'Try typing Fresno or Oakland...',
+    'Find districts by name or city...',
   ],
   charDelay: 45,
   charJitter: 15,
@@ -29,23 +28,19 @@ const PUNCTUATION = new Set([',', '.', '?', '!']);
 type TypewriterPhase = 'typing' | 'holding' | 'deleting' | 'pausing';
 
 interface DiscoveryInputProps {
-  onSubmit: (query: string) => void;
   onDirectNavigation: (districtId: string) => void;
   variant?: 'full' | 'compact';
   initialValue?: string;
   disabled?: boolean;
-  onClear?: () => void;
   placeholder?: string;
   autoFocus?: boolean;
 }
 
 export function DiscoveryInput({
-  onSubmit,
   onDirectNavigation,
   variant = 'full',
   initialValue,
   disabled = false,
-  onClear,
   placeholder,
   autoFocus,
 }: DiscoveryInputProps) {
@@ -260,19 +255,12 @@ export function DiscoveryInput({
     if (e.key === 'Enter') {
       if (dropdownOpen && highlightedIndex >= 0 && matches[highlightedIndex]) {
         handleSelect(matches[highlightedIndex]);
-      } else {
-        const trimmed = value.trim();
-        if (trimmed) {
-          setDropdownOpen(false);
-          onSubmit(trimmed);
-        }
+      } else if (dropdownOpen && matches.length > 0) {
+        // No highlight but matches exist — select the first match
+        handleSelect(matches[0]);
       }
+      // No matches or dropdown closed — do nothing
     }
-  }
-
-  function handleClear() {
-    setValue('');
-    onClear?.();
   }
 
   // Cursor shows during typing, holding, and deleting — not during pausing
@@ -320,7 +308,7 @@ export function DiscoveryInput({
             : undefined
         }
         aria-autocomplete="list"
-        aria-label="Search districts or ask a question"
+        aria-label="Search for a district"
         autoFocus={autoFocus ?? variant === 'full'}
         autoComplete="off"
         placeholder={placeholder}
@@ -333,7 +321,7 @@ export function DiscoveryInput({
         className={cn(
           'w-full bg-surface-raised border text-sm text-foreground outline-none transition-[border-color,box-shadow] duration-200',
           variant === 'full'
-            ? cn('h-14 rounded-xl pl-11', value.length > 0 ? 'pr-14' : 'pr-5')
+            ? 'h-14 rounded-xl pl-11 pr-5'
             : cn('h-10 rounded-lg pl-10', value.length > 0 ? 'pr-9' : 'pr-4'),
           isFocused
             ? cn(
@@ -346,41 +334,6 @@ export function DiscoveryInput({
           disabled && 'cursor-not-allowed',
         )}
       />
-
-      {/* Submit button — full variant, appears when value is present */}
-      {variant === 'full' && value.length > 0 && !disabled && (
-        <button
-          type="button"
-          aria-label="Search"
-          onClick={() => {
-            const trimmed = value.trim();
-            if (trimmed) {
-              setDropdownOpen(false);
-              onSubmit(trimmed);
-            }
-          }}
-          className={cn(
-            'absolute right-3 top-1/2 -translate-y-1/2 z-10',
-            'flex items-center justify-center w-9 h-9 rounded-md',
-            'bg-brand-orange text-white',
-            'transition-all duration-150 hover:brightness-105 active:scale-95',
-          )}
-        >
-          <ArrowRight className="w-4 h-4" />
-        </button>
-      )}
-
-      {/* Clear button — compact mode only, when value present and not disabled */}
-      {variant === 'compact' && value.length > 0 && !disabled && (
-        <button
-          type="button"
-          aria-label="Clear search"
-          onClick={handleClear}
-          className="absolute right-3 top-1/2 -translate-y-1/2 text-foreground-tertiary hover:text-foreground-secondary transition-colors z-10"
-        >
-          <X className="w-4 h-4" />
-        </button>
-      )}
 
       {/* Typewriter overlay — pointer-events-none so clicks pass through to input */}
       {showTypewriter && (

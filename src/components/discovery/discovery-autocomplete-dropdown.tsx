@@ -59,8 +59,7 @@ export function DiscoveryAutocompleteDropdown({
           role="option"
           aria-selected={false}
         >
-          No matching districts.{' '}
-          <span className="font-normal">Press Enter to search.</span>
+          No matching districts found.
         </li>
       ) : (
         matches.map((entry, index) => (
