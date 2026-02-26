@@ -107,7 +107,7 @@ export default function SavedDistrictsPage() {
     result = filterBySnapshot(result, filterValues);
 
     // Sort
-    if (activeSort?.key === 'matchTier') {
+    if (activeSort?.key === 'productFit') {
       const tierOrder: Record<string, number> = { strong: 0, moderate: 1, limited: 2 };
       const dir = activeSort.direction === 'asc' ? 1 : -1;
       result = [...result].sort((a, b) => {

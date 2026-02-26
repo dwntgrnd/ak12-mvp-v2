@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { DiscoveryInput } from './discovery-input';
 
 interface DiscoveryEntryStateProps {
@@ -35,6 +36,16 @@ export function DiscoveryEntryState({
         <p className="mt-3 text-xs font-medium text-foreground-tertiary max-w-[480px] mx-auto">
           Search by district name to explore profiles, view intelligence data, and generate sales
           playbooks.
+        </p>
+
+        {/* Browse all districts link */}
+        <p className="mt-4">
+          <Link
+            href="/districts"
+            className="text-sm text-primary underline decoration-primary/30 underline-offset-2 hover:decoration-primary"
+          >
+            Browse all districts
+          </Link>
         </p>
       </div>
     </div>

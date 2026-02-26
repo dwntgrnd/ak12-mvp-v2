@@ -150,6 +150,18 @@ export const CARD_SET_CONFIG: ListContextConfig = {
   sortOptions: SHARED_SORT_OPTIONS,
 };
 
+export const BROWSE_DISTRICTS_CONFIG: ListContextConfig = {
+  columns: [
+    { key: 'name', label: 'District', minWidth: 'min-w-0', sortable: true },
+    ...SHARED_METRIC_COLUMNS,
+  ],
+  availableFilters: SHARED_FILTERS,
+  showLocalFilter: false,
+  showColumnHeaders: false,
+  searchPlaceholder: 'Search districts...',
+  sortOptions: SHARED_SORT_OPTIONS,
+};
+
 export const SAVED_DISTRICTS_CONFIG: ListContextConfig = {
   columns: [
     { key: 'name', label: 'District', minWidth: 'min-w-0', sortable: true },
@@ -161,7 +173,6 @@ export const SAVED_DISTRICTS_CONFIG: ListContextConfig = {
   searchPlaceholder: 'Search saved districts...',
   sortOptions: [
     { key: 'savedAt', label: 'Date Saved' },
-    { key: 'matchTier', label: 'Match Tier' },
     ...SHARED_SORT_OPTIONS,
   ],
 };
@@ -219,6 +230,6 @@ export function buildListContextConfig(
     ...base,
     columns: [...columns, ALIGNMENT_COLUMN],
     availableFilters: [...base.availableFilters, ALIGNMENT_LEVEL_FILTER],
-    sortOptions: [...sortOptions, { key: 'alignment', label: 'Alignment' }],
+    sortOptions: [...sortOptions, { key: 'productFit', label: 'Product Fit' }, { key: 'alignment', label: 'Alignment' }],
   };
 }
