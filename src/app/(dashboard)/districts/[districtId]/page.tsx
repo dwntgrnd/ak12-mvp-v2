@@ -2,6 +2,7 @@
 
 import { use, useEffect, useState, useCallback, useRef } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
+import { invalidatePlaybookCount } from '@/hooks/use-playbook-count';
 import Link from 'next/link';
 import { RefreshCw, AlertCircle, X } from 'lucide-react';
 import { useAppShell } from '@/components/layout/app-shell-context';
@@ -200,6 +201,7 @@ export default function DistrictProfilePage({
           const playbookData: Playbook = await pbRes.json();
           const defaultName = formatDefaultName(district.name, activeProduct.name);
 
+          invalidatePlaybookCount();
           setGenerationState({
             status: 'preview',
             playbookId,
@@ -243,6 +245,7 @@ export default function DistrictProfilePage({
     if (playbookId) {
       // Fire-and-forget delete — still reset UI even if delete fails
       fetch(`/api/playbooks/${playbookId}`, { method: 'DELETE' }).catch(() => {});
+      invalidatePlaybookCount();
     }
     setGenerationState(INITIAL_GENERATION_STATE);
     // Lens remains active — user returns to district-lens state

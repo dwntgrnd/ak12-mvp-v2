@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import { invalidatePlaybookCount } from '@/hooks/use-playbook-count';
 import { Loader2, Info, X } from 'lucide-react';
 import {
   Dialog,
@@ -260,6 +261,7 @@ export function GeneratePlaybookSheet({
       if (!res.ok) throw new Error('Generation failed');
       const data = await res.json();
       const playbookId = data.playbookId;
+      invalidatePlaybookCount();
       if (selectedDistrict && !isSaved(selectedDistrict.districtId)) {
         saveDistrict(selectedDistrict.districtId).catch(() => {});
       }

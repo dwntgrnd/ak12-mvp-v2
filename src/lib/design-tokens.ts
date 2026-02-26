@@ -62,31 +62,37 @@ export const fitCategoryColors = {
 /** @deprecated Use MatchTierKey instead */
 export type FitCategoryKey = keyof typeof fitCategoryColors;
 
-// Mode bar visual treatments
+// Mode bar visual treatments — progression: neutral → subject → lens → preview → playbook
 export const modeColors = {
   neutral: {
-    bg: '',
+    bg: 'bg-[#64748B]/[0.04]',
     border: 'border-border-default',
     text: 'text-foreground',
     label: 'District Intelligence',
   },
+  subject: {
+    bg: 'bg-[#64748B]/[0.08]',
+    border: 'border-[#64748B]/20',
+    text: 'text-foreground',
+    label: 'District Intelligence',
+  },
   lens: {
-    bg: 'bg-[#03C4D4]/5',
+    bg: 'bg-[#03C4D4]/[0.06]',
     border: 'border-[#03C4D4]/40',
     text: 'text-[#1E698F]',
     label: 'Lens',
   },
-  playbook: {
-    bg: 'bg-[#00DE9C]/5',
-    border: 'border-[#00DE9C]/40',
-    text: 'text-[#0A7A5A]',
-    label: 'Playbook',
-  },
   preview: {
-    bg: 'bg-[#FFC205]/5',
+    bg: 'bg-[#FFC205]/[0.06]',
     border: 'border-[#FFC205]/50',
     text: 'text-[#92710A]',
     label: 'Preview',
+  },
+  playbook: {
+    bg: 'bg-[#FFC205]/[0.10]',
+    border: 'border-[#FFC205]/40',
+    text: 'text-[#92710A]',
+    label: 'Playbook',
   },
 } as const;
 

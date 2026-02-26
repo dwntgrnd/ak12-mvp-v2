@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback, use } from 'react';
 import { useRouter } from 'next/navigation';
+import { invalidatePlaybookCount } from '@/hooks/use-playbook-count';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -69,6 +70,7 @@ export default function NestedPlaybookDetailPage({
   const handleDelete = useCallback(async () => {
     try {
       await fetch(`/api/playbooks/${playbookId}`, { method: 'DELETE' });
+      invalidatePlaybookCount();
       router.push(`/districts/${districtId}`);
     } catch {
       /* stay on page */
